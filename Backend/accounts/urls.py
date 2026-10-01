@@ -1,0 +1,35 @@
+from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
+from .views import (
+    signup,
+    login,
+    profile,
+    logout,
+    verify_otp,
+    forgot_password,
+    verify_reset_otp,
+    reset_password,
+    admin_test,
+    admin_users,
+    block_user,
+    unblock_user,
+    admin_user_detail,
+)
+
+urlpatterns = [
+    path("signup/",signup, name="signup"),
+    path("login/", login, name="login"),
+    path("profile/",profile,name='profile'),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("logout/",logout,name='logout'),
+    path("verify-otp/", verify_otp, name="verify_otp"),
+    path("forgot-password/",forgot_password,name="forgot_password"),
+    path("verify-reset-otp/",verify_reset_otp,name="verify_reset_otp"),
+    path("reset-password/",reset_password,name="reset_password"),
+    path("admin-test/",admin_test,name="admin_test"),
+    path("admin/users/",admin_users,name="admin_users"),
+    path("admin/users/<int:user_id>/block/",block_user,name="block_user"),
+    path("admin/users/<int:user_id>/unblock/",unblock_user,name="unblock_user"),
+    path("admin/users/<int:user_id>/",admin_user_detail,name="admin_user_detail"),
+
+]
