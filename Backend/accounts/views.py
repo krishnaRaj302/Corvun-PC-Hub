@@ -9,10 +9,10 @@ from .permissions import IsAdmin
 
 
 
-from .models import User,EmailOTP
+from .models import User,EmailOTP,Address
 from .validators import validate_password
 from .utils import create_email_otp, send_otp_email
-from .serializers import SignupSerializer
+from .serializers import SignupSerializer,AddressSerializer
 
 @api_view(["POST"])
 def signup(request):
@@ -497,3 +497,111 @@ def admin_user_detail(request, user_id):
         "phone_verified": user.phone_verified,
         "created_at": user.created_at
     }, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_address(request):
+    # Create serializer using data received from React
+    serializer = AddressSerializer(data=request.data)
+
+    # Check whether the address data is valid
+    if serializer.is_valid():
+        # Save the address for the logged-in user
+        address = serializer.save(user=request.user)
+
+        # Return the created address
+        return Response(
+            {
+                "message": "Address added successfully.",
+                "address": AddressSerializer(address).data
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    # Return validation errors
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_addresses(request):
+    # Get all addresses belonging to the logged-in user
+    addresses = Address.objects.filter(user=request.user).order_by("-created_at")
+
+    # Convert addresses into JSON format
+    serializer = AddressSerializer(addresses, many=True)
+
+    # Return the user's addresses
+    return Response(
+        {
+            "addresses": serializer.data
+        },
+        status=status.HTTP_200_OK
+    )
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_address(request, address_id):
+    # Get the address belonging to the logged-in user
+    try:
+        address = Address.objects.get(
+            id=address_id,
+            user=request.user
+        )
+    except Address.DoesNotExist:
+        return Response(
+            {"error": "Address not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # Update the address with the new data
+    serializer = AddressSerializer(
+        address,
+        data=request.data,
+        partial=True
+    )
+
+    # Check whether the new data is valid
+    if serializer.is_valid():
+        # Save the updated address
+        serializer.save()
+
+        # Return the updated address
+        return Response(
+            {
+                "message": "Address updated successfully.",
+                "address": serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+    # Return validation errors
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_address(request, address_id):
+    # Get the address belonging to the logged-in user
+    try:
+        address = Address.objects.get(
+            id=address_id,
+            user=request.user
+        )
+    except Address.DoesNotExist:
+        return Response(
+            {"error": "Address not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # Delete the address
+    address.delete()
+
+    # Return success response
+    return Response(
+        {"message": "Address deleted successfully."},
+        status=status.HTTP_200_OK
+    )

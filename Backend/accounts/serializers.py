@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User
+from .models import User,Address
 from .validators import validate_password
 
 
@@ -57,3 +57,33 @@ class SignupSerializer(serializers.Serializer):
         )
 
         return user
+
+class AddressSerializer(serializers.ModelSerializer):
+    # Serializer for user addresses
+    class Meta:
+        model = Address
+        fields = [
+            "id",
+            "user",
+            "label",
+            "full_name",
+            "phone",
+            "alternative_phone",
+            "address_line1",
+            "address_line2",
+            "city",
+            "state",
+            "postal_code",
+            "country",
+            "is_default",
+            "created_at",
+            "updated_at",
+        ]
+
+        # User and timestamps are managed by the backend
+        read_only_fields = [
+            "id",
+            "user",
+            "created_at",
+            "updated_at",
+        ]

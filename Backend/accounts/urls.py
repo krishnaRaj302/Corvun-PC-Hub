@@ -14,7 +14,11 @@ from .views import (
     block_user,
     unblock_user,
     admin_user_detail,
-)
+    add_address,
+    get_addresses,
+    update_address,
+    delete_address,
+)   
 
 urlpatterns = [
     path("signup/",signup, name="signup"),
@@ -31,5 +35,8 @@ urlpatterns = [
     path("admin/users/<int:user_id>/block/",block_user,name="block_user"),
     path("admin/users/<int:user_id>/unblock/",unblock_user,name="unblock_user"),
     path("admin/users/<int:user_id>/",admin_user_detail,name="admin_user_detail"),
-
+    path("address/add/", add_address, name="add_address"),
+    path("addresses/", get_addresses, name="get_addresses"),
+    path("address/<int:address_id>/update/", update_address, name="update_address"),
+    path("address/<int:address_id>/delete/", delete_address, name="delete_address"),
 ]
