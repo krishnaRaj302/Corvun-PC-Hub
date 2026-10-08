@@ -28,4 +28,5 @@ urlpatterns = [
     path("api/reviews/", include("reviews.urls")),
     path("api/support/", include("support.urls")),
     path("api/referrals/", include("referrals.urls")),
+    path("api/content/", include("content.urls")),
 ]

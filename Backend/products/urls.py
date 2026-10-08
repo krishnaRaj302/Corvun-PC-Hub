@@ -20,6 +20,7 @@ from .views import (
     delete_product_image,
     create_product_specification,
     delete_product_specification,
+    low_stock_products,
 )
 
 urlpatterns = [
@@ -43,4 +44,5 @@ urlpatterns = [
     path("images/<int:image_id>/delete/",delete_product_image,name="delete_product_image"),
     path("specifications/create/",create_product_specification,name="create_product_specification"),
     path("specifications/<int:specification_id>/delete/",delete_product_specification,name="delete_product_specification"),
+    path("admin/low-stock/", low_stock_products, name="low_stock_products"),
 ]

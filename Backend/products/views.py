@@ -1,7 +1,12 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from django.db.models import F
+
+from accounts.permissions import IsAdmin
+from rest_framework.permissions import IsAuthenticated
+
 from .models import (
     Product,
     Category, 
@@ -530,5 +535,23 @@ def delete_product_specification(request, specification_id):
 
     return Response(
         {"message": "Product specification deleted successfully."},
+        status=status.HTTP_200_OK
+    )
+
+# Admin: Get products that are low in stock
+@api_view(["GET"])
+@permission_classes([IsAdmin])
+def low_stock_products(request):
+
+    # Find products where stock is less than
+    # or equal to the low stock threshold
+    products = Product.objects.filter(
+        stock__lte=F("low_stock_threshold") 
+    ).order_by("stock")
+
+    serializer = ProductSerializer(products, many=True)
+
+    return Response(
+        {"products": serializer.data},
         status=status.HTTP_200_OK
     )
