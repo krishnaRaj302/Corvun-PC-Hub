@@ -27,18 +27,18 @@ def signup(request):
         )
 
     try:
-        # Create the user
+    
         user = serializer.save()
-
         # Create OTP
-        otp = create_email_otp(user)
-
+        otp = create_email_otp(user,"signup")
         # Send OTP to user's email
         send_otp_email(user.email, otp)
 
-    except Exception:
+    except Exception as e:
+        print("SIGNUP ERROR:", e)
+
         return Response({
-        "error": "Something went wrong. Please try again later."
+        "error": str(e)
     }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response(
