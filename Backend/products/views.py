@@ -273,6 +273,7 @@ def delete_category(request, category_id):
             status=status.HTTP_404_NOT_FOUND
         )
 
+
     # Delete the category from the database
     category.delete()
 

@@ -1,0 +1,451 @@
+/* ==================================================
+   CORVUN LOGIN PAGE STYLES
+   ================================================== */
+
+.login-card-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Protocol Pill Badge */
+.corvun-protocol-badge {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  background-color: var(--corvun-red-badge-bg);
+  border: 1px solid var(--corvun-red-badge-border);
+  border-radius: var(--corvun-radius-full);
+  padding: 4px 12px;
+  margin-bottom: 20px;
+}
+
+.corvun-protocol-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--corvun-red);
+  box-shadow: 0 0 8px rgba(239, 56, 66, 0.7);
+}
+
+.corvun-protocol-badge .badge-text {
+  font-family: var(--corvun-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #f87171;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+/* Card Header */
+.auth-card-header {
+  margin-bottom: 24px;
+}
+
+.auth-main-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
+}
+
+.auth-subtitle {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--corvun-text-secondary);
+  margin: 0;
+}
+
+/* Feedback Notifications */
+.auth-feedback-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--corvun-radius-md);
+  font-size: 12.5px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-box {
+  background-color: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.error-box .feedback-icon {
+  color: var(--corvun-red);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.success-box {
+  background-color: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #86efac;
+}
+
+.success-box .feedback-icon {
+  color: var(--corvun-success);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Auth Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9aa0ae;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.label-meta {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--corvun-text-muted);
+  letter-spacing: 0.5px;
+}
+
+.forgot-password-link {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #d1d5db;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.forgot-password-link:hover {
+  color: var(--corvun-red);
+  text-decoration: underline;
+}
+
+/* Input Fields */
+.input-field-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-prefix-icon {
+  position: absolute;
+  left: 14px;
+  color: #64748b;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.corvun-input {
+  width: 100%;
+  height: 46px;
+  background-color: var(--corvun-panel-light);
+  border: 1px solid #232734;
+  border-radius: var(--corvun-radius-md);
+  padding: 0 14px 0 42px;
+  font-size: 13.5px;
+  color: #ffffff;
+  outline: none;
+  transition: var(--corvun-transition);
+  box-sizing: border-box;
+}
+
+.corvun-input::placeholder {
+  color: #4b5563;
+  font-size: 13.5px;
+}
+
+.corvun-input:focus {
+  border-color: var(--corvun-red);
+  background-color: #1a1e28;
+  box-shadow: 0 0 0 2px rgba(239, 56, 66, 0.2);
+}
+
+.corvun-input.has-suffix {
+  padding-right: 44px;
+}
+
+.input-suffix-action {
+  position: absolute;
+  right: 12px;
+  color: #64748b;
+  background: none;
+  border: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: var(--corvun-transition);
+}
+
+.input-suffix-action:hover {
+  color: #ffffff;
+}
+
+/* Remember Workstation Row */
+.remember-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  margin-bottom: 22px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.corvun-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-custom {
+  width: 16px;
+  height: 16px;
+  background-color: var(--corvun-panel-light);
+  border: 1px solid #374151;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--corvun-transition);
+  flex-shrink: 0;
+}
+
+.corvun-checkbox:checked + .checkbox-custom {
+  background-color: var(--corvun-red);
+  border-color: var(--corvun-red);
+  box-shadow: 0 0 8px rgba(239, 56, 66, 0.5);
+}
+
+.corvun-checkbox:checked + .checkbox-custom::after {
+  content: "";
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.checkbox-label-text {
+  font-size: 13px;
+  color: #9aa0ae;
+}
+
+.ttl-badge {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  color: #64748b;
+  background-color: #141720;
+  border: 1px solid #232734;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* Primary CTA Button */
+.corvun-btn-primary {
+  width: 100%;
+  height: 48px;
+  background-color: var(--corvun-red);
+  border: 1px solid #ff4d58;
+  border-radius: var(--corvun-radius-md);
+  color: #ffffff;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--corvun-transition);
+  box-shadow: 0 4px 18px rgba(239, 56, 66, 0.32);
+}
+
+.corvun-btn-primary:hover:not(:disabled) {
+  background-color: var(--corvun-red-hover);
+  box-shadow: 0 6px 24px rgba(239, 56, 66, 0.45);
+  transform: translateY(-1px);
+}
+
+.corvun-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.corvun-btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-arrow {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.corvun-btn-primary:hover:not(:disabled) .btn-arrow {
+  transform: translateX(4px);
+}
+
+.btn-loading-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--corvun-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Social Login Divider */
+.social-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 18px 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #212532;
+}
+
+.divider-text {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: #5e6677;
+  letter-spacing: 1.5px;
+}
+
+/* Social Buttons Grid */
+.social-buttons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.corvun-social-btn {
+  height: 42px;
+  background-color: var(--corvun-panel-light);
+  border: 1px solid #232734;
+  border-radius: var(--corvun-radius-md);
+  color: #d1d5db;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--corvun-transition);
+}
+
+.corvun-social-btn:hover {
+  background-color: #1c202c;
+  border-color: #3b4255;
+  color: #ffffff;
+}
+
+.social-icon {
+  flex-shrink: 0;
+}
+
+/* Auth Card Footer */
+.auth-card-footer {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--corvun-text-secondary);
+}
+
+.footer-nav-link {
+  color: #ffffff;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--corvun-transition);
+  text-decoration: none;
+}
+
+.footer-nav-link:hover {
+  color: var(--corvun-red);
+}
+
+.nav-arrow {
+  color: var(--corvun-red);
+  font-size: 12px;
+}

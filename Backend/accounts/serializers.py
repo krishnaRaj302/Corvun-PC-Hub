@@ -62,28 +62,6 @@ class AddressSerializer(serializers.ModelSerializer):
     # Serializer for user addresses
     class Meta:
         model = Address
-        fields = [
-            "id",
-            "user",
-            "label",
-            "full_name",
-            "phone",
-            "alternative_phone",
-            "address_line1",
-            "address_line2",
-            "city",
-            "state",
-            "postal_code",
-            "country",
-            "is_default",
-            "created_at",
-            "updated_at",
-        ]
+        fields = "__all__"
 
-        # User and timestamps are managed by the backend
-        read_only_fields = [
-            "id",
-            "user",
-            "created_at",
-            "updated_at",
-        ]
+        
