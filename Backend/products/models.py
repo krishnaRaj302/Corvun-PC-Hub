@@ -39,7 +39,7 @@ class Product(models.Model):
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name="variants")
-    variant_name = models.CharField(max_length=150,blank=True)
+    variant_name = models.CharField(max_length=150,blank=True,)
     price = models.DecimalField(max_digits=12,decimal_places=2,null=True,blank=True)
     stock = models.IntegerField(default=0)
 

@@ -1,8 +1,16 @@
 from rest_framework import serializers
-from .models import CartItem,WishlistItem
+
+from .models import CartItem, WishlistItem
+
+from .validators import validate_quantity
 
 
 class CartItemSerializer(serializers.ModelSerializer):
+
+    quantity = serializers.IntegerField(
+        validators=[validate_quantity]
+    )
+
     class Meta:
         model = CartItem
         fields = [
@@ -16,6 +24,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         ]
 
 class WishlistItemSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = WishlistItem
         fields = [

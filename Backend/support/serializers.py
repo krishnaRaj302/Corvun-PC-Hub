@@ -1,8 +1,26 @@
 from rest_framework import serializers
+
 from .models import SupportTicket
 
+from .validators import (
+    validate_subject,
+    validate_priority,
+)
+
+
+# =========================
+# Support Ticket Serializer
+# =========================
 
 class SupportTicketSerializer(serializers.ModelSerializer):
+
+    subject = serializers.CharField(
+        validators=[validate_subject]
+    )
+
+    priority = serializers.CharField(
+        validators=[validate_priority]
+    )
 
     class Meta:
         model = SupportTicket
