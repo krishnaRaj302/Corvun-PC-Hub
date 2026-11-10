@@ -8,4 +8,6 @@ urlpatterns = [
     path("my-tickets/", my_tickets, name="my_tickets"),
     path("admin/", admin_tickets, name="admin_tickets"),
     path("admin/<int:ticket_id>/", admin_tickets, name="admin_ticket_detail"),
+    path("admin/tickets/", admin_tickets, name="admin_tickets_alias"),
+    path("admin/tickets/<int:ticket_id>/", admin_tickets, name="admin_ticket_detail_alias"),
 ]

@@ -1,0 +1,884 @@
+/* ============================================================
+   CORVUN ADMIN BANNER MANAGEMENT – Figma Design System
+   All class names are prefixed bm- (Banner Management)
+   ============================================================ */
+
+@keyframes bm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bm-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Page Wrapper */
+.bm-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: bm-fadeIn 0.3s ease;
+  width: 100%;
+}
+
+/* ── Toast Notification ─────────────────────────────────────── */
+.bm-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+  color: #4ade80;
+  font-size: 13px;
+  animation: bm-fadeIn 0.25s ease;
+}
+
+.bm-toast--error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.bm-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bm-toast-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.bm-toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.7;
+}
+.bm-toast-close:hover {
+  opacity: 1;
+}
+
+/* ── Error Banner ───────────────────────────────────────────── */
+.bm-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 13.5px;
+}
+
+.bm-retry-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  background: #ef3842;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Page Header (Exact Figma Top) ──────────────────────────── */
+.bm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.bm-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bm-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.bm-subtitle {
+  font-size: 13.5px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+.bm-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.bm-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #ef3842;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(239, 56, 66, 0.35);
+  white-space: nowrap;
+}
+.bm-add-btn:hover {
+  background: #f9444e;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(239, 56, 66, 0.45);
+}
+
+/* ── Banner Table Card ──────────────────────────────────────── */
+.bm-card {
+  background: #0b0d13;
+  border: 1px solid #1c202a;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.bm-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.bm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  text-align: left;
+}
+
+.bm-table th {
+  padding: 14px 20px;
+  background: #080a0f;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid #1c202a;
+  white-space: nowrap;
+}
+
+.bm-th-actions {
+  text-align: right;
+  padding-right: 24px;
+}
+
+.bm-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #141822;
+  color: #cbd5e1;
+  vertical-align: middle;
+}
+
+.bm-table-row {
+  transition: background 0.15s ease;
+}
+.bm-table-row:hover {
+  background: #0f131c;
+}
+
+/* IMAGE Column */
+.bm-col-image {
+  width: 120px;
+}
+
+.bm-thumb-wrap {
+  width: 96px;
+  height: 42px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #141722;
+  border: 1px solid #1e2430;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bm-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bm-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #111319;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.5px;
+}
+
+/* TITLE Column */
+.bm-banner-title {
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 13.5px;
+  max-width: 320px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+/* CTA Column */
+.bm-banner-cta {
+  font-weight: 500;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+/* STATUS Column */
+.bm-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.bm-status-pill--active {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.bm-status-pill--inactive {
+  background: rgba(100, 116, 139, 0.12);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+.bm-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* DATES Column */
+.bm-banner-dates {
+  font-size: 12.5px;
+  color: #8e95a5;
+  white-space: nowrap;
+}
+
+/* ACTIONS Column */
+.bm-col-actions {
+  text-align: right;
+  padding-right: 24px;
+}
+
+.bm-action-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bm-icon-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.bm-icon-btn--edit:hover {
+  color: #ffffff;
+  background: #181d28;
+}
+
+.bm-icon-btn--delete:hover {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* ── Pagination ─────────────────────────────────────────────── */
+.bm-pagination {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #1c202a;
+  font-size: 13px;
+  color: #8e95a5;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bm-pagination-left {
+  font-weight: 500;
+}
+
+.bm-pagination-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bm-page-nav-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.bm-page-nav-btn:hover:not(:disabled) {
+  color: #cbd5e1;
+}
+.bm-page-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.bm-page-number-active {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  background: #ef3842;
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 0 6px;
+}
+
+/* ── Empty State ────────────────────────────────────────────── */
+.bm-empty {
+  padding: 60px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.bm-empty-icon {
+  color: #334155;
+  margin-bottom: 16px;
+}
+
+.bm-empty-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.bm-empty-desc {
+  font-size: 13.5px;
+  color: #8e95a5;
+  max-width: 400px;
+}
+
+/* ── Loading ────────────────────────────────────────────────── */
+.bm-loading {
+  padding: 60px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.bm-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #1c202a;
+  border-top-color: #ef3842;
+  border-radius: 50%;
+  animation: bm-spin 0.8s linear infinite;
+}
+
+.bm-loading-text {
+  font-size: 13.5px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+/* ============================================================
+   MODALS (Add, Edit, Delete) – Matching Figma Screenshots
+   ============================================================ */
+.bm-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: bm-fadeIn 0.2s ease;
+}
+
+.bm-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+.bm-modal--delete {
+  max-width: 440px;
+  padding: 28px 24px;
+  align-items: center;
+  text-align: center;
+}
+
+/* Modal Header */
+.bm-modal-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1a1e28;
+}
+
+.bm-modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.bm-modal-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.15s;
+}
+.bm-modal-close:hover {
+  color: #ffffff;
+}
+
+/* Modal Form Body */
+.bm-modal-form {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bm-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.bm-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.bm-form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.bm-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: #141722;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+.bm-input::placeholder {
+  color: #475569;
+}
+.bm-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+.bm-input--error {
+  border-color: #ef4444;
+}
+
+.bm-form-error {
+  font-size: 12px;
+  color: #f87171;
+}
+
+/* ── Upload Dropzone (Screenshot 2) ─────────────────────────── */
+.bm-dropzone {
+  border: 1px dashed #2b3242;
+  border-radius: 8px;
+  background: #0d0f15;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 150px;
+}
+
+.bm-dropzone:hover,
+.bm-dropzone--dragging {
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.bm-dropzone--error {
+  border-color: #ef4444;
+}
+
+.bm-file-input-hidden {
+  display: none;
+}
+
+.bm-dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.bm-cloud-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #141722;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.bm-dropzone-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+.bm-dropzone-subtext {
+  font-size: 11.5px;
+  color: #64748b;
+  margin: 0 0 8px 0;
+}
+
+.bm-dropzone-btn {
+  padding: 7px 16px;
+  background: #181d28;
+  border: 1px solid #2b3242;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.bm-dropzone-btn:hover {
+  background: #202736;
+  border-color: #3b4559;
+}
+
+.bm-dropzone-preview {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.bm-preview-image {
+  width: 100%;
+  max-height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #20242e;
+}
+
+.bm-preview-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.bm-preview-filename {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.bm-preview-change {
+  font-size: 11.5px;
+  color: #60a5fa;
+}
+
+/* ── Current Image Box (Screenshot 3 - Edit) ────────────────── */
+.bm-current-image-box {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #090c12;
+  border: 1px solid #1c202a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bm-current-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bm-change-image-link {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 2px;
+  transition: color 0.15s;
+}
+.bm-change-image-link:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.bm-new-file-selected {
+  font-size: 12px;
+  color: #4ade80;
+}
+
+/* ── Status Toggle Row (Screenshots 2 & 3) ──────────────────── */
+.bm-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.bm-toggle-text {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.bm-toggle-text--selected {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.bm-switch {
+  width: 44px;
+  height: 24px;
+  border-radius: 9999px;
+  background: #1e2430;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s ease;
+  padding: 2px;
+}
+
+.bm-switch--active {
+  background: #2563eb;
+}
+
+.bm-switch-thumb {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.bm-switch--active .bm-switch-thumb {
+  transform: translateX(20px);
+}
+
+/* ── Modal Footer Buttons ───────────────────────────────────── */
+.bm-modal-footer {
+  padding-top: 14px;
+  border-top: 1px solid #1a1e28;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.bm-btn-cancel {
+  padding: 9px 18px;
+  background: #141722;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.bm-btn-cancel:hover:not(:disabled) {
+  background: #1c202d;
+  color: #ffffff;
+}
+.bm-btn-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Blue Save button in Add/Edit Modals (Figma Screenshots 2 & 3) */
+.bm-btn-primary {
+  padding: 9px 20px;
+  background: #2563eb;
+  border: none;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+.bm-btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+}
+.bm-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Delete Confirmation Modal (Screenshot 4) ───────────────── */
+.bm-delete-icon-wrap {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.bm-delete-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+}
+
+.bm-delete-text {
+  font-size: 13.5px;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.bm-delete-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.bm-btn-cancel--delete {
+  flex: 1;
+}
+
+.bm-btn-danger {
+  flex: 1;
+  padding: 10px 18px;
+  background: #ef4444;
+  border: none;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+}
+.bm-btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
+}
+.bm-btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

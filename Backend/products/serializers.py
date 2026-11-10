@@ -36,10 +36,24 @@ class CategorySerializer(serializers.ModelSerializer):
     name = serializers.CharField(
         validators=[validate_category_name]
     )
+    product_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "description",
+            "status",
+            "product_count",
+            "created_at",
+            "updated_at",
+        ]
+
+    def get_product_count(self, obj):
+        if hasattr(obj, "product_count"):
+            return obj.product_count
+        return obj.products.count()
 
 
 # =========================
@@ -51,10 +65,24 @@ class BrandSerializer(serializers.ModelSerializer):
     name = serializers.CharField(
         validators=[validate_brand_name]
     )
+    product_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Brand
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "logo",
+            "status",
+            "product_count",
+            "created_at",
+            "updated_at",
+        ]
+
+    def get_product_count(self, obj):
+        if hasattr(obj, "product_count"):
+            return obj.product_count
+        return obj.products.count()
 
 
 # =========================
@@ -81,9 +109,42 @@ class ProductSerializer(serializers.ModelSerializer):
         validators=[validate_low_stock_threshold]
     )
 
+    brand_name = serializers.CharField(source="brand.name", read_only=True)
+    category_name = serializers.CharField(source="category.name", read_only=True)
+    primary_image = serializers.SerializerMethodField()
+    images = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
         fields = "__all__"
+
+    def _format_image_url(self, img_url):
+        if not img_url:
+            return ""
+        if img_url.startswith("http://") or img_url.startswith("https://"):
+            return img_url
+        request = self.context.get("request")
+        if request and img_url.startswith("/"):
+            return request.build_absolute_uri(img_url)
+        if img_url.startswith("/"):
+            return f"http://127.0.0.1:8002{img_url}"
+        return img_url
+
+    def get_primary_image(self, obj):
+        first_img = obj.images.order_by("sort_order", "id").first()
+        return self._format_image_url(first_img.image) if first_img else ""
+
+    def get_images(self, obj):
+        return [
+            {
+                "id": img.id,
+                "image": self._format_image_url(img.image),
+                "image_type": img.image_type,
+                "sort_order": img.sort_order,
+            }
+            for img in obj.images.order_by("sort_order", "id")
+        ]
+
 
 
 # =========================
@@ -138,6 +199,17 @@ class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        img_url = data.get("image")
+        if img_url and img_url.startswith("/media/"):
+            request = self.context.get("request")
+            if request:
+                data["image"] = request.build_absolute_uri(img_url)
+            else:
+                data["image"] = f"http://127.0.0.1:8002{img_url}"
+        return data
 
 
 # =========================

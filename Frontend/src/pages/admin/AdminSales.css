@@ -1,0 +1,554 @@
+/* ============================================================
+   CORVUN ADMIN SALES REPORT – Figma Replica Design System
+   All class names are prefixed sl- (Sales)
+   ============================================================ */
+
+@keyframes sl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sl-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Page Wrapper */
+.sl-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: sl-fadeIn 0.3s ease;
+  width: 100%;
+}
+
+/* ── Error Banner ───────────────────────────────────────────── */
+.sl-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 13.5px;
+}
+
+.sl-btn-retry {
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sl-btn-retry:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ── Top Header ─────────────────────────────────────────────── */
+.sl-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sl-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sl-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.sl-subtitle {
+  font-size: 13.5px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+.sl-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+.sl-export-btn:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.45);
+  transform: translateY(-1px);
+}
+
+.sl-export-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Period Selector Tabs (Exact Figma style) ───────────────── */
+.sl-period-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sl-period-tab {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #8e95a5;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sl-period-tab:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sl-period-tab--active {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.sl-period-tab--active:hover {
+  background: rgba(239, 68, 68, 0.24);
+  color: #ffffff;
+}
+
+/* ── 4 KPI Stat Cards ───────────────────────────────────────── */
+.sl-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.sl-kpi-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 22px 24px;
+  background: #141418;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.sl-kpi-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-1px);
+}
+
+.sl-kpi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sl-kpi-label {
+  font-size: 13px;
+  color: #8e95a5;
+  font-weight: 500;
+}
+
+.sl-kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.sl-kpi-trend {
+  font-size: 12.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sl-kpi-trend--up {
+  color: #22c55e;
+}
+
+.sl-kpi-trend--down {
+  color: #ef4444;
+}
+
+.sl-kpi-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sl-kpi-icon--blue {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.sl-kpi-icon--green {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+}
+
+.sl-kpi-icon--purple {
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
+}
+
+.sl-kpi-icon--amber {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+/* ── Sales Trend Card ───────────────────────────────────────── */
+.sl-chart-card {
+  background: #141418;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.sl-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.sl-chart-container {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  height: 280px;
+  align-items: stretch;
+}
+
+.sl-chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 11.5px;
+  font-family: inherit;
+  text-align: right;
+  width: 55px;
+  flex-shrink: 0;
+  padding-bottom: 26px; /* space for x-axis labels */
+}
+
+.sl-chart-tick-label {
+  line-height: 1;
+}
+
+.sl-chart-svg-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+  min-width: 0;
+}
+
+.sl-chart-svg {
+  width: 100%;
+  height: 240px;
+  overflow: visible;
+}
+
+.sl-chart-x-axis {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 10px;
+  color: #64748b;
+  font-size: 11.5px;
+}
+
+.sl-chart-x-label {
+  text-align: center;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Middle 2-Column Section ────────────────────────────────── */
+.sl-two-col-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.sl-panel-card {
+  background: #141418;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Top Selling Products List ──────────────────────────────── */
+.sl-top-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sl-top-product-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sl-product-rank {
+  color: #64748b;
+  font-size: 13.5px;
+  font-weight: 500;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sl-product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sl-product-name {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sl-product-units {
+  color: #8e95a5;
+  font-size: 12px;
+}
+
+.sl-product-amount {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ── Sales by Category ──────────────────────────────────────── */
+.sl-category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sl-category-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sl-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sl-category-name {
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.sl-category-amount {
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.sl-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #23232a;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.sl-progress-fill {
+  height: 100%;
+  background: #ef4444;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.sl-category-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sl-category-pct {
+  color: #8e95a5;
+  font-size: 11.5px;
+}
+
+/* ── Bottom Section: Recent Transactions Table ──────────────── */
+.sl-table-card {
+  width: 100%;
+  overflow: hidden;
+}
+
+.sl-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.sl-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+.sl-table thead tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sl-table th {
+  padding: 14px 16px;
+  color: #8e95a5;
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sl-table-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background-color 0.15s ease;
+}
+
+.sl-table-row:last-child {
+  border-bottom: none;
+}
+
+.sl-table-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sl-table td {
+  padding: 16px;
+  vertical-align: middle;
+}
+
+.sl-tx-id {
+  color: #8e95a5;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sl-tx-customer {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.sl-tx-product {
+  color: #cbd5e1;
+}
+
+.sl-tx-date {
+  color: #8e95a5;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.sl-tx-price {
+  color: #ffffff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── Empty & Loading States ─────────────────────────────────── */
+.sl-empty-notice {
+  color: #64748b;
+  font-size: 13.5px;
+  padding: 24px 0;
+  text-align: center;
+}
+
+.sl-card-loading {
+  color: #8e95a5;
+  font-size: 13px;
+  padding: 24px 0;
+  text-align: center;
+}
+
+/* ── Responsive Breakpoints ─────────────────────────────────── */
+@media (max-width: 1100px) {
+  .sl-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .sl-two-col-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .sl-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .sl-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

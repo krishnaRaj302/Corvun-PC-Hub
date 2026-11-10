@@ -7,9 +7,9 @@ from .views import (
     cancel_order,
     admin_orders,
     admin_order_detail,
-
-    
-    )
+    admin_dashboard_stats,
+    admin_sales_report,
+)
 
 urlpatterns = [
     path("create/", create_order, name="create_order"),
@@ -19,4 +19,8 @@ urlpatterns = [
     path("<int:order_id>/cancel/", cancel_order, name="cancel_order"),
     path("admin/orders/", admin_orders, name="admin_orders"),
     path("admin/orders/<int:order_id>/", admin_order_detail, name="admin_order_detail"),
+    path("admin/orders/<int:order_id>/status/", update_order_status, name="admin_update_order_status"),
+    path("admin/dashboard/", admin_dashboard_stats, name="admin_dashboard_stats"),
+    path("admin/sales-report/", admin_sales_report, name="admin_sales_report"),
+    path("admin/sales/", admin_sales_report, name="admin_sales_report_alias"),
 ]

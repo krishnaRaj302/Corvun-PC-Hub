@@ -1,0 +1,1348 @@
+/* ==================================================
+   CORVUN HOME PAGE — FIGMA REFERENCE IMPLEMENTATION
+   Dark / Crimson Hardware Architecture Theme
+   ================================================== */
+
+.corvun-home-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #07080b;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* ==================================================
+   SECTION UTILITIES
+   ================================================== */
+.home-section {
+  padding: 64px 24px;
+  border-bottom: 1px solid #141722;
+}
+
+.section-content-wrapper {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.section-content-wrapper.text-center {
+  text-align: center;
+}
+
+.section-heading-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.heading-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.section-sub-label {
+  font-family: var(--corvun-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--corvun-red);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.section-main-title {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.section-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--corvun-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.section-action-link:hover {
+  color: var(--corvun-red);
+  transform: translateX(3px);
+}
+
+/* ==================================================
+   1. HERO SECTION
+   ================================================== */
+.home-hero-section {
+  position: relative;
+  width: 100%;
+  padding: 64px 24px 72px;
+  border-bottom: 1px solid #141722;
+  background:
+    radial-gradient(circle at 75% 45%, rgba(239, 56, 66, 0.08) 0%, transparent 60%),
+    #07080b;
+}
+
+.home-hero-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 48px;
+}
+
+/* Left Hero Column */
+.hero-left-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-performance-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 4px 12px;
+  background-color: rgba(239, 56, 66, 0.1);
+  border: 1px solid rgba(239, 56, 66, 0.3);
+  border-radius: 9999px;
+  margin-bottom: 24px;
+}
+
+.hero-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--corvun-red);
+  box-shadow: 0 0 8px var(--corvun-red);
+}
+
+.hero-badge-text {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--corvun-red);
+}
+
+.hero-main-heading {
+  font-size: clamp(38px, 5.2vw, 64px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-highlight-red {
+  color: var(--corvun-red);
+  text-shadow: 0 0 30px rgba(239, 56, 66, 0.35);
+}
+
+.hero-description-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #8e95a5;
+  max-width: 580px;
+  margin-bottom: 36px;
+}
+
+.hero-button-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 28px;
+  background-color: var(--corvun-red);
+  color: #ffffff;
+  border-radius: 6px;
+  font-family: var(--corvun-sans);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(239, 56, 66, 0.35);
+  transition: var(--corvun-transition);
+}
+
+.hero-btn-primary:hover {
+  background-color: var(--corvun-red-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(239, 56, 66, 0.5);
+}
+
+.hero-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 24px;
+  background-color: #12151c;
+  border: 1px solid #222634;
+  color: #ffffff;
+  border-radius: 6px;
+  font-family: var(--corvun-sans);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.hero-btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background-color: #1a1e28;
+}
+
+/* Lower Feature Strip */
+.hero-feature-strip {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #141722;
+  flex-wrap: wrap;
+}
+
+.feature-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.feature-strip-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background-color: #0e1017;
+  border: 1px solid #1c202a;
+  color: var(--corvun-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-strip-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-title {
+  font-family: var(--corvun-mono);
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+}
+
+.feature-sub {
+  font-size: 11px;
+  color: #7b8394;
+}
+
+/* Right Hero Column: Showcase Card */
+.hero-right-column {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-showcase-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 4 / 3.8;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(239, 56, 66, 0.15) 0%, transparent 70%),
+    #0c0e14;
+  border: 1px solid #1c202a;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
+.showcase-top-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+}
+
+.showcase-tag {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #8e95a5;
+  background-color: #141720;
+  border: 1px solid #222634;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.showcase-prime-pill {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  background-color: var(--corvun-red);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.showcase-media-box {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.showcase-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Chassis Render Mockup */
+.showcase-rig-render {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.rig-ambient-glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(239, 56, 66, 0.3) 0%, transparent 70%);
+  filter: blur(40px);
+}
+
+.rig-chassis-shell {
+  position: relative;
+  width: 280px;
+  height: 340px;
+  background: linear-gradient(135deg, #161922 0%, #0d0f15 100%);
+  border: 2px solid #282d3c;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(239, 56, 66, 0.2);
+}
+
+.chassis-glass-panel {
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 12, 17, 0.85);
+  border: 1px solid rgba(239, 56, 66, 0.25);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-cooler-loop {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid var(--corvun-red);
+  box-shadow: 0 0 15px var(--corvun-red);
+}
+
+.gpu-illuminated-bracket {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  right: 20px;
+  height: 24px;
+  background: #141720;
+  border-bottom: 3px solid var(--corvun-red);
+  box-shadow: 0 4px 12px rgba(239, 56, 66, 0.4);
+}
+
+.ram-rgb-stripes {
+  position: absolute;
+  top: 50px;
+  right: 35px;
+  display: flex;
+  gap: 4px;
+}
+
+.ram-rgb-stripes span {
+  width: 4px;
+  height: 40px;
+  background: var(--corvun-red);
+  box-shadow: 0 0 6px var(--corvun-red);
+  border-radius: 2px;
+}
+
+.chassis-front-fans {
+  position: absolute;
+  right: -8px;
+  top: 30px;
+  bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.fan-ring {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--corvun-red);
+  box-shadow: 0 0 8px var(--corvun-red);
+}
+
+.showcase-bottom-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-end;
+  background-color: rgba(13, 15, 21, 0.9);
+  border: 1px solid #1c202a;
+  border-radius: 6px;
+  padding: 6px 12px;
+  z-index: 2;
+  backdrop-filter: blur(8px);
+}
+
+.aeroflow-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.aero-title {
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+}
+
+.aero-sub {
+  font-size: 8px;
+  color: #7b8394;
+}
+
+/* ==================================================
+   2. CATALOGUE INDEX / SHOP BY CATEGORY
+   ================================================== */
+.category-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.cat-box-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #0d0f15;
+  border: 1px solid #1a1d26;
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.cat-box-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(239, 56, 66, 0.4);
+  background-color: #12151e;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+.cat-box-img-wrap {
+  width: 100%;
+  height: 140px;
+  background-color: #08090d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid #161922;
+}
+
+.cat-real-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cat-box-card:hover .cat-real-img {
+  transform: scale(1.06);
+}
+
+.cat-fallback-icon {
+  color: #4b5263;
+  transition: color 0.2s ease;
+}
+
+.cat-box-card:hover .cat-fallback-icon {
+  color: var(--corvun-red);
+}
+
+.cat-box-info {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cat-box-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.cat-box-sub {
+  font-size: 11px;
+  color: #6d7585;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==================================================
+   3. BUILDER / AI PROMOTIONAL SECTION
+   ================================================== */
+.builder-promo-two-col {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+}
+
+/* Left: AI PC Assistant Card */
+.promo-card-ai {
+  background:
+    radial-gradient(circle at 90% 50%, rgba(239, 56, 66, 0.15), transparent 60%),
+    linear-gradient(135deg, #10121a 0%, #0a0b0f 100%);
+  border: 1px solid #1c202a;
+  border-radius: 12px;
+  padding: 32px 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-card-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.ai-card-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 420px;
+}
+
+.ai-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ai-heading {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.ai-beta-badge {
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: #ffffff;
+  background-color: var(--corvun-red);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.ai-subtext {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #8e95a5;
+  margin-bottom: 20px;
+}
+
+.ai-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.ai-tag-pill {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: #7b8394;
+  background-color: #141720;
+  border: 1px solid #1f2330;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.ai-try-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  height: 40px;
+  padding: 0 20px;
+  background-color: var(--corvun-red);
+  color: #ffffff;
+  border-radius: 6px;
+  font-family: var(--corvun-sans);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.ai-try-btn:hover {
+  background-color: var(--corvun-red-hover);
+  box-shadow: 0 4px 16px rgba(239, 56, 66, 0.4);
+}
+
+/* Mascot Graphic */
+.ai-mascot-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ai-bot-graphic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #222736 0%, #0d0f15 100%);
+  border: 2px solid rgba(239, 56, 66, 0.4);
+  box-shadow: 0 0 25px rgba(239, 56, 66, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-bot-head {
+  display: flex;
+  gap: 12px;
+}
+
+.ai-bot-eye {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--corvun-red);
+  box-shadow: 0 0 10px var(--corvun-red);
+}
+
+/* Right: Real-Time Validation Card */
+.promo-card-rules {
+  background-color: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 12px;
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.rules-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rules-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--corvun-red);
+}
+
+.rules-meta {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--corvun-red);
+}
+
+.rules-heading {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.rules-subtext {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #8e95a5;
+  margin-bottom: 24px;
+}
+
+.rules-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  font-family: var(--corvun-mono);
+  font-size: 11px;
+  color: #656d7d;
+}
+
+.rules-chip-sep {
+  color: #383e4e;
+}
+
+.rules-start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  height: 42px;
+  padding: 0 22px;
+  background-color: #141720;
+  border: 1px solid #282d3c;
+  color: #ffffff;
+  border-radius: 6px;
+  font-family: var(--corvun-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.rules-start-btn:hover {
+  background-color: #1c202c;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ==================================================
+   4. FEATURED PRODUCTS (3 COLUMNS)
+   ================================================== */
+.featured-filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.tab-btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-family: var(--corvun-sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: #8e95a5;
+  transition: var(--corvun-transition);
+}
+
+.tab-btn:hover {
+  color: #ffffff;
+}
+
+.tab-btn.active {
+  background-color: var(--corvun-red);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(239, 56, 66, 0.35);
+}
+
+.featured-3col-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.reference-product-card {
+  position: relative;
+  background-color: #0d0f15;
+  border: 1px solid #1a1d26;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: var(--corvun-transition);
+}
+
+.reference-product-card:hover {
+  transform: translateY(-4px);
+  border-color: #282d3c;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
+}
+
+.card-wishlist-trigger {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(13, 15, 21, 0.85);
+  border: 1px solid #20242e;
+  color: #656d7d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: var(--corvun-transition);
+}
+
+.card-wishlist-trigger:hover,
+.card-wishlist-trigger.wished {
+  color: var(--corvun-red);
+  border-color: rgba(239, 56, 66, 0.4);
+}
+
+.card-media-anchor {
+  display: block;
+  text-decoration: none;
+}
+
+.card-media-wrap {
+  width: 100%;
+  height: 220px;
+  background-color: #08090d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid #141722;
+}
+
+.card-actual-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.reference-product-card:hover .card-actual-image {
+  transform: scale(1.05);
+}
+
+.card-default-graphic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.graphic-chip-id {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--corvun-red);
+  letter-spacing: 0.1em;
+}
+
+.graphic-center-logo {
+  font-family: var(--corvun-mono);
+  font-size: 13px;
+  font-weight: 800;
+  color: #383e4e;
+}
+
+.card-info-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-breadcrumb-tag {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #656d7d;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.card-product-heading {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 10px;
+  min-height: 42px;
+}
+
+.card-product-heading a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.card-product-heading a:hover {
+  color: var(--corvun-red);
+}
+
+.card-rating-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--corvun-mono);
+  font-size: 11px;
+  color: #8e95a5;
+  margin-bottom: 18px;
+}
+
+.rating-star {
+  color: #eab308;
+  font-size: 12px;
+}
+
+.rating-value {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rating-count {
+  color: #555c6d;
+}
+
+.card-bottom-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #141722;
+}
+
+.card-price-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-gst-sub {
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+  color: #555c6d;
+  letter-spacing: 0.05em;
+}
+
+.price-bold-val {
+  font-family: var(--corvun-mono);
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.card-quick-cart-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  background-color: var(--corvun-red);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--corvun-transition);
+}
+
+.card-quick-cart-btn:hover {
+  background-color: var(--corvun-red-hover);
+  transform: scale(1.05);
+  box-shadow: 0 0 14px var(--corvun-red-glow);
+}
+
+/* ==================================================
+   5. BEST DEALS + PRE-BUILT PCS
+   ================================================== */
+.deals-prebuilt-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.deals-banner-card,
+.prebuilt-banner-card {
+  background-color: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 12px;
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 360px;
+  position: relative;
+  overflow: hidden;
+}
+
+.deals-pill-badge {
+  display: inline-block;
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: #ffffff;
+  background-color: var(--corvun-red);
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.prebuilt-pill-badge {
+  display: inline-block;
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: #8e95a5;
+  background-color: #141720;
+  border: 1px solid #222634;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.deals-banner-title,
+.prebuilt-banner-title {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.deals-banner-sub,
+.prebuilt-banner-sub {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #8e95a5;
+  max-width: 440px;
+}
+
+.deals-visual-display,
+.prebuilt-visual-display {
+  margin: 24px 0;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-lineup-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.pc-tower-thumb {
+  width: 44px;
+  height: 64px;
+  background-color: #12151c;
+  border: 1px solid #1e222e;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--corvun-mono);
+  font-size: 11px;
+  color: #656d7d;
+  font-weight: 700;
+}
+
+.pc-tower-thumb.highlight {
+  border-color: var(--corvun-red);
+  color: var(--corvun-red);
+  box-shadow: 0 0 10px rgba(239, 56, 66, 0.3);
+}
+
+.deals-card-footer,
+.prebuilt-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid #141722;
+}
+
+.deals-cta-link,
+.prebuilt-cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--corvun-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.deals-cta-link:hover,
+.prebuilt-cta-link:hover {
+  color: var(--corvun-red);
+  transform: translateX(3px);
+}
+
+.deals-timestamp,
+.prebuilt-onsite-tag {
+  font-family: var(--corvun-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #555c6d;
+}
+
+/* ==================================================
+   6. OFFICIAL HARDWARE NETWORK / BRANDS
+   ================================================== */
+.network-title {
+  margin-top: 6px;
+  margin-bottom: 32px;
+}
+
+.brands-pill-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand-network-pill {
+  padding: 12px 28px;
+  background-color: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 8px;
+  font-family: var(--corvun-sans);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #8e95a5;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.brand-network-pill:hover {
+  color: #ffffff;
+  background-color: #141722;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+/* ==================================================
+   7. WHY CHOOSE CORVUN (5 COLUMNS)
+   ================================================== */
+.choose-title {
+  margin-top: 6px;
+  margin-bottom: 40px;
+}
+
+.why-corvun-5col-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.choose-metric-card {
+  background-color: #0d0f15;
+  border: 1px solid #1a1d26;
+  border-radius: 10px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  transition: var(--corvun-transition);
+}
+
+.choose-metric-card:hover {
+  transform: translateY(-3px);
+  border-color: #242836;
+  background-color: #11141c;
+}
+
+.choose-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background-color: rgba(239, 56, 66, 0.1);
+  border: 1px solid rgba(239, 56, 66, 0.25);
+  color: var(--corvun-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.choose-card-title {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.choose-card-text {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #7b8394;
+}
+
+/* ==================================================
+   EMPTY, LOADING & ERROR STATES
+   ================================================== */
+.section-loading-box,
+.corvun-empty-panel,
+.corvun-error-panel {
+  padding: 48px 24px;
+  text-align: center;
+  background-color: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--corvun-mono);
+  font-size: 13px;
+  color: #8e95a5;
+}
+
+.empty-tech-tag {
+  color: var(--corvun-red);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.empty-message-text {
+  max-width: 500px;
+  line-height: 1.5;
+  color: #656d7d;
+}
+
+.empty-action-btn {
+  margin-top: 8px;
+  display: inline-block;
+  padding: 8px 18px;
+  background-color: #141720;
+  border: 1px solid #222634;
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--corvun-transition);
+}
+
+.empty-action-btn:hover {
+  background-color: var(--corvun-red);
+  border-color: var(--corvun-red);
+}
+
+.corvun-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(239, 56, 66, 0.2);
+  border-top-color: var(--corvun-red);
+  border-radius: 50%;
+  animation: corvunSpin 0.7s linear infinite;
+}
+
+@keyframes corvunSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================================================
+   RESPONSIVENESS
+   ================================================== */
+@media (max-width: 1200px) {
+  .category-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .why-corvun-5col-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .home-hero-container {
+    grid-template-columns: 1fr;
+  }
+
+  .builder-promo-two-col,
+  .deals-prebuilt-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .featured-3col-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .why-corvun-5col-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+
+  .category-cards-grid,
+  .featured-3col-grid,
+  .why-corvun-5col-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-main-heading {
+    font-size: 34px;
+  }
+
+  .hero-feature-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .ai-card-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

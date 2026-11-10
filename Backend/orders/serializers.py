@@ -108,13 +108,23 @@ class OrderSerializer(serializers.ModelSerializer):
         validators=[validate_total_amount]
     )
 
+    customer_name = serializers.CharField(source="user.full_name", read_only=True, default="")
+    customer_email = serializers.CharField(source="user.email", read_only=True, default="")
+    customer_phone = serializers.CharField(source="user.phone", read_only=True, default="")
+    items_count = serializers.SerializerMethodField()
+    shipping_address = serializers.SerializerMethodField()
+
     class Meta:
         model = Order
         fields = [
             "id",
             "user",
+            "customer_name",
+            "customer_email",
+            "customer_phone",
             "order_number",
             "shipping_address_id",
+            "shipping_address",
             "subtotal",
             "discount_amount",
             "shipping_amount",
@@ -122,7 +132,32 @@ class OrderSerializer(serializers.ModelSerializer):
             "total_amount",
             "status",
             "payment_status",
+            "items_count",
             "items",
             "created_at",
             "updated_at",
         ]
+
+    def get_items_count(self, obj):
+        return sum(item.quantity for item in obj.items.all())
+
+    def get_shipping_address(self, obj):
+        if not obj.shipping_address_id:
+            return None
+        from accounts.models import Address
+        try:
+            addr = Address.objects.get(id=obj.shipping_address_id)
+            return {
+                "id": addr.id,
+                "full_name": addr.full_name,
+                "phone": addr.phone,
+                "alternative_phone": addr.alternative_phone,
+                "address_line1": addr.address_line1,
+                "address_line2": addr.address_line2,
+                "city": addr.city,
+                "state": addr.state,
+                "postal_code": addr.postal_code,
+                "country": addr.country,
+            }
+        except Address.DoesNotExist:
+            return None

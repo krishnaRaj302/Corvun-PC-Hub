@@ -1,5 +1,11 @@
 from django.urls import path
-from .views import validate_coupon, apply_coupon, offer_list, admin_offers
+from .views import (
+    validate_coupon,
+    apply_coupon,
+    offer_list,
+    admin_offers,
+    admin_coupons,
+)
 
 
 urlpatterns = [
@@ -8,4 +14,6 @@ urlpatterns = [
     path("offers/", offer_list, name="offer_list"),
     path("admin/offers/", admin_offers, name="admin_offers"),
     path("admin/offers/<int:offer_id>/", admin_offers, name="admin_offer_detail"),
-]
+    path("admin/coupons/", admin_coupons, name="admin_coupons"),
+    path("admin/coupons/<int:coupon_id>/", admin_coupons, name="admin_coupon_detail"),
+]

@@ -1,0 +1,735 @@
+/* ============================================================
+   CORVUN ADMIN REVIEW DETAILS – Figma Design System
+   All class names are prefixed rd- (Review Details)
+   ============================================================ */
+
+@keyframes rd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rd-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Page Wrapper */
+.rd-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: rd-fadeIn 0.3s ease;
+  width: 100%;
+}
+
+/* ── Toast Notification ─────────────────────────────────────── */
+.rd-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+  color: #4ade80;
+  font-size: 13px;
+  animation: rd-fadeIn 0.25s ease;
+}
+
+.rd-toast--error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.rd-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rd-toast-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.rd-toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.7;
+}
+.rd-toast-close:hover {
+  opacity: 1;
+}
+
+/* ── Top Navigation ─────────────────────────────────────────── */
+.rd-top-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rd-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: -0.2px;
+  transition: color 0.2s ease;
+}
+.rd-back-link:hover {
+  color: #ef3842;
+}
+
+/* ── Error Banner ───────────────────────────────────────────── */
+.rd-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 13.5px;
+}
+
+.rd-retry-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  background: #ef3842;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Loading & Empty ────────────────────────────────────────── */
+.rd-loading-card,
+.rd-empty-card {
+  background: #0e1118;
+  border: 1px solid #1c202a;
+  border-radius: 12px;
+  padding: 60px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #8e95a5;
+  font-size: 14px;
+}
+
+.rd-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #1c202a;
+  border-top-color: #ef3842;
+  border-radius: 50%;
+  animation: rd-spin 0.8s linear infinite;
+}
+
+.rd-back-btn {
+  padding: 9px 18px;
+  background: #ef3842;
+  color: #ffffff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Layout Grid ────────────────────────────────────────────── */
+.rd-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .rd-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rd-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rd-side-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Shared Card Styles ─────────────────────────────────────── */
+.rd-card {
+  background: #0e1118;
+  border: 1px solid #1c202a;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Review Information Card Top ────────────────────────────── */
+.rd-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rd-user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rd-user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #181d28;
+  border: 1px solid #283142;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rd-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rd-user-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.rd-user-email {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Status Badges */
+.rd-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.rd-badge--approved {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.rd-badge--pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.rd-badge--reported {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.rd-badge--rejected {
+  background: rgba(136, 19, 26, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.rd-divider {
+  width: 100%;
+  height: 1px;
+  background: #1c202a;
+}
+
+/* ── Rating Section ─────────────────────────────────────────── */
+.rd-rating-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rd-stars-wrap {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rd-star--filled {
+  color: #f59e0b;
+}
+
+.rd-star--empty {
+  opacity: 0.25;
+}
+
+.rd-rating-number {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.rd-edited-badge {
+  padding: 2px 8px;
+  background: #141722;
+  border: 1px solid #20242e;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ── Content Section ────────────────────────────────────────── */
+.rd-content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rd-review-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.rd-review-comment {
+  font-size: 14px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* Attached Images */
+.rd-images-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.rd-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.6px;
+}
+
+.rd-images-grid {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rd-image-thumb-link {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #20242e;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.rd-image-thumb-link:hover {
+  border-color: #ef3842;
+  transform: scale(1.04);
+}
+
+.rd-image-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Review Metadata Footer */
+.rd-meta-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #64748b;
+  padding-top: 8px;
+  border-top: 1px solid #161a23;
+}
+
+/* ── Product Information Card ───────────────────────────────── */
+.rd-card-header-sm {
+  margin-bottom: -4px;
+}
+
+.rd-card-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.rd-product-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.2px;
+}
+
+.rd-product-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  background: #090c12;
+  border: 1px solid #181d27;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+@media (max-width: 768px) {
+  .rd-product-specs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.rd-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rd-spec-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.rd-spec-value {
+  font-size: 13.5px;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.rd-spec-value--active {
+  color: #4ade80;
+}
+
+.rd-product-link-row {
+  padding-top: 6px;
+}
+
+.rd-view-product-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ef3842;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+.rd-view-product-btn:hover {
+  color: #f9444e;
+  gap: 10px;
+}
+
+.rd-view-product-btn--disabled {
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+/* ── Moderation Actions (Right Column) ──────────────────────── */
+.rd-side-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.rd-side-subtitle {
+  font-size: 12.5px;
+  color: #8e95a5;
+  margin: -8px 0 0 0;
+  line-height: 1.4;
+}
+
+.rd-actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rd-btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+.rd-btn-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Approve Button: Green */
+.rd-btn-approve {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #22c55e;
+}
+.rd-btn-approve:hover:not(:disabled) {
+  background: #22c55e;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+}
+
+/* Reject Button: Dark / Red */
+.rd-btn-reject {
+  background: #181d28;
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+.rd-btn-reject:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+/* Flag Button: Amber / Yellow */
+.rd-btn-flag {
+  background: #181d28;
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+.rd-btn-flag:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #f59e0b;
+}
+
+.rd-btn-action--current {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Moderation Notes */
+.rd-notes-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #1c202a;
+}
+
+.rd-notes-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.rd-notes-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: #141722;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12.5px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+.rd-notes-textarea:focus {
+  outline: none;
+  border-color: #ef3842;
+}
+
+.rd-notes-save-btn {
+  align-self: flex-end;
+  padding: 6px 14px;
+  background: #1c202d;
+  border: 1px solid #2b3242;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.rd-notes-save-btn:hover:not(:disabled) {
+  background: #ef3842;
+  border-color: #ef3842;
+  color: #ffffff;
+}
+
+/* Danger Zone */
+.rd-danger-zone {
+  padding-top: 6px;
+  border-top: 1px solid #1c202a;
+}
+
+.rd-delete-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 6px;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.rd-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+}
+
+.rd-delete-confirm-box {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rd-confirm-text {
+  font-size: 12px;
+  color: #fca5a5;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.rd-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rd-confirm-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.rd-confirm-btn--delete {
+  background: #ef4444;
+  color: #ffffff;
+}
+.rd-confirm-btn--cancel {
+  background: #1c202d;
+  color: #cbd5e1;
+}
+
+/* ── Review Statistics (Right Column) ───────────────────────── */
+.rd-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rd-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #8e95a5;
+}
+
+.rd-stat-row--highlight {
+  padding-top: 8px;
+  border-top: 1px solid #1c202a;
+}
+
+.rd-stat-value {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rd-stat-value--accent {
+  color: #4ade80;
+  font-size: 15px;
+}
+
+/* Ratio Meter */
+.rd-ratio-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.rd-ratio-bar {
+  width: 100%;
+  height: 6px;
+  background: #141722;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.rd-ratio-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.rd-ratio-meta {
+  font-size: 11px;
+  color: #64748b;
+  text-align: right;
+}

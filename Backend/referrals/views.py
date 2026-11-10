@@ -2,6 +2,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Sum, Q
+from rest_framework.pagination import PageNumberPagination
 
 from accounts.permissions import IsAdmin
 from accounts.models import User
@@ -79,10 +81,13 @@ def create_referral(request):
 def my_referrals(request):
 
     # Get referrals where the user is either referrer or referee
-    referrals = Referral.objects.filter(
-        referrer=request.user
-    ) | Referral.objects.filter(
-        referee=request.user
+    referrals = (
+        Referral.objects
+        .select_related("referrer", "referee", "order")
+        .filter(referrer=request.user)
+        | Referral.objects
+        .select_related("referrer", "referee", "order")
+        .filter(referee=request.user)
     )
 
     # Convert referrals into JSON
@@ -95,19 +100,67 @@ def my_referrals(request):
     )
 
 
-# Admin can view all referrals
+# Admin can view all referrals with KPI statistics
 @api_view(["GET"])
 @permission_classes([IsAdmin])
 def admin_referrals(request):
 
-    # Get all referrals
-    referrals = Referral.objects.all().order_by("-created_at")
+    # Base queryset with select_related for optimum PostgreSQL performance
+    referrals_qs = (
+        Referral.objects
+        .select_related("referrer", "referee", "order")
+        .order_by("-created_at")
+    )
+
+    # ── Dynamic KPI Calculations ──────────────────────────────
+    total_referrals = referrals_qs.count()
+
+    successful_conversions = referrals_qs.filter(
+        status__iexact="completed"
+    ).count()
+
+    earnings_agg = referrals_qs.filter(
+        status__iexact="completed"
+    ).aggregate(total=Sum("reward_amount"))
+    total_earnings = float(earnings_agg["total"]) if earnings_agg["total"] else 0.0
+
+    pending_agg = referrals_qs.filter(
+        status__iexact="pending"
+    ).aggregate(total=Sum("reward_amount"))
+    pending_rewards = float(pending_agg["total"]) if pending_agg["total"] else 0.0
+
+    stats = {
+        "total_referrals": total_referrals,
+        "successful_conversions": successful_conversions,
+        "total_earnings": total_earnings,
+        "pending_rewards": pending_rewards,
+    }
+
+    # ── Optional Pagination ───────────────────────────────────
+    page = request.query_params.get("page")
+    page_size = request.query_params.get("page_size")
+    paginate = request.query_params.get("paginate", "").strip().lower() in ["true", "1"]
+
+    if page or page_size or paginate:
+        paginator = PageNumberPagination()
+        paginator.page_size = int(page_size) if page_size and page_size.isdigit() else 10
+        result_page = paginator.paginate_queryset(referrals_qs, request)
+        serializer = ReferralSerializer(result_page, many=True)
+        resp = paginator.get_paginated_response(serializer.data)
+        resp.data["referrals"] = serializer.data
+        resp.data["stats"] = stats
+        return resp
 
     # Convert referrals into JSON
-    serializer = ReferralSerializer(referrals, many=True)
+    serializer = ReferralSerializer(referrals_qs, many=True)
 
-    # Return all referrals to admin
+    # Return all referrals and KPI stats to admin
     return Response(
-        {"referrals": serializer.data},
+        {
+            "referrals": serializer.data,
+            "results": serializer.data,
+            "count": total_referrals,
+            "stats": stats,
+        },
         status=status.HTTP_200_OK
-    )
+    )

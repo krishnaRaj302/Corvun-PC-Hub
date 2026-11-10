@@ -6,4 +6,5 @@ urlpatterns = [
     path("create/", create_referral, name="create_referral"),
     path("my-referrals/", my_referrals, name="my_referrals"),
     path("admin/", admin_referrals, name="admin_referrals"),
+    path("admin/referrals/", admin_referrals, name="admin_referrals_alias"),
 ]

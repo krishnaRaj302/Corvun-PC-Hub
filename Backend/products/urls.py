@@ -14,9 +14,12 @@ from .views import (
     create_brand,
     update_brand,
     delete_brand,
+    brand_admin_detail,
+    upload_brand_logo,
     create_product_variant,
     update_product_variant,
     delete_product_variant,
+    upload_product_image_file,
     create_product_image,
     delete_product_image,
     create_product_specification,
@@ -43,8 +46,12 @@ urlpatterns = [
     # Brands
     path("brands/", brand_list, name="brand_list"),
     path("brands/create/", create_brand, name="create_brand"),
+    path("brands/upload-logo/", upload_brand_logo, name="upload_brand_logo"),
     path("brands/<int:brand_id>/update/", update_brand, name="update_brand"),
     path("brands/<int:brand_id>/delete/", delete_brand, name="delete_brand"),
+    path("admin/brands/", create_brand, name="admin_create_brand"),
+    path("admin/brands/<int:brand_id>/", brand_admin_detail, name="admin_brand_detail"),
+    path("admin/brands/upload-logo/", upload_brand_logo, name="admin_upload_brand_logo"),
 
     # Variants
     path("variants/create/", create_product_variant, name="create_product_variant"),
@@ -52,6 +59,7 @@ urlpatterns = [
     path("variants/<int:variant_id>/delete/", delete_product_variant, name="delete_product_variant"),
 
     # Images
+    path("images/upload/", upload_product_image_file, name="upload_product_image_file"),
     path("images/create/", create_product_image, name="create_product_image"),
     path("images/<int:image_id>/delete/", delete_product_image, name="delete_product_image"),
 

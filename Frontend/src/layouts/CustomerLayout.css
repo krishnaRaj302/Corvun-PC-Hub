@@ -1,0 +1,12 @@
+.customer-layout-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--corvun-bg);
+  color: var(--corvun-text);
+}
+
+.customer-main-content {
+  flex: 1;
+  width: 100%;
+}

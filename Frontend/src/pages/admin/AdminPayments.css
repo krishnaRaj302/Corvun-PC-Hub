@@ -1,0 +1,493 @@
+/* ============================================================
+   CORVUN ADMIN PAYMENTS MANAGEMENT – Figma Design
+   All class names prefixed ap- (Admin Payments)
+   ============================================================ */
+
+@keyframes ap-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ap-fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Page ─────────────────────────────────────────────────── */
+.ap-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  animation: ap-fadeIn 0.3s ease;
+  width: 100%;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.ap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ap-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.ap-subtitle {
+  font-size: 13px;
+  color: #8e95a5;
+  margin: 4px 0 0;
+}
+
+/* ── KPI Cards Row ────────────────────────────────────────── */
+.ap-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .ap-kpi-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .ap-kpi-row { grid-template-columns: 1fr; }
+}
+
+.ap-kpi-card {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 12px;
+  padding: 22px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.2s;
+}
+.ap-kpi-card:hover { border-color: #252b38; }
+
+.ap-kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ap-kpi-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8e95a5;
+  letter-spacing: 0.2px;
+}
+
+.ap-kpi-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* KPI change tag — kept for future use, no hardcoded % */
+.ap-kpi-change {
+  font-size: 11px;
+  font-weight: 600;
+  color: #4ade80;
+}
+
+.ap-kpi-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ap-kpi-icon--blue {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.ap-kpi-icon--green {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.ap-kpi-icon--red {
+  background: rgba(239, 56, 66, 0.15);
+  color: #ef3842;
+  border: 1px solid rgba(239, 56, 66, 0.25);
+}
+
+/* ── Refund Navigation Link ───────────────────────────────── */
+.ap-refund-nav {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ap-refund-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #c4c9d4;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+  font-family: inherit;
+}
+.ap-refund-link:hover { color: #ef3842; }
+.ap-refund-link svg { color: inherit; }
+
+/* ── Filter Bar ───────────────────────────────────────────── */
+.ap-filter-bar {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ap-search-wrap {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ap-search-icon {
+  position: absolute;
+  left: 12px;
+  color: #5e6575;
+  pointer-events: none;
+}
+
+.ap-search-input {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ap-search-input::placeholder { color: #5e6575; }
+.ap-search-input:focus {
+  outline: none;
+  border-color: #ef3842;
+  box-shadow: 0 0 0 2px rgba(239, 56, 66, 0.12);
+}
+
+.ap-select-wrap { min-width: 150px; }
+
+.ap-select {
+  width: 100%;
+  padding: 9px 12px;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.ap-select:focus {
+  outline: none;
+  border-color: #ef3842;
+}
+.ap-select option { background: #111319; }
+
+/* ── Table Card ───────────────────────────────────────────── */
+.ap-card {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.ap-table-wrap { overflow-x: auto; }
+
+.ap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ap-table th {
+  background: #11141c;
+  padding: 13px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7b8394;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #1c202a;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ap-table td {
+  padding: 15px 18px;
+  border-bottom: 1px solid #161922;
+  color: #c4c9d4;
+  vertical-align: middle;
+}
+
+.ap-table tbody tr:last-child td { border-bottom: none; }
+
+.ap-row { cursor: default; transition: background 0.12s; }
+.ap-row:hover td { background: #11141c; }
+
+/* ── Cell Content ─────────────────────────────────────────── */
+.ap-pay-id {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  letter-spacing: 0.3px;
+}
+
+.ap-order-id {
+  font-size: 12px;
+  color: #8e95a5;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+.ap-customer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ap-customer-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+  display: block;
+}
+
+.ap-customer-email {
+  font-size: 11px;
+  color: #6d7588;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+  display: block;
+}
+
+.ap-amount {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.ap-method {
+  font-size: 13px;
+  color: #c4c9d4;
+}
+
+.ap-date {
+  font-size: 13px;
+  color: #8e95a5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Status Badges (Figma colors) ────────────────────────── */
+.ap-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.ap-badge--completed {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+}
+
+.ap-badge--pending {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  color: #fbbf24;
+}
+
+.ap-badge--failed {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  color: #f87171;
+}
+
+.ap-badge--refunded {
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  color: #a78bfa;
+}
+
+/* ── Pagination ───────────────────────────────────────────── */
+.ap-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid #1c202a;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ap-pagination-info {
+  font-size: 12px;
+  color: #8e95a5;
+}
+
+.ap-white {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ap-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ap-page-nav {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ap-page-nav:hover:not(:disabled) {
+  background: #171b24;
+  color: #ffffff;
+  border-color: #2e3544;
+}
+.ap-page-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.ap-page-num {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ap-page-num:hover {
+  background: #171b24;
+  color: #ffffff;
+  border-color: #2e3544;
+}
+.ap-page-num--active {
+  background: #ef3842 !important;
+  border-color: #ef3842 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(239, 56, 66, 0.4);
+}
+
+/* ── Loading / Empty States ───────────────────────────────── */
+.ap-loading {
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.ap-spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #20242e;
+  border-top-color: #ef3842;
+  border-radius: 50%;
+  animation: ap-spin 0.8s linear infinite;
+}
+
+.ap-loading-text {
+  font-size: 13px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+.ap-empty {
+  padding: 64px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: #6d7588;
+}
+.ap-empty svg { opacity: 0.25; }
+
+.ap-empty--error { color: #f87171; }
+.ap-empty--error svg { opacity: 0.55; color: #f87171; }
+
+.ap-empty-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #c4c9d4;
+}
+
+.ap-empty-desc {
+  font-size: 13px;
+  color: #6d7588;
+  max-width: 420px;
+  line-height: 1.55;
+}
+
+.ap-retry-btn {
+  padding: 8px 18px;
+  background: #141720;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ap-retry-btn:hover { background: #1c202a; color: #ffffff; }
