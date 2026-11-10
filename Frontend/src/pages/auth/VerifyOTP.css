@@ -1,0 +1,631 @@
+.verify-otp-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(239, 56, 66, 0.08),
+      transparent 32%
+    ),
+    linear-gradient(
+      180deg,
+      #07090d 0%,
+      #090b10 50%,
+      #050609 100%
+    );
+  color: var(--corvun-text-primary);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ==========================================
+   BACKGROUND GRID
+   ========================================== */
+
+.verify-otp-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+
+/* ==========================================
+   TOP SYSTEM HEADER
+   ========================================== */
+
+.verify-system-header {
+  height: 38px;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--corvun-text-muted);
+  position: relative;
+  z-index: 2;
+}
+
+.system-brand {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.system-divider {
+  color: var(--corvun-red);
+}
+
+.system-module {
+  color: #a8adb9;
+}
+
+.system-status {
+  margin-left: auto;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.system-active {
+  color: var(--corvun-success);
+}
+
+/* ==========================================
+   MAIN
+   ========================================== */
+
+.verify-otp-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 45px 20px 55px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================
+   CARD
+   ========================================== */
+
+.verify-otp-card {
+  width: min(100%, 470px);
+  background: rgba(14, 17, 24, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 34px 36px 30px;
+  position: relative;
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.65),
+    0 0 55px rgba(239, 56, 66, 0.035);
+}
+
+/* ==========================================
+   CORNER MARKS
+   ========================================== */
+
+.card-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.corner-top-left {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--corvun-red);
+  border-left: 2px solid var(--corvun-red);
+}
+
+.corner-top-right {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid var(--corvun-red);
+  border-right: 2px solid var(--corvun-red);
+}
+
+.corner-bottom-left {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid var(--corvun-red);
+  border-left: 2px solid var(--corvun-red);
+}
+
+.corner-bottom-right {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--corvun-red);
+  border-right: 2px solid var(--corvun-red);
+}
+
+/* ==========================================
+   BADGE
+   ========================================== */
+
+.corvun-protocol-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--corvun-red-badge-border);
+  background: var(--corvun-red-badge-bg);
+  border-radius: var(--corvun-radius-full);
+  font-family: var(--corvun-mono);
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--corvun-red);
+  box-shadow: 0 0 8px rgba(239, 56, 66, 0.8);
+}
+
+.badge-text {
+  color: #ff656d;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.verify-header {
+  margin-top: 22px;
+}
+
+.verify-header h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 38px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+
+.verify-header p {
+  margin: 12px 0 0;
+  color: var(--corvun-text-secondary);
+  font-size: 13px;
+  line-height: 1.65;
+  max-width: 400px;
+}
+
+/* ==========================================
+   TARGET EMAIL
+   ========================================== */
+
+.verify-target-box {
+  margin-top: 22px;
+  min-height: 55px;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(7, 9, 13, 0.72);
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.target-icon {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(239, 56, 66, 0.35);
+  color: #ff5962;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--corvun-mono);
+  font-size: 13px;
+}
+
+.target-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.target-label {
+  color: var(--corvun-text-muted);
+  font-family: var(--corvun-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.target-email {
+  color: #e7e9ed;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.target-meta {
+  margin-left: auto;
+  color: #687184;
+  font-family: var(--corvun-mono);
+  font-size: 8px;
+}
+
+/* ==========================================
+   FEEDBACK
+   ========================================== */
+
+.verify-feedback {
+  margin-top: 14px;
+  padding: 11px 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.error-feedback {
+  color: #ff8990;
+  background: rgba(239, 56, 66, 0.1);
+  border: 1px solid rgba(239, 56, 66, 0.3);
+}
+
+.success-feedback {
+  color: #74e3a0;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.feedback-symbol {
+  font-family: var(--corvun-mono);
+  font-weight: 700;
+}
+
+/* ==========================================
+   FORM
+   ========================================== */
+
+.verify-form {
+  margin-top: 25px;
+}
+
+.otp-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.otp-label,
+.otp-label-meta {
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.otp-label {
+  color: #8991a2;
+}
+
+.otp-label-meta {
+  color: #687184;
+}
+
+/* ==========================================
+   OTP INPUTS
+   ========================================== */
+
+.otp-inputs {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 9px;
+}
+
+.otp-input {
+  width: 100%;
+  height: 58px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 4px;
+  background: #0a0d13;
+  color: #ffffff;
+  text-align: center;
+  font-family: var(--corvun-mono);
+  font-size: 22px;
+  font-weight: 700;
+  outline: none;
+  transition: var(--corvun-transition);
+}
+
+.otp-input:focus {
+  border-color: var(--corvun-red);
+  box-shadow:
+    0 0 0 1px rgba(239, 56, 66, 0.15),
+    0 0 15px rgba(239, 56, 66, 0.1);
+}
+
+.otp-input.otp-filled {
+  border-color: rgba(239, 56, 66, 0.35);
+  background: #10131a;
+}
+
+/* ==========================================
+   OTP STATUS
+   ========================================== */
+
+.otp-status-row {
+  margin-top: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+}
+
+.otp-expiry {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #747d8e;
+}
+
+.expiry-icon {
+  color: #e6a83d;
+}
+
+.otp-expiry strong {
+  color: #e6a83d;
+  font-weight: 700;
+}
+
+.attempt-status {
+  color: #687184;
+}
+
+/* ==========================================
+   VERIFY BUTTON
+   ========================================== */
+
+.verify-button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 21px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--corvun-red);
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 9px 25px rgba(239, 56, 66, 0.18);
+  transition: var(--corvun-transition);
+}
+
+.verify-button:hover:not(:disabled) {
+  background: var(--corvun-red-hover);
+  box-shadow: 0 10px 30px rgba(239, 56, 66, 0.28);
+  transform: translateY(-1px);
+}
+
+.verify-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.verify-button-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+}
+
+.verify-arrow {
+  font-size: 17px;
+}
+
+.verify-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.verify-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: verifySpin 0.7s linear infinite;
+}
+
+@keyframes verifySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   RESEND
+   ========================================== */
+
+.resend-section {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 10px;
+}
+
+.resend-question {
+  color: #6f7787;
+}
+
+.resend-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #c4c8d0;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.resend-button:hover:not(:disabled) {
+  color: #ff5962;
+}
+
+.resend-disabled {
+  color: #525a68;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.resend-divider {
+  color: #4b5360;
+}
+
+.resend-wait {
+  color: #727b8b;
+  font-family: var(--corvun-mono);
+  font-size: 9px;
+}
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+
+.verify-footer {
+  margin-top: 20px;
+  padding-top: 17px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #697283;
+}
+
+.back-login-link {
+  color: #d7d9df;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.back-login-link:hover {
+  color: #ff5962;
+}
+
+.back-login-link span {
+  color: var(--corvun-red);
+  margin-left: 3px;
+}
+
+/* ==========================================
+   BOTTOM SYSTEM FOOTER
+   ========================================== */
+
+.verify-system-footer {
+  min-height: 34px;
+  padding: 0 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  color: #5e6777;
+  font-family: var(--corvun-mono);
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--corvun-red);
+  margin-right: 7px;
+  box-shadow: 0 0 7px rgba(239, 56, 66, 0.7);
+}
+
+.footer-optimal {
+  color: var(--corvun-success);
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 700px) {
+  .verify-system-header {
+    padding: 0 14px;
+  }
+
+  .system-status {
+    display: none;
+  }
+
+  .verify-otp-main {
+    padding: 25px 12px 35px;
+  }
+
+  .verify-otp-card {
+    padding: 26px 20px 24px;
+  }
+
+  .otp-inputs {
+    gap: 6px;
+  }
+
+  .otp-input {
+    height: 52px;
+    font-size: 19px;
+  }
+
+  .verify-system-footer {
+    padding: 8px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .verify-header h1 {
+    font-size: 29px;
+  }
+
+  .otp-inputs {
+    gap: 4px;
+  }
+
+  .otp-input {
+    height: 48px;
+  }
+
+  .otp-status-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

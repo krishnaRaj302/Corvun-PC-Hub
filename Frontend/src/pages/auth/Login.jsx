@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/authService";
+import { useAuth } from "../../context/AuthContext";
 import "./Login.css";
 
 function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -39,15 +43,20 @@ function Login() {
 
     console.log("Login response:", data);
 
-    localStorage.setItem("access_token", data.access);
-    localStorage.setItem("refresh_token", data.refresh);
+    await login(data);
 
     setSuccessMessage("Authentication successful.");
+
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
 
   } catch (error) {
     console.error("Login error:", error);
 
-    if (error.response?.data?.detail) {
+    if (error.response?.data?.error) {
+      setErrorMessage(error.response.data.error);
+    } else if (error.response?.data?.detail) {
       setErrorMessage(error.response.data.detail);
     } else {
       setErrorMessage(

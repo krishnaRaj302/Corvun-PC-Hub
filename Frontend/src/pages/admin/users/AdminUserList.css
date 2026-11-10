@@ -1,0 +1,529 @@
+/* Corvun Admin Users Page Styles - Pixel-perfect Figma reproduction */
+.aul-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.aul-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.aul-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.aul-subtitle {
+  font-size: 13px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────────── */
+.aul-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0f1c16;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #4ade80;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.aul-toast-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #4ade80;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+/* ── Filter Bar ─────────────────────────────────────────────────────────── */
+.aul-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.aul-search-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+}
+
+.aul-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555d71;
+  pointer-events: none;
+}
+
+.aul-search-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 14px 0 38px;
+  background: #0e1118;
+  border: 1px solid #1c202d;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.aul-search-input:focus {
+  outline: none;
+  border-color: #ef3842;
+  background: #11151f;
+}
+
+.aul-search-input::placeholder {
+  color: #555d71;
+}
+
+/* ── Table Card ─────────────────────────────────────────────────────────── */
+.aul-card {
+  background: #0c0e15;
+  border: 1px solid #1a1e2a;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.aul-table-wrap {
+  overflow-x: auto;
+}
+
+.aul-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.aul-table th {
+  background: #0c0e15;
+  padding: 13px 18px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6d7588;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #161923;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.aul-th-right {
+  text-align: right !important;
+}
+
+.aul-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #141722;
+  color: #c4c9d4;
+  vertical-align: middle;
+}
+
+.aul-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.aul-table tbody tr:hover td {
+  background: #10131c;
+}
+
+/* ── User Cell ──────────────────────────────────────────────────────────── */
+.aul-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.aul-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1b1f2b;
+  border: 1px solid #282e3f;
+  color: #a0a6b5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.aul-avatar--admin {
+  background: rgba(239, 56, 66, 0.18);
+  border-color: rgba(239, 56, 66, 0.4);
+  color: #ef3842;
+}
+
+.aul-user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.aul-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aul-user-name--blocked {
+  text-decoration: line-through;
+  color: #7b8394;
+}
+
+.aul-user-email {
+  font-size: 11px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Role ───────────────────────────────────────────────────────────────── */
+.aul-role-text {
+  font-size: 13px;
+  color: #8e95a5;
+}
+
+.aul-role-badge {
+  display: inline-block;
+  background: rgba(239, 56, 66, 0.15);
+  border: 1px solid rgba(239, 56, 66, 0.35);
+  color: #ef3842;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ── Status Pill ────────────────────────────────────────────────────────── */
+.aul-status-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: lowercase;
+}
+
+.aul-status-pill--active {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  color: #22c55e;
+}
+
+.aul-status-pill--blocked {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+}
+
+/* ── Join Date ──────────────────────────────────────────────────────────── */
+.aul-date {
+  font-size: 12px;
+  color: #8e95a5;
+}
+
+/* ── Actions ────────────────────────────────────────────────────────────── */
+.aul-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.aul-action-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.aul-action-btn:hover {
+  transform: scale(1.15);
+}
+
+.aul-action-btn--block {
+  color: #f97316;
+}
+
+.aul-action-btn--block:hover {
+  color: #ef4444;
+}
+
+.aul-action-btn--unblock {
+  color: #22c55e;
+}
+
+.aul-action-btn--unblock:hover {
+  color: #4ade80;
+}
+
+/* ── Pagination ─────────────────────────────────────────────────────────── */
+.aul-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid #161923;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.aul-pagination-info {
+  font-size: 12px;
+  color: #6d7588;
+}
+
+.aul-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.aul-page-btn {
+  padding: 5px 12px;
+  background: #11141c;
+  border: 1px solid #1c202d;
+  border-radius: 6px;
+  color: #8e95a5;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.aul-page-btn:hover:not(:disabled) {
+  background: #171b26;
+  color: #ffffff;
+  border-color: #2a3142;
+}
+
+.aul-page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.aul-page-num {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #11141c;
+  border: 1px solid #1c202d;
+  border-radius: 6px;
+  color: #8e95a5;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.aul-page-num:hover:not(.active) {
+  background: #171b26;
+  color: #ffffff;
+}
+
+.aul-page-num.active {
+  background: #ef3842;
+  border-color: #ef3842;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ── Empty State ────────────────────────────────────────────────────────── */
+.aul-empty {
+  padding: 60px 24px;
+  text-align: center;
+  color: #6d7588;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.aul-empty svg {
+  opacity: 0.35;
+}
+
+.aul-empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #c4c9d4;
+}
+
+.aul-empty-desc {
+  font-size: 13px;
+  color: #6d7588;
+  max-width: 380px;
+}
+
+.aul-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(239, 56, 66, 0.2);
+  border-top-color: #ef3842;
+  border-radius: 50%;
+  animation: aul-spin 0.8s linear infinite;
+}
+
+@keyframes aul-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.aul-retry-btn {
+  padding: 6px 14px;
+  background: #191c28;
+  border: 1px solid #282e3f;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+.aul-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.aul-modal {
+  width: 100%;
+  max-width: 440px;
+  background: #0f121a;
+  border: 1px solid #222736;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+.aul-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #1a1e2b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.aul-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.aul-modal-close {
+  background: none;
+  border: none;
+  color: #6d7588;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.aul-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.aul-modal-text {
+  font-size: 13px;
+  color: #9aa1b2;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.aul-modal-user-box {
+  padding: 12px 14px;
+  background: #090b10;
+  border: 1px solid #1a1e2b;
+  border-radius: 6px;
+}
+
+.aul-modal-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.aul-modal-user-email {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.aul-modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #1a1e2b;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.aul-modal-cancel {
+  padding: 8px 16px;
+  background: #141722;
+  border: 1px solid #202534;
+  border-radius: 6px;
+  color: #8e95a5;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aul-modal-confirm {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.aul-modal-confirm--block {
+  background: #ef4444;
+}
+
+.aul-modal-confirm--unblock {
+  background: #22c55e;
+}

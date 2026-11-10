@@ -1,0 +1,368 @@
+/* ============================================================
+   CORVUN ADMIN REFERRALS – Figma Replica Design System
+   All class names are prefixed rf- (Referral)
+   ============================================================ */
+
+@keyframes rf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rf-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Page Wrapper */
+.rf-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: rf-fadeIn 0.3s ease;
+  width: 100%;
+}
+
+/* ── Error Banner ───────────────────────────────────────────── */
+.rf-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 13.5px;
+}
+
+.rf-btn-retry {
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rf-btn-retry:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ── Page Header ────────────────────────────────────────────── */
+.rf-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rf-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.rf-subtitle {
+  font-size: 13.5px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+/* ── 4 KPI Stat Cards ───────────────────────────────────────── */
+.rf-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.rf-stat-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px;
+  background: #141418;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.rf-stat-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.rf-stat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rf-stat-label {
+  font-size: 13px;
+  color: #8e95a5;
+  font-weight: 500;
+}
+
+.rf-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: inherit;
+  line-height: 1.1;
+}
+
+.rf-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rf-stat-icon--blue {
+  background: rgba(59, 130, 246, 0.14);
+  color: #3b82f6;
+}
+
+.rf-stat-icon--green {
+  background: rgba(34, 197, 94, 0.14);
+  color: #22c55e;
+}
+
+.rf-stat-icon--purple {
+  background: rgba(168, 85, 247, 0.14);
+  color: #a855f7;
+}
+
+.rf-stat-icon--amber {
+  background: rgba(245, 158, 11, 0.14);
+  color: #f59e0b;
+}
+
+/* ── Referral History Section ───────────────────────────────── */
+.rf-history-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rf-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ── Table Card ─────────────────────────────────────────────── */
+.rf-table-card {
+  background: #141418;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.rf-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.rf-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+.rf-table thead tr {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rf-table th {
+  padding: 16px 20px;
+  color: #8e95a5;
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rf-table-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.15s ease;
+}
+
+.rf-table-row:last-child {
+  border-bottom: none;
+}
+
+.rf-table-row:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.rf-table td {
+  padding: 16px 20px;
+  vertical-align: middle;
+}
+
+/* ── Cell Specifics ─────────────────────────────────────────── */
+.rf-id-text {
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rf-user-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rf-user-name {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.rf-user-email {
+  color: #8e95a5;
+  font-size: 12px;
+}
+
+/* ── Status Pills ───────────────────────────────────────────── */
+.rf-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rf-badge--completed {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.28);
+}
+
+.rf-badge--pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+}
+
+.rf-badge--expired {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+}
+
+.rf-reward-text {
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.rf-order-value-text {
+  color: #cbd5e1;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.rf-date-text {
+  color: #8e95a5;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ── Empty State ────────────────────────────────────────────── */
+.rf-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px;
+  gap: 10px;
+}
+
+.rf-empty-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.rf-empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.rf-empty-desc {
+  font-size: 13px;
+  color: #8e95a5;
+  max-width: 420px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Loading Spinner ────────────────────────────────────────── */
+.rf-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  gap: 14px;
+  color: #8e95a5;
+  font-size: 13.5px;
+}
+
+.rf-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #ef4444;
+  border-radius: 50%;
+  animation: rf-spin 0.8s linear infinite;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .rf-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .rf-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,468 @@
+/* Corvun Admin Dashboard Styles - Pixel-perfect Figma Reproduction */
+
+.admin-dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.adb-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adb-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.adb-subtitle {
+  font-size: 13px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+/* ── Error Banner ────────────────────────────────────────────────────────── */
+.adb-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.adb-retry-btn {
+  margin-left: auto;
+  background: #1e1b22;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.adb-retry-btn:hover {
+  background: #2a1f24;
+  border-color: #ef4444;
+}
+
+/* ── Top KPI Grid (4 Cards) ──────────────────────────────────────────────── */
+.adb-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.adb-kpi-card {
+  background: #0c0e15;
+  border: 1px solid #1a1e2a;
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.adb-kpi-card:hover {
+  border-color: #262c3e;
+}
+
+.adb-kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.adb-kpi-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8e95a5;
+}
+
+.adb-kpi-icon-box {
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adb-kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.adb-kpi-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adb-trend {
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.adb-trend--up {
+  color: #22c55e;
+}
+
+.adb-trend--down {
+  color: #ef4444;
+}
+
+/* ── Middle Charts Grid (2 Cards) ────────────────────────────────────────── */
+.adb-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.adb-chart-card {
+  background: #0c0e15;
+  border: 1px solid #1a1e2a;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 280px;
+}
+
+.adb-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.adb-chart-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.adb-chart-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.adb-svg-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.adb-svg-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.adb-axis-label {
+  font-size: 10px;
+  fill: #555d71;
+  font-family: var(--corvun-sans, -apple-system, sans-serif);
+}
+
+.adb-axis-label--y {
+  text-anchor: end;
+}
+
+.adb-axis-label--x {
+  text-anchor: middle;
+}
+
+.adb-hit-target {
+  cursor: pointer;
+}
+
+/* Chart Tooltip */
+.adb-chart-tooltip {
+  position: absolute;
+  transform: translate(-50%, -125%);
+  background: #141824;
+  border: 1px solid #242c40;
+  padding: 6px 10px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: transform 0.1s ease, left 0.1s ease, top 0.1s ease;
+}
+
+.adb-tooltip-title {
+  font-size: 10px;
+  font-weight: 500;
+  color: #8e95a5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.adb-tooltip-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* ── Bottom Section: Recent Orders Table Card ────────────────────────────── */
+.adb-orders-card {
+  background: #0c0e15;
+  border: 1px solid #1a1e2a;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.adb-orders-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adb-orders-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.adb-orders-body {
+  width: 100%;
+}
+
+.adb-table-wrap {
+  overflow-x: auto;
+}
+
+.adb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.adb-table th {
+  background: #0c0e15;
+  padding: 12px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6d7588;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #161923;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.adb-table td {
+  padding: 14px;
+  border-bottom: 1px solid #141722;
+  color: #c4c9d4;
+  vertical-align: middle;
+}
+
+.adb-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.adb-table tbody tr:hover td {
+  background: #10131c;
+}
+
+.adb-cell-order-id {
+  font-family: var(--corvun-mono, monospace);
+  font-size: 12px;
+  color: #8e95a5;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.adb-cell-customer {
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.adb-cell-product {
+  color: #8e95a5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.adb-cell-amount {
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.adb-cell-status {
+  white-space: nowrap;
+}
+
+/* Status Badges */
+.adb-status-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+.adb-status-pill--completed {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  color: #22c55e;
+}
+
+.adb-status-pill--processing {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #3b82f6;
+}
+
+.adb-status-pill--shipped {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #f59e0b;
+}
+
+.adb-status-pill--cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+}
+
+.adb-status-pill--pending {
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+}
+
+/* ── Empty State ─────────────────────────────────────────────────────────── */
+.adb-orders-empty {
+  padding: 48px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #555d71;
+}
+
+.adb-orders-empty svg {
+  opacity: 0.35;
+}
+
+.adb-orders-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #c4c9d4;
+}
+
+.adb-orders-empty-desc {
+  font-size: 13px;
+  color: #6d7588;
+  max-width: 420px;
+}
+
+/* ── Skeletons ───────────────────────────────────────────────────────────── */
+.adb-skeleton {
+  background: linear-gradient(90deg, #131722 25%, #1c2233 50%, #131722 75%);
+  background-size: 200% 100%;
+  animation: adb-shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.adb-sk-text {
+  width: 90px;
+  height: 28px;
+}
+
+.adb-chart-skeleton {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(90deg, #10131d 25%, #181d2a 50%, #10131d 75%);
+  background-size: 200% 100%;
+  animation: adb-shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+.adb-table-skeleton-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.adb-table-skeleton-row {
+  width: 100%;
+  height: 38px;
+  background: linear-gradient(90deg, #10131d 25%, #181d2a 50%, #10131d 75%);
+  background-size: 200% 100%;
+  animation: adb-shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+@keyframes adb-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .adb-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .adb-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .adb-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}

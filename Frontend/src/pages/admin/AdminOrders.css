@@ -1,0 +1,1040 @@
+/* ============================================================
+   CORVUN ADMIN ORDERS MANAGEMENT – Figma Design
+   All class names prefixed ao- (Admin Orders)
+   ============================================================ */
+
+@keyframes ao-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ao-fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes ao-slideIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Page Wrapper (split-panel when drawer open) ──────────── */
+.ao-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: ao-fadeIn 0.3s ease;
+  width: 100%;
+  position: relative;
+  min-height: 0;
+}
+
+/* When drawer is open, main content shrinks */
+.ao-page--drawer-open .ao-main-container {
+  width: calc(100% - 400px);
+}
+
+/* ── Toast Notification ───────────────────────────────────── */
+.ao-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+  color: #4ade80;
+  font-size: 13px;
+  min-width: 280px;
+  max-width: 420px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  animation: ao-fadeIn 0.25s ease;
+}
+
+.ao-toast--error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.ao-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ao-toast-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  flex-shrink: 0;
+}
+
+.ao-toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.ao-toast-close:hover { opacity: 1; }
+
+/* ── Main Content Area ────────────────────────────────────── */
+.ao-main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: width 0.3s ease;
+  min-width: 0;
+}
+
+/* ── Header (Figma) ───────────────────────────────────────── */
+.ao-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ao-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ao-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ao-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.ao-total-count-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: rgba(239, 56, 66, 0.12);
+  border: 1px solid rgba(239, 56, 66, 0.25);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ef3842;
+  letter-spacing: 0.3px;
+}
+
+.ao-subtitle {
+  font-size: 13px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+/* ── Filter Bar (Figma) ───────────────────────────────────── */
+.ao-filter-bar {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ao-search-wrap {
+  flex: 1;
+  min-width: 220px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ao-search-icon {
+  position: absolute;
+  left: 12px;
+  color: #5e6575;
+  pointer-events: none;
+}
+
+.ao-search-input {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.ao-search-input::placeholder { color: #5e6575; }
+.ao-search-input:focus {
+  outline: none;
+  border-color: #ef3842;
+  box-shadow: 0 0 0 2px rgba(239, 56, 66, 0.12);
+}
+
+.ao-select-wrap { min-width: 140px; }
+
+.ao-select {
+  width: 100%;
+  padding: 9px 12px;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.ao-select:focus {
+  outline: none;
+  border-color: #ef3842;
+}
+.ao-select option { background: #111319; }
+
+/* ── Table Card (Figma) ───────────────────────────────────── */
+.ao-card {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.ao-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ao-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ao-table th {
+  background: #11141c;
+  padding: 13px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7b8394;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #1c202a;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ao-th-right { text-align: right !important; }
+
+.ao-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #161922;
+  color: #c4c9d4;
+  vertical-align: middle;
+}
+
+.ao-table tbody tr:last-child td { border-bottom: none; }
+
+.ao-row {
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.ao-row:hover td { background: #11141c; }
+
+.ao-row--selected td {
+  background: rgba(239, 56, 66, 0.04) !important;
+}
+
+/* ── Order Number Cell ────────────────────────────────────── */
+.ao-order-num-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ao-row-active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef3842;
+  box-shadow: 0 0 8px rgba(239, 56, 66, 0.6);
+  flex-shrink: 0;
+}
+
+.ao-order-num {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  letter-spacing: 0.3px;
+}
+
+.ao-order-num--selected {
+  color: #ef3842;
+}
+
+/* ── Customer / Date / Total cells ───────────────────────── */
+.ao-customer-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+  display: block;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ao-date-text {
+  font-size: 13px;
+  color: #8e95a5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Items Pill ───────────────────────────────────────────── */
+.ao-items-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  background: #171b24;
+  border: 1px solid #252b38;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+/* ── Total Text ───────────────────────────────────────────── */
+.ao-total-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Status Badges (Figma colors) ────────────────────────── */
+.ao-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 11px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.ao-status--pending {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  color: #fbbf24;
+}
+
+.ao-status--confirmed {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  color: #60a5fa;
+}
+
+.ao-status--processing {
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  color: #a78bfa;
+}
+
+.ao-status--shipped {
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.28);
+  color: #38bdf8;
+}
+
+.ao-status--delivered {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  color: #4ade80;
+}
+
+.ao-status--cancelled {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  color: #f87171;
+}
+
+/* ── Actions Column ───────────────────────────────────────── */
+.ao-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ao-icon-btn {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #141720;
+  border: 1px solid #20242e;
+  color: #5e9fc7;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ao-icon-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+}
+
+/* ── Loading / Empty States ───────────────────────────────── */
+.ao-loading-container {
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.ao-spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #20242e;
+  border-top-color: #ef3842;
+  border-radius: 50%;
+  animation: ao-spin 0.8s linear infinite;
+}
+
+.ao-loading-text {
+  font-size: 13px;
+  color: #8e95a5;
+  margin: 0;
+}
+
+.ao-empty {
+  padding: 64px 24px;
+  text-align: center;
+  color: #6d7588;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.ao-empty svg { opacity: 0.25; }
+
+.ao-empty--error { color: #f87171; }
+.ao-empty--error svg {
+  opacity: 0.55;
+  color: #f87171;
+}
+
+.ao-empty-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #c4c9d4;
+}
+
+.ao-empty-desc {
+  font-size: 13px;
+  color: #6d7588;
+  max-width: 420px;
+  line-height: 1.55;
+}
+
+.ao-retry-btn {
+  padding: 8px 18px;
+  background: #141720;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ao-retry-btn:hover {
+  background: #1c202a;
+  color: #ffffff;
+}
+
+/* ── Pagination (Figma) ───────────────────────────────────── */
+.ao-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid #1c202a;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ao-pagination-info {
+  font-size: 12px;
+  color: #8e95a5;
+}
+
+.ao-white-text {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ao-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ao-page-nav-btn {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ao-page-nav-btn:hover:not(:disabled) {
+  background: #171b24;
+  color: #ffffff;
+  border-color: #2e3544;
+}
+.ao-page-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.ao-page-num-btn {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ao-page-num-btn:hover {
+  background: #171b24;
+  color: #ffffff;
+  border-color: #2e3544;
+}
+
+.ao-page-num-btn--active {
+  background: #ef3842 !important;
+  border-color: #ef3842 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(239, 56, 66, 0.4);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ORDER DETAIL DRAWER  (Figma right-panel)
+   ══════════════════════════════════════════════════════════════ */
+
+.ao-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: #0a0c12;
+  border-left: 1px solid #1c202a;
+  display: flex;
+  flex-direction: column;
+  z-index: 400;
+  animation: ao-slideIn 0.28s ease;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+/* ── Drawer Header ────────────────────────────────────────── */
+.ao-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid #1c202a;
+  background: #0d0f15;
+  flex-shrink: 0;
+}
+
+.ao-drawer-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ao-drawer-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #7b8394;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.ao-drawer-title-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+  animation: ao-pulse 2s infinite;
+}
+
+@keyframes ao-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.ao-drawer-close {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #141720;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #8e95a5;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ao-drawer-close:hover {
+  background: #1c202a;
+  color: #ffffff;
+}
+
+/* ── Drawer Body ──────────────────────────────────────────── */
+.ao-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: #20242e transparent;
+}
+
+.ao-drawer-body::-webkit-scrollbar { width: 4px; }
+.ao-drawer-body::-webkit-scrollbar-track { background: transparent; }
+.ao-drawer-body::-webkit-scrollbar-thumb {
+  background: #20242e;
+  border-radius: 4px;
+}
+
+.ao-drawer-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 60px 0;
+  color: #8e95a5;
+  font-size: 13px;
+}
+
+/* ── Order Banner (ID + Status) ──────────────────────────── */
+.ao-drawer-order-banner {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ao-drawer-order-id-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ao-drawer-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #5e6575;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.ao-drawer-order-number {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ef3842;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  letter-spacing: 0.5px;
+}
+
+/* ── Status Change Controls ───────────────────────────────── */
+.ao-status-change-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ao-status-current-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: #11141c;
+  border-radius: 6px;
+}
+
+/* Delivered full-width green bar (Figma) */
+.ao-status-current-badge .ao-status--delivered {
+  width: 100%;
+  justify-content: center;
+  padding: 9px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ao-status-select-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ao-status-change-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #5e6575;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.ao-status-select {
+  width: 100%;
+  padding: 9px 12px;
+  background: #111319;
+  border: 1px solid #20242e;
+  border-radius: 6px;
+  color: #c4c9d4;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.ao-status-select:focus {
+  outline: none;
+  border-color: #ef3842;
+}
+.ao-status-select:disabled { opacity: 0.5; cursor: not-allowed; }
+.ao-status-select option { background: #111319; }
+
+/* ── Drawer Sections ──────────────────────────────────────── */
+.ao-drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ao-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #5e6575;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.ao-section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ao-skus-badge {
+  font-size: 11px;
+  color: #8e95a5;
+  background: #141720;
+  border: 1px solid #1c202a;
+  border-radius: 5px;
+  padding: 2px 8px;
+}
+
+/* ── Info Card ────────────────────────────────────────────── */
+.ao-info-card {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ao-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #161922;
+}
+.ao-info-row:last-child { border-bottom: none; }
+
+.ao-info-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #141720;
+  border: 1px solid #1c202a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7b8394;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ao-info-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ao-info-sublabel {
+  font-size: 9px;
+  font-weight: 700;
+  color: #5e6575;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.ao-info-value {
+  font-size: 13px;
+  color: #e2e8f0;
+  font-weight: 500;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* ── Order Items List ─────────────────────────────────────── */
+.ao-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ao-item-card {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: border-color 0.15s;
+}
+.ao-item-card:hover { border-color: #252b38; }
+
+.ao-item-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #11141c;
+  border: 1px solid #1c202a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5e6575;
+  flex-shrink: 0;
+}
+
+.ao-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ao-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ao-item-variant {
+  font-size: 11px;
+  color: #6d7588;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ao-item-qty {
+  font-size: 11px;
+  color: #8e95a5;
+}
+
+.ao-item-unit-price {
+  color: #6d7588;
+}
+
+.ao-item-total {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.ao-empty-items-notice {
+  font-size: 13px;
+  color: #5e6575;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+}
+
+/* ── Order Summary Section ────────────────────────────────── */
+.ao-summary-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #161922;
+}
+.ao-summary-line:last-child { border-bottom: none; }
+
+.ao-summary-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #8e95a5;
+}
+
+.ao-summary-label svg { color: #5e6575; flex-shrink: 0; }
+
+.ao-summary-val {
+  font-size: 13px;
+  color: #e2e8f0;
+  font-weight: 500;
+  text-align: right;
+}
+
+.ao-capitalize { text-transform: capitalize; }
+
+/* ── Financials / Grand Total ─────────────────────────────── */
+.ao-drawer-financials {
+  background: #0d0f15;
+  border: 1px solid #1c202a;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 4px 0;
+}
+
+.ao-fin-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 16px;
+  font-size: 13px;
+  color: #8e95a5;
+  border-bottom: 1px solid #161922;
+}
+.ao-fin-row:last-child { border-bottom: none; }
+
+.ao-fin-row--discount { color: #4ade80; }
+
+.ao-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-top: 1px solid #252b38;
+  margin-top: 4px;
+}
+
+.ao-total-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ao-total-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #5e6575;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.ao-usd-caption {
+  display: block;
+  font-size: 10px;
+  color: #5e6575;
+}
+
+.ao-total-amount {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Responsive Adjustments ───────────────────────────────── */
+@media (max-width: 1100px) {
+  .ao-drawer {
+    width: 360px;
+  }
+  .ao-page--drawer-open .ao-main-container {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .ao-drawer {
+    width: 100%;
+    border-left: none;
+  }
+  .ao-title { font-size: 20px; }
+}

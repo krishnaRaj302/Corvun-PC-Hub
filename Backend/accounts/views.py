@@ -345,35 +345,6 @@ def admin_test(request):
         "message": "Admin access successful."
     }, status=status.HTTP_200_OK)
 
-@api_view(["GET"])
-@permission_classes([IsAdmin])
-def admin_users(request):
-
-    # Get all users from the database
-    users = User.objects.all()
-
-    # Create an empty list for user details
-    user_list = []
-
-    # Go through each user
-    for user in users:
-
-        # Add the user's information to the list
-        user_list.append({
-            "id": user.id,
-            "full_name": user.full_name,
-            "email": user.email,
-            "phone": user.phone,
-            "role": user.role,
-            "status": user.status,
-            "email_verified": user.email_verified,
-            "created_at": user.created_at
-        })
-
-    # Send the user list to the admin
-    return Response({
-        "users": user_list
-    }, status=status.HTTP_200_OK)
 
 
 @api_view(["PATCH"])
