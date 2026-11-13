@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { getProductDetail, getProductReviews, submitProductReview } from "../services/productService";
-import { addToCart, addToWishlist } from "../services/cartService";
+import { addToWishlist } from "../services/cartService";
 import { resolveImageUrl } from "../utils/imageUrl";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import "./ProductDetail.css";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { addToCartItem } = useCart();
 
   // Core Data States
   const [data, setData] = useState(null);
@@ -227,7 +229,7 @@ export default function ProductDetail() {
         return;
       }
 
-      await addToCart({
+      await addToCartItem({
         productId: product.id,
         variantId: selectedVariant ? selectedVariant.id : null,
         quantity,
@@ -263,7 +265,7 @@ export default function ProductDetail() {
 
     try {
       setIsAddingToCart(true);
-      await addToCart({
+      await addToCartItem({
         productId: product.id,
         variantId: selectedVariant ? selectedVariant.id : null,
         quantity,

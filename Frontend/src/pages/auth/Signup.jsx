@@ -171,7 +171,7 @@ function Signup() {
 
       else if (err.request) {
         apiErrors.push(
-          "Backend gateway offline. Please ensure Django server is running on port 8001."
+          "Backend gateway offline. Please ensure Django server is running on port 8002."
         );
       }
 

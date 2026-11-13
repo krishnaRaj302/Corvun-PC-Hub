@@ -9,6 +9,14 @@ import Home from "./pages/Home";
 import Products from "./pages/Products";
 import PCBuilder from "./pages/PCBuilder";
 import ProductDetail from "./pages/ProductDetail";
+import Wishlist from "./pages/Wishlist";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderConfirmation from "./pages/OrderConfirmation";
+import MyOrders from "./pages/MyOrders";
+import CustomerProfile from "./pages/CustomerProfile";
+import SavedAddresses from "./pages/SavedAddresses";
+import OrderDetails from "./pages/OrderDetails";
 
 // Auth Pages
 import Login from "./pages/auth/Login";
@@ -26,7 +34,6 @@ import AdminEditProduct from "./pages/admin/products/AdminEditProduct";
 import AdminUserList from "./pages/admin/users/AdminUserList";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminBrands from "./pages/admin/AdminBrands";
-import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminRefunds from "./pages/admin/AdminRefunds";
@@ -79,6 +86,88 @@ function App() {
             <PCBuilder />
           </CustomerLayout>
         }
+      />
+
+      <Route
+        path="/wishlist"
+        element={
+          <CustomerLayout>
+            <Wishlist />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/cart"
+        element={
+          <CustomerLayout>
+            <Cart />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/checkout"
+        element={
+          <CustomerLayout>
+            <Checkout />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/order-confirmation"
+        element={
+          <CustomerLayout>
+            <OrderConfirmation />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/my-orders"
+        element={
+          <CustomerLayout>
+            <MyOrders />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <CustomerLayout>
+            <CustomerProfile />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/addresses"
+        element={
+          <CustomerLayout>
+            <SavedAddresses />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/orders/:orderId"
+        element={
+          <CustomerLayout>
+            <OrderDetails />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/account"
+        element={<Navigate to="/profile" replace />}
+      />
+
+      <Route
+        path="/orders"
+        element={<Navigate to="/my-orders" replace />}
       />
 
       {/* ==========================================

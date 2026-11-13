@@ -28,6 +28,25 @@ export const getCart = async () => {
 };
 
 /**
+ * Update quantity of a cart item
+ * @param {number} itemId
+ * @param {number} quantity
+ */
+export const updateCartQuantity = async (itemId, quantity) => {
+  const response = await api.put(`/cart/update/${itemId}/`, { quantity });
+  return response.data;
+};
+
+/**
+ * Remove an item from the user's cart
+ * @param {number} itemId
+ */
+export const removeFromCart = async (itemId) => {
+  const response = await api.delete(`/cart/remove/${itemId}/`);
+  return response.data;
+};
+
+/**
  * Add a product to the user's wishlist
  * @param {number} productId
  */
