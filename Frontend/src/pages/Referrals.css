@@ -70,6 +70,63 @@
 }
 
 /* ==========================================================================
+   TOP BREADCRUMBS & PAGE HEADER (Harmonized with CustomerProfile)
+   ========================================================================== */
+
+.referrals-header-container {
+  margin-bottom: 28px;
+}
+
+.referrals-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--corvun-text-muted, #7c8394);
+  margin-bottom: 12px;
+}
+
+.breadcrumb-link {
+  color: var(--corvun-text-muted, #7c8394);
+  text-decoration: none;
+  transition: var(--corvun-transition, all 0.2s ease);
+}
+
+.breadcrumb-link:hover {
+  color: #ffffff;
+}
+
+.breadcrumb-sep {
+  color: #3b404d;
+}
+
+.breadcrumb-current {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.referrals-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.referrals-headline {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.referrals-subtitle {
+  font-size: 14px;
+  color: var(--corvun-text-secondary, #8c93a4);
+  margin: 0;
+}
+
+/* ==========================================================================
    MAIN TWO-COLUMN WORKSPACE GRID
    ========================================================================== */
 
@@ -1335,7 +1392,7 @@
    RESPONSIVENESS (MOBILE, TABLET, LAPTOP)
    ========================================================================== */
 
-@media (max-width: 1080px) {
+@media (max-width: 1024px) {
   .referrals-workspace-grid {
     grid-template-columns: 240px 1fr;
     gap: 20px;
@@ -1350,18 +1407,18 @@
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 768px) {
+  .referrals-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .referrals-workspace-grid {
     grid-template-columns: 1fr;
   }
 
   .referrals-sidebar {
     position: static;
-  }
-
-  .ref-page-header {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .ref-claim-code-btn {

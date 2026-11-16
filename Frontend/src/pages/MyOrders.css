@@ -1051,18 +1051,26 @@
   border-radius: 50%;
 }
 
-/* Responsive */
+/* Responsive (Harmonized with CustomerProfile) */
 @media (max-width: 1024px) {
   .orders-workspace-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .orders-profile-sidebar {
-    position: static;
+    grid-template-columns: 240px 1fr;
+    gap: 20px;
   }
 
   .orders-metric-cards-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .orders-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .orders-workspace-layout {
+    grid-template-columns: 1fr;
   }
 }
 

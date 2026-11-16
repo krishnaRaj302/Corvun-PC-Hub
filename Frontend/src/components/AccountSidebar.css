@@ -268,8 +268,8 @@
   transform: translateX(2px);
 }
 
-/* Responsive */
-@media (max-width: 860px) {
+/* Responsive (Harmonized with CustomerProfile 768px collapse) */
+@media (max-width: 768px) {
   .corvun-account-sidebar {
     position: static;
   }

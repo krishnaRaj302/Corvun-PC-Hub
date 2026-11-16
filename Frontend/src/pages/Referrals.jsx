@@ -333,10 +333,42 @@ export default function Referrals() {
         </div>
       )}
 
+      {/* Top Breadcrumbs & Page Header (Consistent with CustomerProfile layout) */}
+      <div className="referrals-header-container">
+        <nav className="referrals-breadcrumbs" aria-label="Breadcrumb">
+          <Link to="/" className="breadcrumb-link">Home</Link>
+          <span className="breadcrumb-sep">/</span>
+          <Link to="/profile" className="breadcrumb-link">My Account</Link>
+          <span className="breadcrumb-sep">/</span>
+          <span className="breadcrumb-current">Referrals</span>
+        </nav>
+
+        <div className="referrals-title-row">
+          <div>
+            <div className="ref-badge-row">
+              <h1 className="referrals-headline">Referral Program</h1>
+              <span className="ref-tag-badge">SHARE &amp; EARN</span>
+            </div>
+            <p className="referrals-subtitle">
+              Invite friends and earn rewards together when they shop high-performance custom rigs.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="ref-claim-code-btn"
+            onClick={() => setShowClaimModal(true)}
+            title="Apply a friend's referral code to your account"
+          >
+            Have a Friend&apos;s Code?
+          </button>
+        </div>
+      </div>
+
       {/* Main Two-Column Layout */}
       <div className="referrals-workspace-grid">
         {/* =================================================================
-            LEFT COLUMN: ACCOUNT NAVIGATION SIDEBAR (Exact Match to Figma)
+            LEFT COLUMN: ACCOUNT NAVIGATION SIDEBAR (Exact Match to Master Profile)
             ================================================================= */}
         <AccountSidebar activeItem="referrals" />
 
@@ -344,29 +376,7 @@ export default function Referrals() {
             RIGHT COLUMN: REFERRALS MAIN CONTENT AREA
             ================================================================= */}
         <main className="referrals-main-content">
-          {/* A. Page Header */}
-          <div className="ref-page-header">
-            <div className="ref-header-text">
-              <div className="ref-badge-row">
-                <h1 className="ref-main-title">Referral Program</h1>
-                <span className="ref-tag-badge">SHARE &amp; EARN</span>
-              </div>
-              <p className="ref-main-subtitle">
-                Invite friends and earn rewards together when they shop high-performance custom rigs.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              className="ref-claim-code-btn"
-              onClick={() => setShowClaimModal(true)}
-              title="Apply a friend's referral code to your account"
-            >
-              Have a Friend&apos;s Code?
-            </button>
-          </div>
-
-          {/* B. Referral Link Card (Hero Banner) */}
+          {/* Referral Link Card (Hero Banner) */}
           <section className="ref-link-hero-card">
             <div className="ref-link-card-header">
               <div className="ref-link-icon-box">
