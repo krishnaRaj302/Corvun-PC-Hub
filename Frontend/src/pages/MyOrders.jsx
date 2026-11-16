@@ -375,7 +375,7 @@ function MyOrders() {
               </div>
 
               {/* 8. Referrals */}
-              <div className="sidebar-nav-item">
+              <Link to="/referrals" className="sidebar-nav-item">
                 <div className="nav-item-left">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -386,7 +386,7 @@ function MyOrders() {
                   <span>Referrals</span>
                 </div>
                 <span className="sidebar-dot-badge" />
-              </div>
+              </Link>
 
               {/* 9. Log Out */}
               <button
