@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getAddresses, getMyOrders } from "../services/orderService";
 import { getWishlist } from "../services/cartService";
+import { getWalletData, formatCurrency, subscribeWallet } from "../services/walletService";
 import "./AccountSidebar.css";
 
 // SVG Icons
@@ -82,6 +83,30 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
     savedAddresses: 2,
     wishlistItems: 7,
   });
+
+  const [walletBalance, setWalletBalance] = useState(() => {
+    return getWalletData(user).balance;
+  });
+
+  // Keep wallet balance reactive
+  useEffect(() => {
+    let isMounted = true;
+    Promise.resolve().then(() => {
+      if (isMounted) {
+        setWalletBalance(getWalletData(user).balance);
+      }
+    });
+
+    const unsubscribe = subscribeWallet((detail) => {
+      if (isMounted && detail && typeof detail.balance === "number") {
+        setWalletBalance(detail.balance);
+      }
+    });
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, [user]);
 
   // Load actual badge counters
   useEffect(() => {
@@ -294,14 +319,18 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
 
           {/* 8. Wallet & Credits */}
           <Link
-            to="/profile#wallet"
+            to="/wallet"
             className={`account-nav-item ${activeItem === "wallet" ? "active-nav-pill" : ""}`}
           >
             <div className="account-nav-left">
               <WalletIcon />
               <span>Wallet &amp; Credits</span>
             </div>
-            <span className="account-badge wallet-badge">₹4,850.00</span>
+            {activeItem === "wallet" ? (
+              <span className="account-active-tag">ACTIVE</span>
+            ) : (
+              <span className="account-badge wallet-badge">{formatCurrency(walletBalance)}</span>
+            )}
           </Link>
 
           {/* 9. Logout */}

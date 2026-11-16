@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AccountSidebar from "../components/AccountSidebar";
+import { getWalletData, formatCurrency, subscribeWallet } from "../services/walletService";
 import "./CustomerProfile.css";
 
 function CustomerProfile() {
@@ -32,6 +33,28 @@ function CustomerProfile() {
   const [editFormData, setEditFormData] = useState({ ...profileData });
   const [isSaving, setIsSaving] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Wallet live state
+  const [walletData, setWalletData] = useState(() => getWalletData(user));
+
+  useEffect(() => {
+    let isMounted = true;
+    Promise.resolve().then(() => {
+      if (isMounted) {
+        setWalletData(getWalletData(user));
+      }
+    });
+
+    const unsubscribe = subscribeWallet((detail) => {
+      if (isMounted && detail?.ledger) {
+        setWalletData(detail.ledger);
+      }
+    });
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, [user]);
 
   // Sync user changes from AuthContext
   useEffect(() => {
@@ -326,20 +349,13 @@ function CustomerProfile() {
                   <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
                   <line x1="1" y1="10" x2="23" y2="10" />
                 </svg>
-                <h3>Corvun Wallet & Credits</h3>
+                <h3>Corvun Wallet &amp; Credits</h3>
               </div>
 
-              <a
-                href="#passbook"
-                onClick={(e) => {
-                  e.preventDefault();
-                  showToast("Wallet ledger: ₹4,850.00 verified on blockchain node.");
-                }}
-                className="wallet-passbook-action"
-              >
+              <Link to="/wallet" className="wallet-passbook-action">
                 <span>View Passbook / Transactions</span>
                 <span className="passbook-arrow">→</span>
-              </a>
+              </Link>
             </div>
 
             <div className="wallet-content-row">
@@ -347,18 +363,18 @@ function CustomerProfile() {
               <div className="wallet-balance-pane">
                 <span className="wallet-balance-caption">AVAILABLE BALANCE</span>
                 <div className="wallet-amount-row">
-                  <span className="wallet-amount-text">₹4,850.00</span>
+                  <span className="wallet-amount-text">{formatCurrency(walletData.balance)}</span>
                   <span className="wallet-active-pill">ACTIVE</span>
                 </div>
                 <div className="wallet-subtext-meta">
                   <span className="subtext-entry">
                     <span className="subtext-icon">🪙</span>
-                    <span>₹350 Cashback Pending</span>
+                    <span>{formatCurrency(walletData.pendingCashback || 350)} Cashback Pending</span>
                   </span>
                   <span className="subtext-bullet">•</span>
                   <span className="subtext-entry">
                     <span className="subtext-icon">🏷️</span>
-                    <span>120 Reward Points</span>
+                    <span>{walletData.rewardPoints || 120} Reward Points</span>
                   </span>
                 </div>
               </div>
@@ -369,13 +385,9 @@ function CustomerProfile() {
                 <p className="topup-card-desc">
                   Add balance using UPI, Credit Cards, or Net Banking for instant checkout on parts and rigs.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => showToast("Direct checkout gateway active. Use UPI/Cards at Checkout.")}
-                  className="wallet-add-money-btn"
-                >
+                <Link to="/wallet?action=topup" className="wallet-add-money-btn">
                   <span>+ + Add Money</span>
-                </button>
+                </Link>
               </div>
             </div>
           </section>
