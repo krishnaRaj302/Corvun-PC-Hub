@@ -136,6 +136,27 @@
   margin: 0;
 }
 
+.wallet-header-right-badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.escrow-secure-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #12151e;
+  border: 1px solid #1f2536;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: var(--corvun-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #10b981;
+}
+
 .wallet-add-funds-btn {
   display: inline-flex;
   align-items: center;
@@ -296,6 +317,27 @@
   background: #ff5a5f;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(255, 70, 75, 0.5);
+}
+
+.hero-withdraw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #181b26;
+  border: 1px solid #282d3e;
+  border-radius: 6px;
+  padding: 12px 20px;
+  color: #d1d5db;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hero-withdraw-btn:hover {
+  background: #202434;
+  border-color: #3f4762;
+  color: #ffffff;
 }
 
 /* KPI Sub-Row */
@@ -709,6 +751,30 @@
 
 .tiny-check {
   font-size: 9px;
+}
+
+.ledger-card-footer-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 18px;
+  margin-top: 16px;
+  border-top: 1px solid #1a1d27;
+  font-size: 11px;
+  color: #7c8394;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ledger-entries-count {
+  font-family: var(--corvun-mono, monospace);
+}
+
+.ledger-sync-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #10b981;
 }
 
 /* Empty State */

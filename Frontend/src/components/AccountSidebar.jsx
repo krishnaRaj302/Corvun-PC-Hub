@@ -235,9 +235,9 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
           </Link>
 
           {/* 3. My Reviews */}
-          <div
+          <Link
+            to="/my-reviews"
             className={`account-nav-item ${activeItem === "reviews" ? "active-nav-pill" : ""}`}
-            style={{ cursor: "pointer" }}
           >
             <div className="account-nav-left">
               <StarIcon />
@@ -248,7 +248,7 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
             ) : (
               <span className="account-badge number-badge">14</span>
             )}
-          </div>
+          </Link>
 
           {/* 4. Referrals */}
           <Link
@@ -266,16 +266,19 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
             )}
           </Link>
 
-          {/* 5. Questions & Answers */}
-          <div
-            className={`account-nav-item ${activeItem === "questions" ? "active-nav-pill" : ""}`}
-            style={{ cursor: "pointer" }}
+          {/* 5. Questions & Answers / Support */}
+          <Link
+            to="/support"
+            className={`account-nav-item ${activeItem === "support" || activeItem === "questions" ? "active-nav-pill" : ""}`}
           >
             <div className="account-nav-left">
               <HelpIcon />
               <span>Questions &amp; Answers</span>
             </div>
-          </div>
+            {(activeItem === "support" || activeItem === "questions") && (
+              <span className="account-active-tag">ACTIVE</span>
+            )}
+          </Link>
         </nav>
 
         {/* GROUP 2: ORDERS & WALLET */}
@@ -356,7 +359,7 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
         <p className="account-assistance-desc">
           Questions about your workstation orders, warranty, or rig builds? Our specialists are online.
         </p>
-        <Link to="/profile" className="account-assistance-link">
+        <Link to="/support" className="account-assistance-link">
           Open Support Ticket →
         </Link>
       </div>

@@ -271,22 +271,28 @@ export default function Wallet() {
         <div className="wallet-title-row">
           <div>
             <span className="wallet-prefix-tag">
-              CORVUN LEDGER // 256-BIT ENCRYPTED LIQUIDITY
+              // REVENUE &amp; HARDWARE ESCROW • LEDGER ID: ACV-NL-88942
             </span>
-            <h1 className="wallet-headline">Wallet &amp; Credits</h1>
+            <h1 className="wallet-headline">My Wallet</h1>
             <p className="wallet-subtitle">
-              Manage workstation credits, instant top-ups, referral dividends, and encrypted passbook telemetry.
+              Manage your Corvun builder balance, instant hardware escrow, and transaction ledger.
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setIsTopUpOpen(true)}
-            className="wallet-add-funds-btn"
-          >
-            <PlusIcon />
-            <span>Add Money</span>
-          </button>
+          <div className="wallet-header-right-badges">
+            <span className="escrow-secure-badge">
+              <span className="status-dot green-pulse" />
+              <span>Escrow Status: 100% SECURE</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsTopUpOpen(true)}
+              className="wallet-add-funds-btn"
+            >
+              <PlusIcon />
+              <span>Add Funds</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -324,7 +330,14 @@ export default function Wallet() {
                   className="hero-topup-btn"
                 >
                   <PlusIcon />
-                  <span>Instant Top-Up</span>
+                  <span>+ Add Funds</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => showToast("Escrow withdrawal protocol: Active funds can be used at checkout or refunded to original payment source upon request.", "info")}
+                  className="hero-withdraw-btn"
+                >
+                  <span>Withdraw</span>
                 </button>
               </div>
             </div>
@@ -560,6 +573,17 @@ export default function Wallet() {
                 })}
               </div>
             )}
+
+            {/* Ledger Telemetry Footer (Screenshot 7) */}
+            <div className="ledger-card-footer-strip">
+              <span className="ledger-entries-count">
+                Showing recent {filteredTransactions.length} of {walletState.transactions?.length || 0} total entries
+              </span>
+              <span className="ledger-sync-tag">
+                <span className="status-dot green-pulse" />
+                <span>Ledger synchronized via Corvun API v2.4</span>
+              </span>
+            </div>
           </section>
         </main>
       </div>

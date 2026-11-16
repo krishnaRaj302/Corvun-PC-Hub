@@ -19,6 +19,8 @@ import SavedAddresses from "./pages/SavedAddresses";
 import OrderDetails from "./pages/OrderDetails";
 import Referrals from "./pages/Referrals";
 import Wallet from "./pages/Wallet";
+import CustomerSupport from "./pages/CustomerSupport";
+import MyReviews from "./pages/MyReviews";
 
 // Auth Pages
 import Login from "./pages/auth/Login";
@@ -176,6 +178,24 @@ function App() {
         element={
           <CustomerLayout>
             <Wallet />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/support"
+        element={
+          <CustomerLayout>
+            <CustomerSupport />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/my-reviews"
+        element={
+          <CustomerLayout>
+            <MyReviews />
           </CustomerLayout>
         }
       />
