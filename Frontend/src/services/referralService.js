@@ -21,3 +21,4 @@ export const claimReferralCode = async (referralCode) => {
   });
   return response.data;
 };
+

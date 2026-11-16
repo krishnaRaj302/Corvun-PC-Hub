@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getMyReferrals, claimReferralCode } from "../services/referralService";
-import { getAddresses, getMyOrders } from "../services/orderService";
-import { getWishlist } from "../services/cartService";
+import AccountSidebar from "../components/AccountSidebar";
 import "./Referrals.css";
 
 // SVG Icons
@@ -56,8 +55,7 @@ const ShareIcon = () => (
 );
 
 export default function Referrals() {
-  const navigate = useNavigate();
-  const { user, isAuthenticated, loading: authLoading, logout } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
 
   // Data states
   const [referrals, setReferrals] = useState([]);
@@ -74,13 +72,6 @@ export default function Referrals() {
   // Toast feedback state
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
-  // Sidebar count badges
-  const [sidebarCounts, setSidebarCounts] = useState({
-    activeOrders: 0,
-    savedAddresses: 0,
-    wishlistItems: 0,
-  });
-
   const showToast = useCallback((message, type = "success") => {
     setToast({ show: true, message, type });
   }, []);
@@ -93,17 +84,6 @@ export default function Referrals() {
     }, 4000);
     return () => clearTimeout(timer);
   }, [toast.show]);
-
-  // Handle Logout
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch (err) {
-      console.error("Logout error:", err);
-      navigate("/login");
-    }
-  };
 
   // Fetch referrals from backend
   const fetchReferrals = useCallback(() => {
@@ -125,54 +105,6 @@ export default function Referrals() {
         setLoading(false);
       });
   }, []);
-
-  // Fetch sidebar badges
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    let isMounted = true;
-
-    Promise.allSettled([
-      getMyOrders(),
-      getAddresses(),
-      getWishlist(),
-    ]).then(([ordersRes, addressesRes, wishlistRes]) => {
-      if (!isMounted) return;
-
-      let activeOrdersCount = 0;
-      let addressCount = 0;
-      let wishlistCount = 0;
-
-      if (ordersRes.status === "fulfilled") {
-        const orderList = Array.isArray(ordersRes.value?.orders)
-          ? ordersRes.value.orders
-          : [];
-        activeOrdersCount = orderList.filter((o) =>
-          ["pending", "processing", "shipped"].includes((o.status || "").toLowerCase())
-        ).length;
-      }
-
-      if (addressesRes.status === "fulfilled" && Array.isArray(addressesRes.value)) {
-        addressCount = addressesRes.value.length;
-      }
-
-      if (wishlistRes.status === "fulfilled") {
-        const items = wishlistRes.value?.items || wishlistRes.value || [];
-        if (Array.isArray(items)) {
-          wishlistCount = items.length;
-        }
-      }
-
-      setSidebarCounts({
-        activeOrders: activeOrdersCount,
-        savedAddresses: addressCount,
-        wishlistItems: wishlistCount,
-      });
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isAuthenticated]);
 
   // Initial load
   useEffect(() => {
@@ -365,11 +297,6 @@ export default function Referrals() {
     return "RF";
   };
 
-  // User avatar initials
-  const userInitials = useMemo(() => {
-    return getInitials(user?.full_name, user?.email);
-  }, [user]);
-
   // Unauthenticated Guard
   if (!authLoading && !isAuthenticated) {
     return (
@@ -411,178 +338,7 @@ export default function Referrals() {
         {/* =================================================================
             LEFT COLUMN: ACCOUNT NAVIGATION SIDEBAR (Exact Match to Figma)
             ================================================================= */}
-        <aside className="referrals-sidebar">
-          {/* User Profile Card */}
-          <div className="sidebar-profile-card">
-            <div className="sidebar-avatar-wrapper">
-              <div className="sidebar-avatar-circle">{userInitials}</div>
-              <span className="avatar-online-dot" />
-            </div>
-            <h3 className="sidebar-user-name">{user?.full_name || "Valued Engineer"}</h3>
-            <p className="sidebar-user-email">{user?.email || "engineer@corvun.io"}</p>
-            <div className="sidebar-level-badge">LEVEL 3 BUILDER</div>
-          </div>
-
-          {/* Account Navigation Card */}
-          <div className="sidebar-nav-card">
-            {/* Group 1: Manage Account */}
-            <div className="sidebar-header-label">MANAGE ACCOUNT</div>
-            <nav className="sidebar-nav-list">
-              {/* 1. Personal Information */}
-              <Link to="/profile" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                  <span>Personal Information</span>
-                </div>
-              </Link>
-
-              {/* 2. Addresses */}
-              <Link to="/addresses" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  <span>Addresses</span>
-                </div>
-                <span className="sidebar-badge number-badge">
-                  {sidebarCounts.savedAddresses || 2}
-                </span>
-              </Link>
-
-              {/* 3. My Reviews */}
-              <div
-                className="sidebar-nav-item"
-                onClick={() => showToast("Review moderation log active.")}
-                style={{ cursor: "pointer" }}
-              >
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                  <span>My Reviews</span>
-                </div>
-                <span className="sidebar-badge number-badge">14</span>
-              </div>
-
-              {/* 4. Referrals (ACTIVE PILL) */}
-              <Link to="/referrals" className="sidebar-nav-item active-nav-pill">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="8.5" cy="7" r="4" />
-                    <line x1="20" y1="8" x2="20" y2="14" />
-                    <line x1="23" y1="11" x2="17" y2="11" />
-                  </svg>
-                  <span>Referrals</span>
-                </div>
-                <span className="sidebar-badge active-tag-badge">ACTIVE</span>
-              </Link>
-
-              {/* 5. Questions & Answers */}
-              <div
-                className="sidebar-nav-item"
-                onClick={() => showToast("Hardware FAQ database is currently synchronized.")}
-                style={{ cursor: "pointer" }}
-              >
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                  </svg>
-                  <span>Questions &amp; Answers</span>
-                </div>
-              </div>
-            </nav>
-
-            {/* Group 2: Orders & Wallet */}
-            <div className="sidebar-header-label" style={{ marginTop: "18px" }}>
-              ORDERS &amp; WALLET
-            </div>
-            <nav className="sidebar-nav-list">
-              {/* 6. My Orders */}
-              <Link to="/my-orders" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="1" y="3" width="15" height="13" />
-                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-                    <circle cx="5.5" cy="18.5" r="2.5" />
-                    <circle cx="18.5" cy="18.5" r="2.5" />
-                  </svg>
-                  <span>My Orders</span>
-                </div>
-                <span className="sidebar-badge active-orders-badge">
-                  {sidebarCounts.activeOrders > 0
-                    ? `${sidebarCounts.activeOrders} Active`
-                    : "1 Active"}
-                </span>
-              </Link>
-
-              {/* 7. Wishlist */}
-              <Link to="/wishlist" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                  <span>Wishlist</span>
-                </div>
-                <span className="sidebar-badge number-badge">
-                  {sidebarCounts.wishlistItems || 7}
-                </span>
-              </Link>
-
-              {/* 8. Wallet & Credits */}
-              <Link to="/profile#wallet" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="2" y="4" width="20" height="16" rx="2" />
-                    <path d="M7 15h0M2 9.5h20" />
-                  </svg>
-                  <span>Wallet &amp; Credits</span>
-                </div>
-                <span className="sidebar-badge wallet-badge">₹4,850.00</span>
-              </Link>
-
-              {/* 9. Log Out */}
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="sidebar-nav-item logout-nav-item"
-              >
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                  <span>Logout</span>
-                </div>
-              </button>
-            </nav>
-          </div>
-
-          {/* Concierge Support Card */}
-          <div className="sidebar-assistance-card">
-            <div className="assistance-header">
-              <span className="assistance-ping" />
-              <span className="assistance-tag">HARDWARE CONCIERGE</span>
-            </div>
-            <p className="assistance-desc">
-              Questions about your referral balance or rig builds? Our specialists are online.
-            </p>
-            <div
-              className="assistance-link"
-              onClick={() => showToast("Directing inquiry to 24/7 technical concierge...")}
-              style={{ cursor: "pointer" }}
-            >
-              Open Support Ticket →
-            </div>
-          </div>
-        </aside>
+        <AccountSidebar activeItem="referrals" />
 
         {/* =================================================================
             RIGHT COLUMN: REFERRALS MAIN CONTENT AREA

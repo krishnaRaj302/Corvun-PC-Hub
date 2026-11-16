@@ -1,20 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getWishlist } from "../services/cartService";
-import { getAddresses, getMyOrders } from "../services/orderService";
+import AccountSidebar from "../components/AccountSidebar";
 import "./CustomerProfile.css";
 
 function CustomerProfile() {
-  const { user, setUser, logout } = useAuth();
-  const navigate = useNavigate();
-
-  // Metrics for navigation badges
-  const [counts, setCounts] = useState({
-    activeOrders: 1,
-    savedAddresses: 2,
-    wishlistItems: 7,
-  });
+  const { user, setUser } = useAuth();
 
   // Profile fields state
   const [profileData, setProfileData] = useState(() => {
@@ -42,75 +33,23 @@ function CustomerProfile() {
   const [isSaving, setIsSaving] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Sync user changes from AuthContext and load metrics
+  // Sync user changes from AuthContext
   useEffect(() => {
     let isMounted = true;
-
-    // Fetch live counts and synchronize profile data safely
-    Promise.allSettled([
-      getMyOrders(),
-      getAddresses(),
-      getWishlist(),
-    ]).then(([ordersRes, addressesRes, wishlistRes]) => {
-      if (!isMounted) return;
-
-      if (user?.full_name || user?.email) {
+    if (user?.full_name || user?.email) {
+      Promise.resolve().then(() => {
+        if (!isMounted) return;
         setProfileData((prev) => ({
           ...prev,
           fullName: user.full_name || prev.fullName,
           email: user.email || prev.email,
         }));
-      }
-
-      let activeOrdersCount = 1;
-      let addressCount = 2;
-      let wishlistCount = 7;
-
-      if (ordersRes.status === "fulfilled" && Array.isArray(ordersRes.value)) {
-        const active = ordersRes.value.filter(
-          (o) =>
-            o.status?.toLowerCase() === "pending" ||
-            o.status?.toLowerCase() === "processing" ||
-            o.status?.toLowerCase() === "shipped"
-        ).length;
-        if (active > 0) activeOrdersCount = active;
-      }
-
-      if (addressesRes.status === "fulfilled" && Array.isArray(addressesRes.value)) {
-        if (addressesRes.value.length > 0) {
-          addressCount = addressesRes.value.length;
-        }
-      }
-
-      if (wishlistRes.status === "fulfilled") {
-        const items = wishlistRes.value?.items || wishlistRes.value || [];
-        if (Array.isArray(items) && items.length > 0) {
-          wishlistCount = items.length;
-        }
-      }
-
-      setCounts({
-        activeOrders: activeOrdersCount,
-        savedAddresses: addressCount,
-        wishlistItems: wishlistCount,
       });
-    });
-
+    }
     return () => {
       isMounted = false;
     };
   }, [user]);
-
-  // Handle Logout
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch (err) {
-      console.error("Logout error:", err);
-      navigate("/login");
-    }
-  };
 
   // Open Edit Modal
   const handleOpenEdit = () => {
@@ -223,183 +162,8 @@ function CustomerProfile() {
 
       {/* Main Two-Column Workstation Layout */}
       <div className="profile-workspace-grid">
-        {/* Left Column: Account Navigation Sidebar */}
-        <aside className="profile-sidebar">
-          <div className="profile-sidebar-card">
-            <div className="sidebar-header-label">ACCOUNT NAVIGATION</div>
-
-            <nav className="sidebar-nav-list">
-              {/* 1. Personal Info (Active) */}
-              <Link to="/profile" className="sidebar-nav-item active-nav-pill">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                  <span>Personal Info</span>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </Link>
-
-              {/* 2. My Orders */}
-              <Link to="/my-orders" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="1" y="3" width="15" height="13" />
-                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-                    <circle cx="5.5" cy="18.5" r="2.5" />
-                    <circle cx="18.5" cy="18.5" r="2.5" />
-                  </svg>
-                  <span>My Orders</span>
-                </div>
-                <span className="sidebar-badge active-orders-badge">
-                  {counts.activeOrders} Active
-                </span>
-              </Link>
-
-              {/* 3. Saved Addresses */}
-              <Link to="/addresses" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  <span>Saved Addresses</span>
-                </div>
-                <span className="sidebar-badge number-badge">
-                  {counts.savedAddresses}
-                </span>
-              </Link>
-
-              {/* 4. Wishlist */}
-              <Link to="/wishlist" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                  <span>Wishlist</span>
-                </div>
-                <span className="sidebar-badge number-badge">
-                  {counts.wishlistItems} items
-                </span>
-              </Link>
-
-              {/* 5. Wallet & Credits */}
-              <a
-                href="#wallet"
-                onClick={(e) => {
-                  e.preventDefault();
-                  showToast("Corvun Wallet passbook is running in local demonstration mode.");
-                }}
-                className="sidebar-nav-item"
-              >
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-                    <line x1="1" y1="10" x2="23" y2="10" />
-                  </svg>
-                  <span>Wallet & Credits</span>
-                </div>
-                <span className="sidebar-badge wallet-badge">
-                  $1,420.00
-                </span>
-              </a>
-
-              {/* 6. My Reviews */}
-              <a
-                href="#reviews"
-                onClick={(e) => {
-                  e.preventDefault();
-                  showToast("Hardware feedback module is synchronizing with reviews node.");
-                }}
-                className="sidebar-nav-item"
-              >
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                  <span>My Reviews</span>
-                </div>
-                <span className="sidebar-badge number-badge">14</span>
-              </a>
-
-              {/* 7. Questions & Answers */}
-              <a
-                href="#qa"
-                onClick={(e) => {
-                  e.preventDefault();
-                  showToast("Community Q&A terminal node is operational.");
-                }}
-                className="sidebar-nav-item"
-              >
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                  </svg>
-                  <span>Questions & Answers</span>
-                </div>
-              </a>
-
-              {/* 8. Referrals */}
-              <Link to="/referrals" className="sidebar-nav-item">
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="8.5" cy="7" r="4" />
-                    <line x1="20" y1="8" x2="20" y2="14" />
-                    <line x1="23" y1="11" x2="17" y2="11" />
-                  </svg>
-                  <span>Referrals</span>
-                </div>
-                <span className="sidebar-dot-badge" />
-              </Link>
-
-              {/* 9. Log Out */}
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="sidebar-nav-item logout-nav-item"
-              >
-                <div className="nav-item-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                  <span>Log Out</span>
-                </div>
-              </button>
-            </nav>
-          </div>
-
-          {/* Need Assistance Support Card */}
-          <div className="sidebar-assistance-card">
-            <div className="assistance-title-row">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef3842" strokeWidth="2">
-                <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
-              </svg>
-              <h4 className="assistance-title">Need Assistance?</h4>
-            </div>
-            <p className="assistance-text">
-              Our technical customer support team is available 24/7 for order and build queries.
-            </p>
-            <a
-              href="mailto:support@corvun.io"
-              className="assistance-link"
-              onClick={(e) => {
-                e.preventDefault();
-                showToast("Support desk dispatched: ticket priority tier 1.");
-              }}
-            >
-              Contact Support →
-            </a>
-          </div>
-        </aside>
+        {/* Left Column: Unified Account Navigation Sidebar */}
+        <AccountSidebar activeItem="personal-info" />
 
         {/* Right Column: Profile Content */}
         <main className="profile-main-content">
