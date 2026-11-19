@@ -8,8 +8,13 @@ import {
   getAddresses,
   addAddress,
   createOrder,
-  createPayment,
 } from "../services/orderService";
+import {
+  loadRazorpayScript,
+  initializePayment,
+  verifyPayment,
+  reportPaymentFailure,
+} from "../services/paymentService";
 import { resolveImageUrl } from "../utils/imageUrl";
 import "./Checkout.css";
 
@@ -226,9 +231,10 @@ function Checkout() {
     setFeedback(null);
 
     try {
-      // 1. Submit order to backend (backend validates stock, prices & addresses authoritatively)
+      // 1. Submit order to backend (authoritative stock and price validation)
       const orderRes = await createOrder({
         shippingAddressId: selectedAddressId,
+        paymentMethod: selectedPaymentMethod,
       });
 
       const createdOrder = orderRes?.order;
@@ -236,33 +242,180 @@ function Checkout() {
         throw new Error("Invalid order telemetry returned from gateway.");
       }
 
-      // 2. Create payment record for the created order
-      let paymentRes = null;
-      try {
-        paymentRes = await createPayment({
-          orderId: createdOrder.id,
-          paymentMethod: selectedPaymentMethod,
+      // ==========================================
+      // FLOW A: CASH ON DELIVERY (COD)
+      // ==========================================
+      if (selectedPaymentMethod === "cod") {
+        let paymentRes = null;
+        try {
+          paymentRes = await initializePayment({
+            orderId: createdOrder.id,
+            paymentMethod: "cod",
+          });
+        } catch (payErr) {
+          console.warn("COD Payment record notice:", payErr);
+        }
+
+        await fetchCart();
+        navigate(`/order-confirmation?order_id=${createdOrder.id}`, {
+          state: {
+            order: createdOrder,
+            orderId: createdOrder.id,
+            payment: paymentRes?.payment || null,
+            paymentMethod: "cod",
+          },
         });
-      } catch (payErr) {
-        console.warn("Payment record notice:", payErr);
+        return;
       }
 
-      // 3. Refresh cart state (backend cleared items) and navigate
-      await fetchCart();
+      // ==========================================
+      // FLOW B: RAZORPAY ONLINE GATEWAY
+      // ==========================================
+      // Pre-load official Razorpay Checkout SDK
+      const sdkLoaded = await loadRazorpayScript();
+      if (!sdkLoaded && !window.Razorpay) {
+        throw new Error("Unable to establish secure handshake with Razorpay CDN. Please check network connection.");
+      }
 
-      navigate(`/order-confirmation?order_id=${createdOrder.id}`, {
-        state: {
-          order: createdOrder,
-          orderId: createdOrder.id,
-          payment: paymentRes?.payment || null,
-          paymentMethod: selectedPaymentMethod,
-        },
+      // Initialize payment on backend
+      const paymentInit = await initializePayment({
+        orderId: createdOrder.id,
+        paymentMethod: "razorpay",
       });
+
+      if (!paymentInit?.razorpay_order_id) {
+        throw new Error("Gateway failed to generate authoritative Razorpay order ID.");
+      }
+
+      // Handle simulated development testing when live Razorpay keys are not installed
+      if (!window.Razorpay && paymentInit.razorpay_order_id.startsWith("order_sim_")) {
+        setFeedback({
+          type: "info",
+          message: "Simulated Test Mode: Verifying payment authorization with security node...",
+        });
+        const verifyRes = await verifyPayment({
+          razorpay_order_id: paymentInit.razorpay_order_id,
+          razorpay_payment_id: `pay_sim_${Date.now()}`,
+          razorpay_signature: `sim_sig_${Date.now()}`,
+        });
+
+        if (verifyRes?.verified) {
+          await fetchCart();
+          navigate(`/order-confirmation?order_id=${createdOrder.id}`, {
+            state: {
+              order: createdOrder,
+              orderId: createdOrder.id,
+              payment: verifyRes.payment,
+              paymentMethod: "razorpay",
+            },
+          });
+          return;
+        }
+      }
+
+      // Standard Razorpay Checkout Modal
+      const selectedAddrObj = addresses.find((a) => a.id === selectedAddressId);
+      const customerName = user?.full_name || selectedAddrObj?.full_name || addressForm.full_name || "Valued Customer";
+      const customerEmail = user?.email || "customer@corvun.com";
+      const customerPhone = user?.phone || selectedAddrObj?.phone || addressForm.phone || "";
+
+      const options = {
+        key: paymentInit.key,
+        amount: paymentInit.amount,
+        currency: paymentInit.currency || "INR",
+        name: "CORVUN PC",
+        description: `Order #${createdOrder.order_number}`,
+        order_id: paymentInit.razorpay_order_id,
+        prefill: {
+          name: customerName,
+          email: customerEmail,
+          contact: customerPhone,
+        },
+        theme: {
+          color: "#ff1e27", // CORVUN Cyberpunk Neon Red
+          backdrop_color: "rgba(5, 8, 17, 0.85)",
+        },
+        modal: {
+          ondismiss: async () => {
+            setIsSubmitting(false);
+            setFeedback({
+              type: "warning",
+              message: "Payment modal was closed. Your order is safely preserved in Pending status; you can retry anytime.",
+            });
+            await reportPaymentFailure({
+              orderId: createdOrder.id,
+              razorpay_order_id: paymentInit.razorpay_order_id,
+              error_code: "CUSTOMER_CLOSED_MODAL",
+              error_description: "Customer closed Razorpay checkout modal before completing transaction.",
+            });
+          },
+        },
+        handler: async (response) => {
+          try {
+            setFeedback({
+              type: "info",
+              message: "Transaction captured. Authenticating cryptographic signature with CORVUN security gateway...",
+            });
+
+            // Crucial Security Rule: Only confirm upon authoritative backend verification
+            const verifyRes = await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (verifyRes?.verified) {
+              await fetchCart();
+              navigate(`/order-confirmation?order_id=${createdOrder.id}`, {
+                state: {
+                  order: createdOrder,
+                  orderId: createdOrder.id,
+                  payment: verifyRes.payment,
+                  paymentMethod: "razorpay",
+                },
+              });
+            } else {
+              throw new Error(verifyRes?.error || "Payment verification failed.");
+            }
+          } catch (verifyErr) {
+            console.error("Payment verification failure:", verifyErr);
+            const errMsg =
+              verifyErr.response?.data?.error ||
+              verifyErr.message ||
+              "Cryptographic signature check failed. If money was debited from your account, our automated webhook reconciliation will confirm your order or issue an automated refund.";
+            setFeedback({ type: "error", message: errMsg });
+            setIsSubmitting(false);
+          }
+        },
+      };
+
+      const razorpayInstance = new window.Razorpay(options);
+
+      razorpayInstance.on("payment.failed", async (response) => {
+        console.error("Razorpay payment failure:", response.error);
+        setIsSubmitting(false);
+        const failureReason = response.error?.description || response.error?.reason || "Transaction declined by bank.";
+        setFeedback({
+          type: "error",
+          message: `Payment Failed: ${failureReason}`,
+        });
+
+        await reportPaymentFailure({
+          orderId: createdOrder.id,
+          razorpay_order_id: paymentInit.razorpay_order_id,
+          razorpay_payment_id: response.error?.metadata?.payment_id,
+          error_code: response.error?.code || "PAYMENT_FAILED",
+          error_description: failureReason,
+        });
+      });
+
+      razorpayInstance.open();
     } catch (err) {
       console.error("Order creation error:", err);
       const errMsg =
         err.response?.data?.error ||
         err.response?.data?.message ||
+        err.message ||
         "Order deployment failed. Please check stock or address details and retry.";
       setFeedback({ type: "error", message: errMsg });
       setIsSubmitting(false);

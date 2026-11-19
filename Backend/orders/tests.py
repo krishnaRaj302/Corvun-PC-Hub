@@ -1,6 +1,6 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
-from accounts.models import User
+from accounts.models import User, Address
 from products.models import Category, Brand, Product
 from cart.models import Cart, CartItem
 
@@ -13,6 +13,18 @@ class OrderAPITest(TestCase):
             email="test@example.com",
             password="Test@1234",
             full_name="Test User"
+        )
+
+        # Create address
+        self.address = Address.objects.create(
+            user=self.user,
+            full_name="Test User",
+            phone="1234567890",
+            address_line1="Test Line 1",
+            city="City",
+            state="State",
+            postal_code="123456",
+            country="India"
         )
 
         # Create a test category
@@ -58,7 +70,7 @@ class OrderAPITest(TestCase):
         response = self.client.post(
             "/api/orders/create/",
             {
-                "shipping_address_id": 1
+                "shipping_address_id": self.address.id
             },
             format="json"
         )

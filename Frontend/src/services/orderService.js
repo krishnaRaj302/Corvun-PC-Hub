@@ -40,10 +40,12 @@ export const deleteAddress = async (addressId) => {
  * Create a new customer order from the active cart
  * @param {Object} params
  * @param {number} params.shippingAddressId
+ * @param {string} [params.paymentMethod='razorpay']
  */
-export const createOrder = async ({ shippingAddressId }) => {
+export const createOrder = async ({ shippingAddressId, paymentMethod = "razorpay" }) => {
   const response = await api.post("/orders/create/", {
     shipping_address_id: shippingAddressId,
+    payment_method: paymentMethod,
   });
   return response.data;
 };
