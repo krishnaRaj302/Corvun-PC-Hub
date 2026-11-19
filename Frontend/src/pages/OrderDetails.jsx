@@ -639,13 +639,29 @@ function OrderDetails() {
 
             <div className="payment-display-row">
               <div className="payment-card-badge">
-                <span className="card-brand-txt">VISA</span>
+                <span className="card-brand-txt">
+                  {order.payment_details?.method === "razorpay"
+                    ? "RZP"
+                    : order.payment_details?.method === "cod"
+                    ? "COD"
+                    : "PAY"}
+                </span>
               </div>
               <div className="payment-meta-text">
                 <span className="payment-type-headline">
-                  Credit Card ending in 4242
+                  {order.payment_details?.method === "razorpay"
+                    ? "Razorpay Online Gateway"
+                    : order.payment_details?.method === "cod"
+                    ? "Cash on Delivery"
+                    : "Authorized Payment Gateway"}
                 </span>
-                <span className="payment-exp-text">Expires 12/28</span>
+                <span className="payment-exp-text">
+                  {order.payment_details?.razorpay_payment_id
+                    ? `TXN ID: ${order.payment_details.razorpay_payment_id}`
+                    : order.payment_status === "completed"
+                    ? "Payment Verified & Settled"
+                    : "Payment Due on Arrival"}
+                </span>
               </div>
             </div>
           </section>

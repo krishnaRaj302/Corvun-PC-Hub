@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <radialGradient id="nvmeBg" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#151b2e"/>
+      <stop offset="100%" stop-color="#05070e"/>
+    </radialGradient>
+    <linearGradient id="ssdRgb" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="25%" stop-color="#00ffaa"/>
+      <stop offset="50%" stop-color="#ffee00"/>
+      <stop offset="75%" stop-color="#ff1e27"/>
+      <stop offset="100%" stop-color="#ff00cc"/>
+    </linearGradient>
+    <filter id="ssdGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#nvmeBg)"/>
+
+  <!-- Angled M.2 NVMe SSD Module -->
+  <g transform="translate(100, 110) rotate(-15 200 70)">
+    <!-- Main PCB Base -->
+    <rect x="0" y="0" width="400" height="110" rx="6" fill="#090d16" stroke="#1c2538" stroke-width="2"/>
+    
+    <!-- Gold Connector Pins on left -->
+    <rect x="-10" y="25" width="12" height="60" rx="2" fill="#d4af37"/>
+    <path d="M-10,40 H2 M-10,50 H2 M-10,60 H2 M-10,70 H2" stroke="#000" stroke-width="1.5"/>
+
+    <!-- Aluminum Grooved Heatspreader -->
+    <rect x="25" y="10" width="360" height="90" rx="4" fill="#131929" stroke="#2a3754" stroke-width="1.5"/>
+    <path d="M35,25 H375 M35,40 H375 M35,55 H375 M35,70 H375 M35,85 H375" stroke="#1d283d" stroke-width="2"/>
+
+    <!-- Glowing RGB Top Spine -->
+    <rect x="35" y="14" width="340" height="16" rx="4" fill="url(#ssdRgb)" filter="url(#ssdGlow)"/>
+    <rect x="40" y="17" width="330" height="8" rx="2" fill="#ffffff" opacity="0.6"/>
+
+    <!-- Heatspreader Label -->
+    <text x="200" y="60" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="900" fill="#f8fafc" letter-spacing="4">SPECTRUM GEAR RGB</text>
+    <text x="200" y="80" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold" fill="#00e5ff" letter-spacing="2">PCIE 4.0 NVME • 7,450 MB/S</text>
+  </g>
+</svg>

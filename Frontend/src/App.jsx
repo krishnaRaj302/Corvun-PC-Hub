@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Products from "./pages/Products";
 import PCBuilder from "./pages/PCBuilder";
 import ProductDetail from "./pages/ProductDetail";
+import Deals from "./pages/Deals";
 import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
@@ -88,6 +89,15 @@ function App() {
         element={
           <CustomerLayout>
             <PCBuilder />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/deals"
+        element={
+          <CustomerLayout>
+            <Deals />
           </CustomerLayout>
         }
       />

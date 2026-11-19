@@ -185,7 +185,7 @@ def admin_offers(request, offer_id=None):
         if search:
             offers = offers.filter(
                 Q(title__icontains=search) |
-                Q(product__name__icontains=search) |
+                Q(product__product_name__icontains=search) |
                 Q(category__name__icontains=search)
             )
 

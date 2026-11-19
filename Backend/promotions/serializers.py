@@ -142,7 +142,7 @@ class OfferSerializer(serializers.ModelSerializer):
 
     def get_product_name(self, obj):
         if obj.product:
-            return obj.product.name
+            return getattr(obj.product, "product_name", getattr(obj.product, "name", None))
         return None
 
     def get_category_name(self, obj):

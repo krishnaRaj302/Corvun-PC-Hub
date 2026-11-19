@@ -117,13 +117,28 @@ function Navbar() {
           </NavLink>
 
           <NavLink
-            to="/products?sort=price_low"
+            to="/deals"
             className={({ isActive }) =>
               `nav-link-item ${isActive ? "active" : ""}`
             }
             onClick={() => setMobileMenuOpen(false)}
           >
-            Deals
+            {({ isActive }) => (
+              <>
+                {isActive && <span className="nav-active-dot" style={{ color: "var(--corvun-red)", marginRight: "4px" }}>•</span>}
+                Deals
+              </>
+            )}
+          </NavLink>
+
+          <NavLink
+            to="/support"
+            className={({ isActive }) =>
+              `nav-link-item ${isActive ? "active" : ""}`
+            }
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Support
           </NavLink>
         </nav>
 

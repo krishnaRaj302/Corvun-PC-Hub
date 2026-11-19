@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <radialGradient id="comboBg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#16152b"/>
+      <stop offset="100%" stop-color="#05070e"/>
+    </radialGradient>
+    <linearGradient id="rainbowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff1e27"/>
+      <stop offset="25%" stop-color="#ff9100"/>
+      <stop offset="50%" stop-color="#00e5ff"/>
+      <stop offset="75%" stop-color="#7000ff"/>
+      <stop offset="100%" stop-color="#ff00bb"/>
+    </linearGradient>
+    <filter id="rgbGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#comboBg)"/>
+
+  <!-- Motherboard Traces / PCB circuit pattern -->
+  <g opacity="0.35" stroke="#00e5ff" stroke-width="1.5" fill="none">
+    <path d="M120,60 L200,60 L240,100 L240,150"/>
+    <path d="M80,180 L180,180 L220,220 L220,300"/>
+    <path d="M480,60 L400,60 L360,100 L360,150" stroke="#ff1e27"/>
+    <path d="M520,200 L420,200 L380,240 L380,300" stroke="#7000ff"/>
+    <circle cx="120" cy="60" r="3" fill="#00e5ff"/>
+    <circle cx="80" cy="180" r="3" fill="#00e5ff"/>
+    <circle cx="480" cy="60" r="3" fill="#ff1e27"/>
+    <circle cx="520" cy="200" r="3" fill="#7000ff"/>
+  </g>
+
+  <!-- Isometric Motherboard Socket Base -->
+  <g transform="translate(190, 60)">
+    <!-- Socket Frame -->
+    <polygon points="110,0 220,60 110,120 0,60" fill="#0f1422" stroke="#25324d" stroke-width="3"/>
+    
+    <!-- Heatsink Armor Fins -->
+    <polygon points="110,10 205,62 195,85 100,33" fill="#182035" stroke="#334466" stroke-width="1"/>
+    <polygon points="10,65 105,117 95,140 0,88" fill="#182035" stroke="#334466" stroke-width="1"/>
+
+    <!-- Central Glowing Quantum Processor / IHS -->
+    <g transform="translate(45, 25)">
+      <rect x="0" y="0" width="130" height="130" rx="16" fill="#090d16" stroke="url(#rainbowGrad)" stroke-width="4" filter="url(#rgbGlow)"/>
+      
+      <!-- Inner core layers -->
+      <rect x="12" y="12" width="106" height="106" rx="10" fill="#101524" stroke="#ff1e27" stroke-width="1.5"/>
+      
+      <!-- Labyrinth Rainbow Circuit Lines -->
+      <path d="M25,25 H105 V105 H25 Z" fill="none" stroke="url(#rainbowGrad)" stroke-width="2.5" opacity="0.8"/>
+      <path d="M35,35 H95 V95 H35 Z" fill="none" stroke="url(#rainbowGrad)" stroke-width="2" opacity="0.9"/>
+      <path d="M45,45 H85 V85 H45 Z" fill="none" stroke="#00e5ff" stroke-width="2"/>
+
+      <!-- Center Logo & Branding -->
+      <rect x="35" y="45" width="60" height="40" rx="4" fill="#070a12" stroke="#ff1e27" stroke-width="1"/>
+      <text x="65" y="60" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" font-weight="bold" fill="#ff5964" letter-spacing="1">QUANTUM</text>
+      <text x="65" y="72" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="900" fill="#ffffff" letter-spacing="2">CORE X7</text>
+      <text x="65" y="80" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="5" font-weight="bold" fill="#00e5ff">7800X3D</text>
+    </g>
+  </g>
+</svg>
