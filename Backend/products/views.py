@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
@@ -435,10 +436,13 @@ def _handle_logo_upload(request):
     if not file_obj:
         return None
     ext = os.path.splitext(file_obj.name)[1].lower()
-    allowed_extensions = [".png", ".jpg", ".jpeg", ".webp", ".svg"]
-    if ext not in allowed_extensions:
+    allowed_extensions = [".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".avif", ".ico", ".bmp"]
+    content_type = getattr(file_obj, "content_type", "")
+    is_valid_type = (ext in allowed_extensions) or (content_type and content_type.startswith("image/"))
+    if not is_valid_type:
         return None
-    safe_name = f"{uuid.uuid4().hex[:10]}_{file_obj.name.replace(' ', '_')}"
+    clean_name = re.sub(r'[^a-zA-Z0-9_\.-]', '_', os.path.basename(file_obj.name))
+    safe_name = f"{uuid.uuid4().hex[:10]}_{clean_name}"
     brands_dir = os.path.join(settings.MEDIA_ROOT, "brands")
     os.makedirs(brands_dir, exist_ok=True)
     file_path = os.path.join(brands_dir, safe_name)
@@ -459,7 +463,7 @@ def upload_brand_logo(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
         return Response(
-            {"error": "Invalid file type. Allowed: .png, .jpg, .jpeg, .webp, .svg"},
+            {"error": "Invalid file type. Allowed formats: PNG, JPG, JPEG, WEBP, SVG, GIF, AVIF, BMP, ICO."},
             status=status.HTTP_400_BAD_REQUEST
         )
     return Response(
@@ -471,9 +475,17 @@ def upload_brand_logo(request):
 @permission_classes([IsAdmin])
 def create_brand(request):
     data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
-    uploaded_logo = _handle_logo_upload(request)
-    if uploaded_logo:
+    file_obj = request.FILES.get("logo")
+    if file_obj:
+        uploaded_logo = _handle_logo_upload(request)
+        if not uploaded_logo:
+            return Response(
+                {"error": "Unsupported image format. Allowed: PNG, JPG, JPEG, WEBP, SVG, GIF, AVIF, BMP, ICO."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         data["logo"] = uploaded_logo
+    elif "logo" in data and not isinstance(data["logo"], str):
+        del data["logo"]
 
     serializer = BrandSerializer(data=data)
     if serializer.is_valid():
@@ -503,9 +515,17 @@ def update_brand(request, brand_id):
         )
 
     data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
-    uploaded_logo = _handle_logo_upload(request)
-    if uploaded_logo:
+    file_obj = request.FILES.get("logo")
+    if file_obj:
+        uploaded_logo = _handle_logo_upload(request)
+        if not uploaded_logo:
+            return Response(
+                {"error": "Unsupported image format. Allowed: PNG, JPG, JPEG, WEBP, SVG, GIF, AVIF, BMP, ICO."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         data["logo"] = uploaded_logo
+    elif "logo" in data and not isinstance(data["logo"], str):
+        del data["logo"]
 
     partial = request.method == "PATCH"
     serializer = BrandSerializer(brand, data=data, partial=partial)

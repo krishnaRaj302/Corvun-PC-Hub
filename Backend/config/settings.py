@@ -178,4 +178,12 @@ SIMPLE_JWT = {
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_placeholder")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
 RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET", "")
+
+# ============================================================
+# FILE UPLOAD SIZE LIMITS
+# Allow high-resolution brand vectors, manufacturer assets, and product media up to 50MB
+# ============================================================
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
+
 RAZORPAY_CURRENCY = "INR"

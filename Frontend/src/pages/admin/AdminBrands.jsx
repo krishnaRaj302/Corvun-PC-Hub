@@ -98,16 +98,22 @@ export default function AdminBrands() {
   const handleFileChange = (file) => {
     if (!file) return;
 
-    // Validate type
-    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml"];
-    if (!validTypes.includes(file.type)) {
-      showToast("Please select a valid image file (PNG, JPG, WEBP, SVG).", "error");
+    // Validate type: support standard image MIME types and file extensions (handles Windows SVG/AVIF cases)
+    const validExtensions = [".png", ".jpg", ".jpeg", ".webp", ".svg", ".avif", ".gif", ".bmp", ".ico"];
+    const ext = "." + (file.name.split(".").pop() || "").toLowerCase();
+    const isImageMime = file.type && file.type.startsWith("image/");
+    const isValidExt = validExtensions.includes(ext);
+
+    if (!isImageMime && !isValidExt) {
+      showToast("Please select a valid image file (PNG, JPG, WEBP, SVG, AVIF, GIF).", "error");
       return;
     }
 
-    // Validate size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      showToast("Logo file size must be less than 5MB.", "error");
+    // Validate size (allow high-resolution assets up to 25MB)
+    const MAX_SIZE_MB = 25;
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      const actualSizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      showToast(`Logo file size (${actualSizeMb}MB) exceeds the maximum ${MAX_SIZE_MB}MB limit.`, "error");
       return;
     }
 
@@ -210,8 +216,12 @@ export default function AdminBrands() {
           setFormErrors({
             name: Array.isArray(resErrors.name) ? resErrors.name[0] : resErrors.name,
           });
+        } else if (resErrors.logo) {
+          showToast(Array.isArray(resErrors.logo) ? resErrors.logo[0] : resErrors.logo, "error");
         } else if (resErrors.error) {
           showToast(resErrors.error, "error");
+        } else if (resErrors.detail) {
+          showToast(resErrors.detail, "error");
         } else {
           showToast("Failed to save brand. Please check your inputs.", "error");
         }
@@ -634,7 +644,7 @@ export default function AdminBrands() {
                       type="file"
                       ref={fileInputRef}
                       style={{ display: "none" }}
-                      accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                      accept="image/*,.png,.jpg,.jpeg,.webp,.svg,.avif,.gif,.ico,.bmp"
                       onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
                           handleFileChange(e.target.files[0]);
@@ -689,7 +699,7 @@ export default function AdminBrands() {
                           </svg>
                         </div>
                         <p className="ab-upload-title">Drag & drop your logo here</p>
-                        <p className="ab-upload-subtitle">or click to browse</p>
+                        <p className="ab-upload-subtitle">PNG, JPG, WEBP, SVG, AVIF up to 25MB</p>
                         <button
                           type="button"
                           className="ab-upload-btn"
@@ -825,7 +835,7 @@ export default function AdminBrands() {
                       type="file"
                       ref={fileInputRef}
                       style={{ display: "none" }}
-                      accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                      accept="image/*,.png,.jpg,.jpeg,.webp,.svg,.avif,.gif,.ico,.bmp"
                       onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
                           handleFileChange(e.target.files[0]);
@@ -879,7 +889,7 @@ export default function AdminBrands() {
                             <line x1="12" y1="3" x2="12" y2="15" />
                           </svg>
                         </div>
-                        <p className="ab-upload-subtitle">Click to upload or drag and drop</p>
+                        <p className="ab-upload-subtitle">Click to upload or drag & drop (up to 25MB)</p>
                         <button
                           type="button"
                           className="ab-btn-change-logo-text"
