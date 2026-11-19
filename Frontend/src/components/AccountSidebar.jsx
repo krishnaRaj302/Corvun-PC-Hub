@@ -266,9 +266,9 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
             )}
           </Link>
 
-          {/* 5. Questions & Answers / Support */}
+          {/* 5. Questions & Answers / Customer Support */}
           <Link
-            to="/support"
+            to="/questions"
             className={`account-nav-item ${activeItem === "support" || activeItem === "questions" ? "active-nav-pill" : ""}`}
           >
             <div className="account-nav-left">

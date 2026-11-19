@@ -21,6 +21,7 @@ import OrderDetails from "./pages/OrderDetails";
 import Referrals from "./pages/Referrals";
 import Wallet from "./pages/Wallet";
 import CustomerSupport from "./pages/CustomerSupport";
+import SupportDesk from "./pages/SupportDesk";
 import MyReviews from "./pages/MyReviews";
 
 // Auth Pages
@@ -194,6 +195,15 @@ function App() {
 
       <Route
         path="/support"
+        element={
+          <CustomerLayout>
+            <SupportDesk />
+          </CustomerLayout>
+        }
+      />
+
+      <Route
+        path="/questions"
         element={
           <CustomerLayout>
             <CustomerSupport />
