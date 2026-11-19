@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import "./Navbar.css";
 
 // Corvun Diamond Logo Icon
@@ -27,6 +28,7 @@ export const CorvunLogo = () => (
 
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -197,7 +199,7 @@ function Navbar() {
               <circle cx="20" cy="21" r="1" />
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
-            <span className="cart-badge-indicator">0</span>
+            <span className="cart-badge-indicator">{cartCount}</span>
           </Link>
 
           {/* User Session */}
@@ -231,28 +233,64 @@ function Navbar() {
                   className="user-dropdown-menu"
                   onMouseLeave={() => setUserDropdownOpen(false)}
                 >
-                  <div className="dropdown-user-header">
+                  <Link
+                    to="/profile"
+                    className="dropdown-user-header"
+                    onClick={() => setUserDropdownOpen(false)}
+                    title="View Personal Profile"
+                  >
                     <span className="dropdown-name">{user?.full_name}</span>
                     <span className="dropdown-email">{user?.email}</span>
                     <span className="dropdown-role-badge">{user?.role}</span>
-                  </div>
+                  </Link>
 
                   <div className="dropdown-divider" />
 
                   <Link
-                    to="/account"
+                    to="/profile"
                     className="dropdown-item"
                     onClick={() => setUserDropdownOpen(false)}
                   >
-                    Workstation Account
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span>User Profile</span>
                   </Link>
 
                   <Link
-                    to="/orders"
+                    to="/my-orders"
                     className="dropdown-item"
                     onClick={() => setUserDropdownOpen(false)}
                   >
-                    Order History
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    </svg>
+                    <span>My Orders</span>
+                  </Link>
+
+                  <Link
+                    to="/addresses"
+                    className="dropdown-item"
+                    onClick={() => setUserDropdownOpen(false)}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <span>Saved Addresses</span>
+                  </Link>
+
+                  <Link
+                    to="/wishlist"
+                    className="dropdown-item"
+                    onClick={() => setUserDropdownOpen(false)}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                    <span>My Wishlist</span>
                   </Link>
 
                   {user?.role === "admin" && (
@@ -261,7 +299,11 @@ function Navbar() {
                       className="dropdown-item admin-link"
                       onClick={() => setUserDropdownOpen(false)}
                     >
-                      Admin Terminal
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="4 17 10 11 4 5" />
+                        <line x1="12" y1="19" x2="20" y2="19" />
+                      </svg>
+                      <span>Admin Terminal</span>
                     </Link>
                   )}
 
@@ -272,7 +314,12 @@ function Navbar() {
                     className="dropdown-item logout-btn"
                     onClick={handleLogout}
                   >
-                    Disconnect // Logout
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    <span>Disconnect // Logout</span>
                   </button>
                 </div>
               )}

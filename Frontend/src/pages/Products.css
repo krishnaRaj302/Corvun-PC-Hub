@@ -631,3 +631,119 @@
     display: flex;
   }
 }
+
+/* Add to Cart Button on Card */
+.prod-add-cart-btn {
+  margin-top: 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(239, 56, 66, 0.12);
+  color: var(--corvun-red);
+  border: 1px solid rgba(239, 56, 66, 0.35);
+  border-radius: var(--corvun-radius-sm);
+  font-family: var(--corvun-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prod-add-cart-btn:hover:not(:disabled) {
+  background: var(--corvun-red);
+  color: #ffffff;
+  border-color: var(--corvun-red);
+  box-shadow: 0 0 12px var(--corvun-red-glow);
+  transform: translateY(-1px);
+}
+
+.prod-add-cart-btn:disabled,
+.prod-add-cart-btn.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: var(--corvun-border);
+  color: var(--corvun-text-muted);
+  background: var(--corvun-bg-secondary);
+}
+
+.prod-add-cart-btn .btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(239, 56, 66, 0.3);
+  border-top-color: var(--corvun-red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Floating Toast Notification */
+.catalog-toast-alert {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: var(--corvun-radius-sm);
+  font-family: var(--corvun-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: #0f121a;
+  border: 1px solid var(--corvun-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(239, 56, 66, 0.2);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.catalog-toast-alert.alert-success {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.catalog-toast-alert.alert-success .toast-dot {
+  background-color: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+.catalog-toast-alert.alert-error {
+  border-color: var(--corvun-red);
+  color: var(--corvun-red);
+}
+
+.catalog-toast-alert.alert-error .toast-dot {
+  background-color: var(--corvun-red);
+  box-shadow: 0 0 8px var(--corvun-red);
+}
+
+.catalog-toast-alert.alert-warning {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.catalog-toast-alert.alert-warning .toast-dot {
+  background-color: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+.catalog-toast-alert .toast-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+

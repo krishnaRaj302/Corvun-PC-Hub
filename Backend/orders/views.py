@@ -1,3 +1,5 @@
+import uuid
+from django.db import transaction
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -12,155 +14,201 @@ from .serializers import OrderSerializer, OrderItemSerializer
 from cart.models import Cart
 from accounts.models import Address, User
 from accounts.permissions import IsAdmin
-from products.models import Category, Product
+from products.models import Category, Product, ProductVariant
+
+
+def confirm_order_and_deduct_stock(order):
+    """
+    Atomically verifies stock, deducts inventory, clears cart items, and confirms order.
+    Guarantees idempotency (runs only once per order).
+    Must be called inside a transaction or starts its own.
+    """
+    if order.payment_status == "completed":
+        # Already confirmed and deducted
+        return True, "Order already confirmed."
+
+    with transaction.atomic():
+        # Lock order items
+        order_items = OrderItem.objects.filter(order=order).select_for_update()
+
+        # Step 1: Verify available stock for all items under lock
+        for item in order_items:
+            if item.product_variant_id:
+                variant = ProductVariant.objects.select_for_update().get(id=item.product_variant_id)
+                if variant.stock < item.quantity:
+                    return False, f"Insufficient stock for {item.product_name} ({variant.variant_name}). Available: {variant.stock}"
+            else:
+                # Variant not set, check base product
+                try:
+                    product = Product.objects.select_for_update().get(sku=item.sku)
+                except Product.DoesNotExist:
+                    product = Product.objects.select_for_update().filter(product_name=item.product_name).first()
+                if product and product.stock < item.quantity:
+                    return False, f"Insufficient stock for {item.product_name}. Available: {product.stock}"
+
+        # Step 2: Deduct inventory
+        for item in order_items:
+            if item.product_variant_id:
+                variant = ProductVariant.objects.select_for_update().get(id=item.product_variant_id)
+                variant.stock -= item.quantity
+                variant.save(update_fields=["stock"])
+            else:
+                product = Product.objects.select_for_update().filter(sku=item.sku).first()
+                if not product:
+                    product = Product.objects.select_for_update().filter(product_name=item.product_name).first()
+                if product:
+                    product.stock -= item.quantity
+                    product.save(update_fields=["stock"])
+
+        # Step 3: Clear customer's cart
+        try:
+            cart = Cart.objects.get(user=order.user)
+            cart.items.all().delete()
+        except Cart.DoesNotExist:
+            pass
+
+        # Step 4: Update order status
+        order.payment_status = "completed"
+        if order.status == "pending":
+            order.status = "processing"
+        order.save(update_fields=["payment_status", "status", "updated_at"])
+
+        return True, "Order confirmed and inventory successfully allocated."
 
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def create_order(request):
-
-    # Get the logged-in user's cart
-    try:
-        cart = Cart.objects.get(user=request.user)
-    except Cart.DoesNotExist:
-        return Response(
-            {"error": "Cart not found."},
-            status=status.HTTP_404_NOT_FOUND
-        )
-
-    # Get all items from the cart
-    cart_items = cart.items.all()
-
-    # Check whether the cart is empty
-    if not cart_items.exists():
-        return Response(
-            {"error": "Your cart is empty."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    # Check stock before creating the order
-    for item in cart_items:
-
-        # Use variant stock when the cart item has a variant
-        if item.variant:
-            available_stock = item.variant.stock
-        else:
-            # Otherwise use the main product stock
-            available_stock = item.product.stock
-
-        # Check whether enough stock is available
-        if item.quantity > available_stock:
+    with transaction.atomic():
+        # Get the logged-in user's cart with lock
+        try:
+            cart = Cart.objects.select_for_update().get(user=request.user)
+        except Cart.DoesNotExist:
             return Response(
-                {
-                    "error": f"Not enough stock for {item.product.product_name}."
-                },
+                {"error": "Cart not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        cart_items = cart.items.select_related("product", "variant").all()
+
+        if not cart_items.exists():
+            return Response(
+                {"error": "Your cart is empty."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-    # Calculate subtotal
-    subtotal = 0
+        # Check stock before creating the order
+        for item in cart_items:
+            if item.variant:
+                available_stock = item.variant.stock
+            else:
+                available_stock = item.product.stock
 
-    for item in cart_items:
+            if item.quantity > available_stock:
+                return Response(
+                    {
+                        "error": f"Not enough stock for {item.product.product_name}. Only {available_stock} available."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
-        # Get the product price
-        if item.variant and item.variant.price is not None:
-            price = item.variant.price
-        else:
-            price = item.product.base_price
+        # Calculate authoritative subtotal directly from database prices
+        subtotal = 0
+        for item in cart_items:
+            if item.variant and item.variant.price is not None:
+                price = item.variant.price
+            else:
+                price = item.product.base_price
+            subtotal += price * item.quantity
 
-        # Add item total to subtotal
-        subtotal += price * item.quantity
+        # Create collision-free order number
+        order_number = f"ORD-{request.user.id}-{uuid.uuid4().hex[:8].upper()}"
 
-    # Create a simple order number
-    order_number = f"ORD-{request.user.id}-{Order.objects.count() + 1}"
+        # Get shipping address
+        shipping_address_id = request.data.get("shipping_address_id")
+        if not shipping_address_id:
+            return Response(
+                {"error": "Shipping address is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-    # Get the shipping address selected by the user
-    shipping_address_id = request.data.get("shipping_address_id")
+        try:
+            shipping_address = Address.objects.get(
+                id=shipping_address_id,
+                user=request.user
+            )
+        except Address.DoesNotExist:
+            return Response(
+                {"error": "Invalid shipping address."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-    # Check whether an address was provided
-    if not shipping_address_id:
-        return Response(
-            {"error": "Shipping address is required."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        payment_method = str(request.data.get("payment_method", "razorpay")).strip().lower()
 
-    # Check that the address belongs to the logged-in user
-    try:
-        shipping_address = Address.objects.get(
-            id=shipping_address_id,
-            user=request.user
-        )
-    except Address.DoesNotExist:
-        return Response(
-            {"error": "Invalid shipping address."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    # Create the order
-    order = Order.objects.create(
-        user=request.user,
-        order_number=order_number,
-        shipping_address_id=shipping_address.id,
-        subtotal=subtotal,
-        discount_amount=0,
-        shipping_amount=0,
-        tax_amount=0,
-        total_amount=subtotal,
-        status="pending",
-        payment_status="pending"
-    )
-
-    # Create order items
-    for item in cart_items:
-
-        # Get the product price
-        if item.variant and item.variant.price is not None:
-            price = item.variant.price
-            variant_name = item.variant.variant_name
-            product_variant = item.variant
-        else:
-            price = item.product.base_price
-            variant_name = ""
-            product_variant = None
-
-        # Create the order item
-        OrderItem.objects.create(
-            order=order,
-            product_variant=product_variant,
-            product_name=item.product.product_name,
-            variant_name=variant_name,
-            sku=item.product.sku,
-            quantity=item.quantity,
-            unit_price=price,
+        # Create the order
+        order = Order.objects.create(
+            user=request.user,
+            order_number=order_number,
+            shipping_address_id=shipping_address.id,
+            subtotal=subtotal,
             discount_amount=0,
+            shipping_amount=0,
             tax_amount=0,
-            total_amount=price * item.quantity,
-            item_status="pending"
+            total_amount=subtotal,
+            status="pending",
+            payment_status="pending"
         )
 
-    for item in cart_items:
-        if item.variant:
-            item.variant.stock -= item.quantity
-            item.variant.save()
-        else:
-        # Otherwise reduce the main product stock
-            item.product.stock -= item.quantity
-            item.product.save()
+        # Create order items
+        for item in cart_items:
+            if item.variant and item.variant.price is not None:
+                price = item.variant.price
+                variant_name = item.variant.variant_name
+                product_variant = item.variant
+            else:
+                price = item.product.base_price
+                variant_name = ""
+                product_variant = None
 
-    # Clear the cart after creating the order
-    cart_items.delete()
+            OrderItem.objects.create(
+                order=order,
+                product_variant=product_variant,
+                product_name=item.product.product_name,
+                variant_name=variant_name,
+                sku=item.product.sku,
+                quantity=item.quantity,
+                unit_price=price,
+                discount_amount=0,
+                tax_amount=0,
+                total_amount=price * item.quantity,
+                item_status="pending"
+            )
 
-    # Convert the order into JSON format
-    serializer = OrderSerializer(order)
+        # For Cash On Delivery: deduct stock immediately and clear cart
+        if payment_method == "cod":
+            for item in cart_items:
+                if item.variant:
+                    item.variant.stock -= item.quantity
+                    item.variant.save(update_fields=["stock"])
+                else:
+                    item.product.stock -= item.quantity
+                    item.product.save(update_fields=["stock"])
+            cart_items.delete()
+            order.status = "processing"
+            order.save(update_fields=["status"])
+        # For Razorpay (online): DO NOT deduct stock yet and DO NOT clear cart yet!
+        # Stock will be atomically locked and deducted upon payment verification.
 
-    # Return the created order
-    return Response(
-        {
-            "message": "Order created successfully.",
-            "order": serializer.data
-        },
-        status=status.HTTP_201_CREATED
-    )
+        serializer = OrderSerializer(order)
+
+        return Response(
+            {
+                "message": "Order created successfully.",
+                "order": serializer.data
+            },
+            status=status.HTTP_201_CREATED
+        )
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])

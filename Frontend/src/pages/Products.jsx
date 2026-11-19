@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { getProducts, getCategories, getBrands } from "../services/productService";
 import { resolveImageUrl } from "../utils/imageUrl";
+import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import "./Products.css";
 
 function Products() {
@@ -28,9 +30,76 @@ function Products() {
   const [searchInput, setSearchInput] = useState(currentSearch);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  // Cart interaction states
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { addToCartItem } = useCart();
+  const [actionLoading, setActionLoading] = useState({});
+  const [feedback, setFeedback] = useState(null);
+
+  // Auto-dismiss feedback after 4 seconds
+  useEffect(() => {
+    if (!feedback) return;
+    const timer = setTimeout(() => {
+      setFeedback(null);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [feedback]);
+
+  const handleAddToCart = async (product) => {
+    if (product.stock === 0) {
+      setFeedback({
+        type: "error",
+        message: `${product.product_name} is depleted from stock.`,
+      });
+      return;
+    }
+
+    if (!isAuthenticated) {
+      setFeedback({
+        type: "warning",
+        message: "Please authenticate to deploy components to your workstation cart.",
+      });
+      setTimeout(() => navigate("/login"), 1500);
+      return;
+    }
+
+    setActionLoading((prev) => ({ ...prev, [product.id]: true }));
+
+    try {
+      const res = await addToCartItem({
+        productId: product.id,
+        quantity: 1,
+      });
+
+      setFeedback({
+        type: "success",
+        message: res?.message || `✓ Added ${product.product_name} to your workstation cart!`,
+      });
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      const errMsg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Failed to deploy component to cart.";
+      setFeedback({
+        type: "error",
+        message: errMsg,
+      });
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [product.id]: false }));
+    }
+  };
+
   // Sync search input when URL changes
   useEffect(() => {
-    setSearchInput(currentSearch);
+    let isMounted = true;
+    Promise.resolve().then(() => {
+      if (isMounted) setSearchInput(currentSearch);
+    });
+    return () => {
+      isMounted = false;
+    };
   }, [currentSearch]);
 
   // Load Categories and Brands once
@@ -114,6 +183,14 @@ function Products() {
 
   return (
     <div className="products-catalog-page">
+      {/* Action Notification Toast */}
+      {feedback && (
+        <div className={`catalog-toast-alert alert-${feedback.type}`}>
+          <span className="toast-dot" />
+          <span>{feedback.message}</span>
+        </div>
+      )}
+
       {/* Telemetry Header */}
       <div className="catalog-top-banner">
         <div className="catalog-banner-inner">
@@ -367,6 +444,32 @@ function Products() {
 
                           <span className="sku-badge">SKU: {prod.sku}</span>
                         </div>
+
+                        <button
+                          type="button"
+                          className={`prod-add-cart-btn ${isOutOfStock ? "disabled" : ""}`}
+                          disabled={isOutOfStock || Boolean(actionLoading[prod.id])}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleAddToCart(prod);
+                          }}
+                        >
+                          {actionLoading[prod.id] ? (
+                            <span className="btn-spinner" />
+                          ) : isOutOfStock ? (
+                            "DEPLETED"
+                          ) : (
+                            <>
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="9" cy="21" r="1" />
+                                <circle cx="20" cy="21" r="1" />
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                              </svg>
+                              ADD TO RIG
+                            </>
+                          )}
+                        </button>
                       </div>
                     </Link>
                   );

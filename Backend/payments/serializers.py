@@ -36,14 +36,22 @@ class PaymentSerializer(serializers.ModelSerializer):
             "coupon",
             "payment_method",
             "amount",
+            "currency",
             "status",
+            "razorpay_order_id",
+            "razorpay_payment_id",
+            "razorpay_signature",
+            "error_code",
+            "error_description",
             "created_at",
+            "updated_at",
         ]
 
         read_only_fields = [
             "id",
             "user",
             "created_at",
+            "updated_at",
         ]
 
 
@@ -79,6 +87,9 @@ class RefundSerializer(serializers.ModelSerializer):
             "gateway",
             "reason",
             "status",
+            "razorpay_refund_id",
+            "arn",
+            "gateway_response",
             "created_at",
             "processed_at",
         ]
