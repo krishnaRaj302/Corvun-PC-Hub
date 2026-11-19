@@ -310,14 +310,24 @@ def delete_product(request, product_id):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # Delete the product from the database
-    product.delete()
+    try:
+        # Dissociate any order items referencing product variants so the historical order records remain intact
+        from orders.models import OrderItem
+        OrderItem.objects.filter(product_variant__product=product).update(product_variant=None)
 
-    # Send success response
-    return Response(
-        {"message": "Product deleted successfully."},
-        status=status.HTTP_200_OK
-    )
+        # Delete the product and its cascaded variants, images, and specifications
+        product.delete()
+
+        # Send success response
+        return Response(
+            {"message": "Product deleted successfully."},
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to delete product: {str(e)}"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["POST"])
