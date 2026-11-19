@@ -548,12 +548,18 @@ function Home() {
                         </Link>
                       </h3>
 
-                      {/* Rating Line */}
-                      <div className="card-rating-line">
-                        <span className="rating-star">★</span>
-                        <span className="rating-value">4.8</span>
-                        <span className="rating-count">(120 reviews)</span>
-                      </div>
+                      {/* Rating Line (Only if reviews exist) */}
+                      {prod.reviews_count > 0 || prod.rating ? (
+                        <div className="card-rating-line">
+                          <span className="rating-star">★</span>
+                          <span className="rating-value">{prod.rating || prod.average_rating || "5.0"}</span>
+                          <span className="rating-count">({prod.reviews_count} {prod.reviews_count === 1 ? "review" : "reviews"})</span>
+                        </div>
+                      ) : (
+                        <div className="card-rating-line">
+                          <span className="rating-count" style={{ opacity: 0.65 }}>No reviews yet</span>
+                        </div>
+                      )}
 
                       {/* Price & Cart Action */}
                       <div className="card-bottom-action-row">

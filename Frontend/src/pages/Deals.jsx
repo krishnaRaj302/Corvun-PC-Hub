@@ -276,76 +276,95 @@ export default function Deals() {
             </div>
           </div>
 
-          {/* Deals Grid (6 Cards) */}
-          <div className="deals-grid">
-            {deals.map((deal) => {
-              const isCopied = copiedCode === deal.code;
+          {/* Deals Grid or Empty State */}
+          {loading ? (
+            <div className="deals-empty-state">
+              <span className="empty-state-title">Loading Active Telemetry...</span>
+            </div>
+          ) : deals.length === 0 ? (
+            <div className="deals-empty-state">
+              <div className="empty-state-icon">
+                <LightningBoltIcon />
+              </div>
+              <h3 className="empty-state-title">No Active Flash Deals Scheduled</h3>
+              <p className="empty-state-desc">
+                All component inventory is currently allocated at standard tier pricing. Special discount drops and hardware bundles will appear here when activated by the administration.
+              </p>
+              <Link to="/products" className="empty-browse-btn">
+                Explore Available Hardware →
+              </Link>
+            </div>
+          ) : (
+            <div className="deals-grid">
+              {deals.map((deal) => {
+                const isCopied = copiedCode === deal.code;
 
-              return (
-                <article key={deal.id} className="deal-card">
-                  {/* Card Media Header */}
-                  <div className="deal-media-frame">
-                    <img
-                      src={deal.imageUrl}
-                      alt={deal.title}
-                      className="deal-image"
-                      loading="lazy"
-                    />
+                return (
+                  <article key={deal.id} className="deal-card">
+                    {/* Card Media Header */}
+                    <div className="deal-media-frame">
+                      <img
+                        src={deal.imageUrl}
+                        alt={deal.title}
+                        className="deal-image"
+                        loading="lazy"
+                      />
 
-                    {/* Top-Left Floating Tag (Featured / Hot Bundle) */}
-                    {deal.badge && (
-                      <span className={`deal-status-tag ${deal.badge === "HOT BUNDLE" ? "hot-bundle" : "featured"}`}>
-                        {deal.badge}
-                      </span>
-                    )}
+                      {/* Top-Left Floating Tag (Featured / Hot Bundle) */}
+                      {deal.badge && (
+                        <span className={`deal-status-tag ${deal.badge === "HOT BUNDLE" ? "hot-bundle" : "featured"}`}>
+                          {deal.badge}
+                        </span>
+                      )}
 
-                    {/* Top-Right Floating Discount Tag */}
-                    <span className="deal-discount-badge">{deal.discount}</span>
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="deal-body">
-                    <h3 className="deal-title">{deal.title}</h3>
-                    <p className="deal-description">{deal.description}</p>
-
-                    {/* Expiration Tag */}
-                    <div className="deal-expiry-row">
-                      <ClockIcon />
-                      <span className="deal-expiry-text">
-                        Expires in: {deal.expiresInDays} days
-                      </span>
+                      {/* Top-Right Floating Discount Tag */}
+                      <span className="deal-discount-badge">{deal.discount}</span>
                     </div>
 
-                    {/* Card Footer / Action Row */}
-                    <div className="deal-footer-row">
-                      {/* Left: Promo Code Chip */}
-                      <div
-                        className="deal-promo-chip"
-                        onClick={(e) => handleCopyCode(deal.code, e)}
-                        title="Click to copy promo code"
-                      >
-                        <span className="promo-label">USE CODE</span>
-                        <div className="promo-code-box">
-                          <code className="promo-code-text">{deal.code}</code>
-                          <CopyIcon />
-                          {isCopied && <span className="copied-pill">COPIED</span>}
-                        </div>
+                    {/* Card Body */}
+                    <div className="deal-body">
+                      <h3 className="deal-title">{deal.title}</h3>
+                      <p className="deal-description">{deal.description}</p>
+
+                      {/* Expiration Tag */}
+                      <div className="deal-expiry-row">
+                        <ClockIcon />
+                        <span className="deal-expiry-text">
+                          Expires in: {deal.expiresInDays} days
+                        </span>
                       </div>
 
-                      {/* Right: Action Button */}
-                      <button
-                        type="button"
-                        className="deal-action-btn"
-                        onClick={() => handleDealAction(deal)}
-                      >
-                        <span>{deal.buttonText || "Shop Now"}</span>
-                      </button>
+                      {/* Card Footer / Action Row */}
+                      <div className="deal-footer-row">
+                        {/* Left: Promo Code Chip */}
+                        <div
+                          className="deal-promo-chip"
+                          onClick={(e) => handleCopyCode(deal.code, e)}
+                          title="Click to copy promo code"
+                        >
+                          <span className="promo-label">USE CODE</span>
+                          <div className="promo-code-box">
+                            <code className="promo-code-text">{deal.code}</code>
+                            <CopyIcon />
+                            {isCopied && <span className="copied-pill">COPIED</span>}
+                          </div>
+                        </div>
+
+                        {/* Right: Action Button */}
+                        <button
+                          type="button"
+                          className="deal-action-btn"
+                          onClick={() => handleDealAction(deal)}
+                        >
+                          <span>{deal.buttonText || "Shop Now"}</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

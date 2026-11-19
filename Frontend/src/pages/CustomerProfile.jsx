@@ -19,12 +19,12 @@ function CustomerProfile() {
       }
     }
     return {
-      fullName: user?.full_name || "Vikramaditya Rao",
-      email: user?.email || "vikram.rao@corvun.io",
-      phone: "+91 98840 54321",
-      dob: "1994-11-14",
-      gender: "Male",
-      membershipTier: "Prime Member",
+      fullName: user?.full_name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      dob: user?.date_of_birth || "",
+      gender: user?.gender || "",
+      membershipTier: "Standard Builder",
     };
   });
 

@@ -365,7 +365,7 @@ export default function ProductDetail() {
           reviewsData.reduce((acc, curr) => acc + (curr.rating || 5), 0) /
           reviewCount
         ).toFixed(1)
-      : "5.0";
+      : "0.0";
 
   // Rating distribution counts
   const ratingDistribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -530,15 +530,23 @@ export default function ProductDetail() {
                 </span>
               ))}
             </div>
-            <span className="rating-score">{avgRating}</span>
-            <span className="reviews-count-label">
-              ({reviewCount > 0 ? `${reviewCount} reviews` : "Verified Telemetry"})
-            </span>
+            {reviewCount > 0 ? (
+              <>
+                <span className="rating-score">{avgRating}</span>
+                <span className="reviews-count-label">
+                  ({reviewCount} {reviewCount === 1 ? "review" : "reviews"})
+                </span>
+              </>
+            ) : (
+              <span className="reviews-count-label" style={{ opacity: 0.7 }}>
+                No reviews yet
+              </span>
+            )}
             <span className="rating-bullet">•</span>
-            <div className="questions-label">
+            <Link to="/support" className="questions-label" style={{ textDecoration: "none" }}>
               <span className="question-mark-box">?</span>
-              <span>14 answered questions</span>
-            </div>
+              <span>Hardware Support</span>
+            </Link>
           </div>
 
           {/* PRICE & PURCHASE PANEL */}

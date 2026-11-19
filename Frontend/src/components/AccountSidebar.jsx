@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getAddresses, getMyOrders } from "../services/orderService";
 import { getWishlist } from "../services/cartService";
+import { getCustomerReviews } from "../services/reviewService";
+import { getMyReferrals } from "../services/referralService";
 import { getWalletData, formatCurrency, subscribeWallet } from "../services/walletService";
 import "./AccountSidebar.css";
 
@@ -79,9 +81,11 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
   const { user, isAuthenticated, logout } = useAuth();
 
   const [counts, setCounts] = useState({
-    activeOrders: 1,
-    savedAddresses: 2,
-    wishlistItems: 7,
+    activeOrders: 0,
+    savedAddresses: 0,
+    wishlistItems: 0,
+    reviewsCount: 0,
+    referralsCount: 0,
   });
 
   const [walletBalance, setWalletBalance] = useState(() => {
@@ -117,12 +121,16 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
       getMyOrders(),
       getAddresses(),
       getWishlist(),
-    ]).then(([ordersRes, addressesRes, wishlistRes]) => {
+      getCustomerReviews(user),
+      getMyReferrals(),
+    ]).then(([ordersRes, addressesRes, wishlistRes, reviewsRes, referralsRes]) => {
       if (!isMounted) return;
 
-      let activeCount = 1;
-      let addressCount = 2;
-      let wishlistCount = 7;
+      let activeCount = 0;
+      let addressCount = 0;
+      let wishlistCount = 0;
+      let reviewsCount = 0;
+      let referralsCount = 0;
 
       if (ordersRes.status === "fulfilled") {
         const orderList = Array.isArray(ordersRes.value?.orders)
@@ -131,7 +139,7 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
         const activeOrders = orderList.filter((o) =>
           ["pending", "processing", "shipped"].includes((o.status || "").toLowerCase())
         );
-        activeCount = activeOrders.length > 0 ? activeOrders.length : 1;
+        activeCount = activeOrders.length;
       }
 
       if (addressesRes.status === "fulfilled" && Array.isArray(addressesRes.value)) {
@@ -140,22 +148,32 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
 
       if (wishlistRes.status === "fulfilled") {
         const items = wishlistRes.value?.items || wishlistRes.value || [];
-        if (Array.isArray(items) && items.length > 0) {
+        if (Array.isArray(items)) {
           wishlistCount = items.length;
         }
+      }
+
+      if (reviewsRes.status === "fulfilled" && Array.isArray(reviewsRes.value)) {
+        reviewsCount = reviewsRes.value.length;
+      }
+
+      if (referralsRes.status === "fulfilled" && Array.isArray(referralsRes.value?.referrals)) {
+        referralsCount = referralsRes.value.referrals.length;
       }
 
       setCounts({
         activeOrders: activeCount,
         savedAddresses: addressCount,
         wishlistItems: wishlistCount,
+        reviewsCount,
+        referralsCount,
       });
     });
 
     return () => {
       isMounted = false;
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   // Handle Logout
   const handleLogout = async () => {
@@ -183,8 +201,8 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
     return "KR";
   })();
 
-  const displayName = user?.full_name || "krizz";
-  const displayEmail = user?.email || "krizzz123@gamil.com";
+  const displayName = user?.full_name || (user?.email ? user.email.split("@")[0] : "Builder");
+  const displayEmail = user?.email || "";
 
   return (
     <aside className="corvun-account-sidebar">
@@ -229,9 +247,9 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
             </div>
             {activeItem === "addresses" ? (
               <span className="account-active-tag">ACTIVE</span>
-            ) : (
+            ) : counts.savedAddresses > 0 ? (
               <span className="account-badge number-badge">{counts.savedAddresses}</span>
-            )}
+            ) : null}
           </Link>
 
           {/* 3. My Reviews */}
@@ -245,9 +263,9 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
             </div>
             {activeItem === "reviews" ? (
               <span className="account-active-tag">ACTIVE</span>
-            ) : (
-              <span className="account-badge number-badge">14</span>
-            )}
+            ) : counts.reviewsCount > 0 ? (
+              <span className="account-badge number-badge">{counts.reviewsCount}</span>
+            ) : null}
           </Link>
 
           {/* 4. Referrals */}
@@ -261,9 +279,9 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
             </div>
             {activeItem === "referrals" ? (
               <span className="account-active-tag">ACTIVE</span>
-            ) : (
-              <span className="account-badge number-badge">1</span>
-            )}
+            ) : counts.referralsCount > 0 ? (
+              <span className="account-badge number-badge">{counts.referralsCount}</span>
+            ) : null}
           </Link>
 
           {/* 5. Questions & Answers / Customer Support */}
@@ -297,11 +315,11 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
             </div>
             {activeItem === "orders" ? (
               <span className="account-active-tag">ACTIVE</span>
-            ) : (
+            ) : counts.activeOrders > 0 ? (
               <span className="account-badge active-orders-badge">
                 {counts.activeOrders} Active
               </span>
-            )}
+            ) : null}
           </Link>
 
           {/* 7. Wishlist */}
@@ -315,9 +333,9 @@ export default function AccountSidebar({ activeItem = "personal-info" }) {
             </div>
             {activeItem === "wishlist" ? (
               <span className="account-active-tag">ACTIVE</span>
-            ) : (
+            ) : counts.wishlistItems > 0 ? (
               <span className="account-badge number-badge">{counts.wishlistItems}</span>
-            )}
+            ) : null}
           </Link>
 
           {/* 8. Wallet & Credits */}
