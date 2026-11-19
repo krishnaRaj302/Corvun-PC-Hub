@@ -3,6 +3,7 @@ import CustomerLayout from "./layouts/CustomerLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminRoute from "./components/AdminRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Customer Pages
 import Home from "./pages/Home";
@@ -124,72 +125,88 @@ function App() {
       <Route
         path="/checkout"
         element={
-          <CustomerLayout>
-            <Checkout />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <Checkout />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/order-confirmation"
         element={
-          <CustomerLayout>
-            <OrderConfirmation />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <OrderConfirmation />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/my-orders"
         element={
-          <CustomerLayout>
-            <MyOrders />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <MyOrders />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/profile"
         element={
-          <CustomerLayout>
-            <CustomerProfile />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <CustomerProfile />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/addresses"
         element={
-          <CustomerLayout>
-            <SavedAddresses />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <SavedAddresses />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/orders/:orderId"
         element={
-          <CustomerLayout>
-            <OrderDetails />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <OrderDetails />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/referrals"
         element={
-          <CustomerLayout>
-            <Referrals />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <Referrals />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/wallet"
         element={
-          <CustomerLayout>
-            <Wallet />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <Wallet />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
@@ -205,18 +222,22 @@ function App() {
       <Route
         path="/questions"
         element={
-          <CustomerLayout>
-            <CustomerSupport />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <CustomerSupport />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/my-reviews"
         element={
-          <CustomerLayout>
-            <MyReviews />
-          </CustomerLayout>
+          <ProtectedRoute>
+            <CustomerLayout>
+              <MyReviews />
+            </CustomerLayout>
+          </ProtectedRoute>
         }
       />
 

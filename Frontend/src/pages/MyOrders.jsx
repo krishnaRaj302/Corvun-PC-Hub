@@ -33,6 +33,7 @@ function MyOrders() {
 
   // Fetch orders from backend
   const fetchOrders = useCallback(async () => {
+    if (!isAuthenticated) return;
     try {
       setLoading(true);
       setError("");
@@ -40,11 +41,15 @@ function MyOrders() {
       setOrders(Array.isArray(res?.orders) ? res.orders : []);
     } catch (err) {
       console.error("Orders load failed:", err);
-      setError("Failed to interrogate order repository node. Please verify connection.");
+      if (err.response?.status === 401) {
+        setError("Your session has expired. Please log in again.");
+      } else {
+        setError("Failed to interrogate order repository node. Please verify connection.");
+      }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     let isMounted = true;
@@ -380,7 +385,26 @@ function MyOrders() {
           </div>
 
           {/* Orders List Area */}
-          {error ? (
+          {!isAuthenticated ? (
+            <div className="orders-state-box empty-box">
+              <span className="card-corner corner-top-left" />
+              <span className="card-corner corner-bottom-right" />
+              <div className="empty-box-icon">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <span className="empty-code-badge">// AUTHENTICATION_REQUIRED</span>
+              <h3 className="empty-headline">Workstation Login Required</h3>
+              <p className="empty-desc">
+                Please log in to your Corvun account to inspect past order dispatches, live tracking telemetry, and invoice records.
+              </p>
+              <Link to="/login" className="empty-cta-btn" style={{ textDecoration: "none" }}>
+                Log In to Workstation →
+              </Link>
+            </div>
+          ) : error ? (
             <div className="orders-state-box error-box">
               <div className="state-badge">TRANSACTION_ERROR</div>
               <p>{error}</p>
