@@ -7,9 +7,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import F, Q, Count, ProtectedError
+from rest_framework.exceptions import ValidationError
 
 from accounts.permissions import IsAdmin
 from rest_framework.permissions import IsAuthenticated
+from config.cloudinary_utils import (
+    upload_image_to_cloudinary,
+    delete_image_from_cloudinary,
+    is_cloudinary_url,
+)
 
 from .models import (
     Product,
@@ -316,6 +322,19 @@ def delete_product(request, product_id):
         from orders.models import OrderItem
         OrderItem.objects.filter(product_variant__product=product).update(product_variant=None)
 
+        # Clean up images (Cloudinary assets and legacy local files)
+        for img in product.images.all():
+            if img.image and is_cloudinary_url(img.image):
+                delete_image_from_cloudinary(img.image)
+            elif img.image and img.image.startswith("/media/products/"):
+                try:
+                    rel_path = img.image[len("/media/"):]
+                    full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                    if os.path.isfile(full_path):
+                        os.remove(full_path)
+                except Exception:
+                    pass
+
         # Delete the product and its cascaded variants, images, and specifications
         product.delete()
 
@@ -435,39 +454,38 @@ def _handle_logo_upload(request):
     file_obj = request.FILES.get("logo")
     if not file_obj:
         return None
-    ext = os.path.splitext(file_obj.name)[1].lower()
-    allowed_extensions = [".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".avif", ".ico", ".bmp"]
-    content_type = getattr(file_obj, "content_type", "")
-    is_valid_type = (ext in allowed_extensions) or (content_type and content_type.startswith("image/"))
-    if not is_valid_type:
-        return None
-    clean_name = re.sub(r'[^a-zA-Z0-9_\.-]', '_', os.path.basename(file_obj.name))
-    safe_name = f"{uuid.uuid4().hex[:10]}_{clean_name}"
-    brands_dir = os.path.join(settings.MEDIA_ROOT, "brands")
-    os.makedirs(brands_dir, exist_ok=True)
-    file_path = os.path.join(brands_dir, safe_name)
-    with open(file_path, "wb+") as destination:
-        for chunk in file_obj.chunks():
-            destination.write(chunk)
-    return f"/media/brands/{safe_name}"
+    allowed_extensions = {".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".avif", ".ico", ".bmp"}
+    res = upload_image_to_cloudinary(
+        file_obj,
+        folder_type="brands",
+        allowed_extensions=allowed_extensions,
+    )
+    return res["secure_url"]
 
 @api_view(["POST"])
 @permission_classes([IsAdmin])
 def upload_brand_logo(request):
-    uploaded_logo = _handle_logo_upload(request)
+    file_obj = request.FILES.get("logo")
+    if not file_obj:
+        return Response(
+            {"error": "No logo file provided."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    try:
+        uploaded_logo = _handle_logo_upload(request)
+    except ValidationError as e:
+        err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+        return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     if not uploaded_logo:
-        file_obj = request.FILES.get("logo")
-        if not file_obj:
-            return Response(
-                {"error": "No logo file provided."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
         return Response(
             {"error": "Invalid file type. Allowed formats: PNG, JPG, JPEG, WEBP, SVG, GIF, AVIF, BMP, ICO."},
             status=status.HTTP_400_BAD_REQUEST
         )
     return Response(
-        {"logo": uploaded_logo, "message": "Logo uploaded successfully."},
+        {"logo": uploaded_logo, "message": "Logo uploaded successfully to Cloudinary."},
         status=status.HTTP_200_OK
     )
 
@@ -476,18 +494,20 @@ def upload_brand_logo(request):
 def create_brand(request):
     data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
     file_obj = request.FILES.get("logo")
+    uploaded_logo = None
     if file_obj:
-        uploaded_logo = _handle_logo_upload(request)
-        if not uploaded_logo:
-            return Response(
-                {"error": "Unsupported image format. Allowed: PNG, JPG, JPEG, WEBP, SVG, GIF, AVIF, BMP, ICO."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        data["logo"] = uploaded_logo
+        try:
+            uploaded_logo = _handle_logo_upload(request)
+            data["logo"] = uploaded_logo
+        except ValidationError as e:
+            err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+            return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     elif "logo" in data and not isinstance(data["logo"], str):
         del data["logo"]
 
-    serializer = BrandSerializer(data=data)
+    serializer = BrandSerializer(data=data, context={"request": request})
     if serializer.is_valid():
         serializer.save()
         return Response(
@@ -497,6 +517,10 @@ def create_brand(request):
             },
             status=status.HTTP_201_CREATED
         )
+
+    # Clean up uploaded Cloudinary image if DB save fails
+    if uploaded_logo and is_cloudinary_url(uploaded_logo):
+        delete_image_from_cloudinary(uploaded_logo)
 
     return Response(
         serializer.errors,
@@ -516,21 +540,39 @@ def update_brand(request, brand_id):
 
     data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
     file_obj = request.FILES.get("logo")
+    uploaded_logo = None
+    old_logo = brand.logo
+
     if file_obj:
-        uploaded_logo = _handle_logo_upload(request)
-        if not uploaded_logo:
-            return Response(
-                {"error": "Unsupported image format. Allowed: PNG, JPG, JPEG, WEBP, SVG, GIF, AVIF, BMP, ICO."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        data["logo"] = uploaded_logo
+        try:
+            uploaded_logo = _handle_logo_upload(request)
+            data["logo"] = uploaded_logo
+        except ValidationError as e:
+            err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+            return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     elif "logo" in data and not isinstance(data["logo"], str):
         del data["logo"]
 
     partial = request.method == "PATCH"
-    serializer = BrandSerializer(brand, data=data, partial=partial)
+    serializer = BrandSerializer(brand, data=data, partial=partial, context={"request": request})
     if serializer.is_valid():
         serializer.save()
+
+        # Clean up old logo if replaced
+        if uploaded_logo and old_logo and old_logo != uploaded_logo:
+            if is_cloudinary_url(old_logo):
+                delete_image_from_cloudinary(old_logo)
+            elif old_logo.startswith("/media/brands/"):
+                try:
+                    rel_path = old_logo[len("/media/"):]
+                    full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                    if os.path.isfile(full_path):
+                        os.remove(full_path)
+                except Exception:
+                    pass
+
         return Response(
             {
                 "message": "Brand updated successfully.",
@@ -538,6 +580,10 @@ def update_brand(request, brand_id):
             },
             status=status.HTTP_200_OK
         )
+
+    # Clean up uploaded Cloudinary image if DB update fails
+    if uploaded_logo and is_cloudinary_url(uploaded_logo):
+        delete_image_from_cloudinary(uploaded_logo)
 
     return Response(
         serializer.errors,
@@ -562,8 +608,20 @@ def delete_brand(request, brand_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    old_logo = brand.logo
     try:
         brand.delete()
+        if old_logo:
+            if is_cloudinary_url(old_logo):
+                delete_image_from_cloudinary(old_logo)
+            elif old_logo.startswith("/media/brands/"):
+                try:
+                    rel_path = old_logo[len("/media/"):]
+                    full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                    if os.path.isfile(full_path):
+                        os.remove(full_path)
+                except Exception:
+                    pass
     except ProtectedError:
         return Response(
             {"error": "Cannot delete this brand because products are currently associated with it."},
@@ -592,13 +650,26 @@ def brand_admin_detail(request, brand_id):
                 {"error": "Cannot delete this brand because products are currently associated with it."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        old_logo = brand.logo
         try:
             brand.delete()
+            if old_logo:
+                if is_cloudinary_url(old_logo):
+                    delete_image_from_cloudinary(old_logo)
+                elif old_logo.startswith("/media/brands/"):
+                    try:
+                        rel_path = old_logo[len("/media/"):]
+                        full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                        if os.path.isfile(full_path):
+                            os.remove(full_path)
+                    except Exception:
+                        pass
         except ProtectedError:
             return Response(
                 {"error": "Cannot delete this brand because products are currently associated with it."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        return Response({"message": "Brand deleted successfully."}, status=status.HTTP_200_OK)
         return Response(
             {"message": "Brand deleted successfully."},
             status=status.HTTP_200_OK
@@ -720,18 +791,13 @@ def delete_product_variant(request, variant_id):
 def _handle_product_image_upload(file_obj):
     if not file_obj:
         return None
-    ext = os.path.splitext(file_obj.name)[1].lower()
-    allowed_extensions = [".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".avif"]
-    if ext not in allowed_extensions:
-        return None
-    safe_name = f"{uuid.uuid4().hex[:12]}_{file_obj.name.replace(' ', '_')}"
-    products_dir = os.path.join(settings.MEDIA_ROOT, "products")
-    os.makedirs(products_dir, exist_ok=True)
-    file_path = os.path.join(products_dir, safe_name)
-    with open(file_path, "wb+") as destination:
-        for chunk in file_obj.chunks():
-            destination.write(chunk)
-    return f"/media/products/{safe_name}"
+    allowed_extensions = {".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".avif"}
+    res = upload_image_to_cloudinary(
+        file_obj,
+        folder_type="products",
+        allowed_extensions=allowed_extensions,
+    )
+    return res["secure_url"]
 
 @api_view(["POST"])
 @permission_classes([IsAdmin])
@@ -742,19 +808,25 @@ def upload_product_image_file(request):
             {"error": "No image file provided."},
             status=status.HTTP_400_BAD_REQUEST
         )
-    uploaded_path = _handle_product_image_upload(file_obj)
+    try:
+        uploaded_path = _handle_product_image_upload(file_obj)
+    except ValidationError as e:
+        err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+        return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     if not uploaded_path:
         return Response(
             {"error": "Invalid image file format. Allowed: .png, .jpg, .jpeg, .webp, .svg, .gif, .avif"},
             status=status.HTTP_400_BAD_REQUEST
         )
-    full_url = request.build_absolute_uri(uploaded_path)
     return Response(
         {
             "image": uploaded_path,
-            "url": full_url,
+            "url": uploaded_path,
             "filename": file_obj.name,
-            "message": "Image uploaded successfully."
+            "message": "Image uploaded successfully to Cloudinary."
         },
         status=status.HTTP_200_OK
     )
@@ -766,25 +838,24 @@ def create_product_image(request):
 
     # Check if a file was uploaded directly
     file_obj = request.FILES.get("image") or request.FILES.get("file")
+    uploaded_url = None
     if file_obj:
-        uploaded_path = _handle_product_image_upload(file_obj)
-        if not uploaded_path:
-            return Response(
-                {"error": "Invalid image file format. Allowed: .png, .jpg, .jpeg, .webp, .svg, .gif, .avif"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        data["image"] = uploaded_path
+        try:
+            uploaded_url = _handle_product_image_upload(file_obj)
+            data["image"] = uploaded_url
+        except ValidationError as e:
+            err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+            return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     # Get image data sent from Postman/frontend
     serializer = ProductImageSerializer(data=data, context={"request": request})
 
     # Check whether the image data is valid
     if serializer.is_valid():
-
         # Save the image into the database
         serializer.save()
-
-        # Send success response
         return Response(
             {
                 "message": "Product image added successfully.",
@@ -792,6 +863,10 @@ def create_product_image(request):
             },
             status=status.HTTP_201_CREATED
         )
+
+    # Clean up uploaded Cloudinary image if DB validation failed
+    if uploaded_url and is_cloudinary_url(uploaded_url):
+        delete_image_from_cloudinary(uploaded_url)
 
     # Send validation errors
     return Response(
@@ -811,8 +886,11 @@ def delete_product_image(request, image_id):
             status=status.HTTP_404_NOT_FOUND
         )
 
+    # If Cloudinary image, delete remote asset
+    if image.image and is_cloudinary_url(image.image):
+        delete_image_from_cloudinary(image.image)
     # Clean up file on disk if stored locally in media/products
-    if image.image and image.image.startswith("/media/products/"):
+    elif image.image and image.image.startswith("/media/products/"):
         rel_path = image.image[len("/media/"):]
         full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
         if os.path.isfile(full_path):

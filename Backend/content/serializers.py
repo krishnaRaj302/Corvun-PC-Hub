@@ -83,3 +83,14 @@ class BannerSerializer(serializers.ModelSerializer):
             )
 
         return data
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        img_url = data.get("image")
+        if img_url and img_url.startswith("/media/"):
+            request = self.context.get("request")
+            if request:
+                data["image"] = request.build_absolute_uri(img_url)
+            else:
+                data["image"] = f"http://127.0.0.1:8002{img_url}"
+        return data

@@ -1,6 +1,26 @@
+# Uploaded media files
+media/
+**/media/
+Backend/media/
+
+# Virtual environments
 venv/
+**/venv/
+
+# Environment variables
 .env
+**/.env
+
+# Node & Frontend
 node_modules/
+**/node_modules/
+
+# Python cache & compiled files
 __pycache__/
+**/__pycache__/
 *.pyc
+
+# Local databases & logs
 db.sqlite3
+*.log
+

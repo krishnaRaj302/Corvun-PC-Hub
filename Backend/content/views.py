@@ -12,38 +12,44 @@ from accounts.permissions import IsAdmin
 from .models import Banner
 from .serializers import BannerSerializer
 from .validators import validate_banner_image_file
+from config.cloudinary_utils import (
+    upload_image_to_cloudinary,
+    delete_image_from_cloudinary,
+    is_cloudinary_url,
+)
 
 
 def _handle_banner_upload(file_obj):
     """
-    Validates uploaded banner file and writes it to media/banners.
-    Returns the media URL path string.
+    Validates uploaded banner file and uploads it to Cloudinary under corvun/banners.
+    Returns the secure HTTPS URL string.
     """
     validate_banner_image_file(file_obj)
-    safe_name = f"{uuid.uuid4().hex[:12]}_{file_obj.name.replace(' ', '_')}"
-    banners_dir = os.path.join(settings.MEDIA_ROOT, "banners")
-    os.makedirs(banners_dir, exist_ok=True)
-    file_path = os.path.join(banners_dir, safe_name)
-    with open(file_path, "wb+") as destination:
-        for chunk in file_obj.chunks():
-            destination.write(chunk)
-    return f"/media/banners/{safe_name}"
+    allowed_extensions = {".png", ".jpg", ".jpeg", ".webp", ".avif"}
+    res = upload_image_to_cloudinary(
+        file_obj,
+        folder_type="banners",
+        allowed_extensions=allowed_extensions,
+    )
+    return res["secure_url"]
 
 
 def _remove_banner_media_file(image_path):
     """
-    Safely cleans up an uploaded banner file from disk.
+    Safely cleans up a banner image from Cloudinary or local disk.
     """
     if not image_path or not isinstance(image_path, str):
         return
-    try:
-        if image_path.startswith("/media/"):
+    if is_cloudinary_url(image_path):
+        delete_image_from_cloudinary(image_path)
+    elif image_path.startswith("/media/"):
+        try:
             rel_path = image_path[len("/media/"):]
             full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
             if os.path.isfile(full_path):
                 os.remove(full_path)
-    except Exception:
-        pass
+        except Exception:
+            pass
 
 
 # ============================================================
