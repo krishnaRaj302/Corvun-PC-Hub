@@ -23,6 +23,7 @@ from .views import (
     create_product_image,
     delete_product_image,
     create_product_specification,
+    update_product_specification,
     delete_product_specification,
     low_stock_products,
 )
@@ -65,6 +66,7 @@ urlpatterns = [
 
     # Specifications
     path("specifications/create/", create_product_specification, name="create_product_specification"),
+    path("specifications/<int:specification_id>/update/", update_product_specification, name="update_product_specification"),
     path("specifications/<int:specification_id>/delete/", delete_product_specification, name="delete_product_specification"),
 
     # Admin

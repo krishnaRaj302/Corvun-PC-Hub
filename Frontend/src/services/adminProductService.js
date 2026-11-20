@@ -85,6 +85,11 @@ export const createAdminSpecification = async (specData) => {
   return response.data;
 };
 
+export const updateAdminSpecification = async (specId, specData) => {
+  const response = await api.put(`/products/specifications/${specId}/update/`, specData);
+  return response.data;
+};
+
 export const deleteAdminSpecification = async (specId) => {
   const response = await api.delete(`/products/specifications/${specId}/delete/`);
   return response.data;

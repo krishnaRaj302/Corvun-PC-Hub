@@ -874,6 +874,35 @@ def delete_product_specification(request, specification_id):
         status=status.HTTP_200_OK
     )
 
+@api_view(["PUT", "PATCH"])
+@permission_classes([IsAdmin])
+def update_product_specification(request, specification_id):
+    try:
+        specification = ProductSpecification.objects.get(id=specification_id)
+    except ProductSpecification.DoesNotExist:
+        return Response(
+            {"error": "Product specification not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    serializer = ProductSpecificationSerializer(
+        specification, data=request.data, partial=True
+    )
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {
+                "message": "Product specification updated successfully.",
+                "data": serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
 # Admin: Get products that are low in stock
 @api_view(["GET"])
 @permission_classes([IsAdmin])
