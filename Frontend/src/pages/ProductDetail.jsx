@@ -131,8 +131,21 @@ export default function ProductDetail() {
   // Group real specifications logically for Architectural Blueprint
   const specsMap = {};
   specifications.forEach((s) => {
-    specsMap[s.specification_name.toLowerCase()] = s.specification_value;
+    if (s.specification_name) {
+      specsMap[s.specification_name.toLowerCase().trim()] = s.specification_value;
+    }
   });
+
+  // Model Number / Part Number extraction
+  const modelSpec =
+    specsMap["model number"] ||
+    specsMap["model no"] ||
+    specsMap["model no."] ||
+    specsMap["model_number"] ||
+    specsMap["model"] ||
+    specsMap["part number"] ||
+    specsMap["item model number"] ||
+    "";
 
   // Extract key telemetry metrics from real specifications
   const powerSpec =
@@ -141,6 +154,7 @@ export default function ProductDetail() {
     specsMap["tgp"] ||
     specsMap["total graphics power"] ||
     specsMap["tdp"] ||
+    specsMap["tdp_watts"] ||
     "253W TURBO";
 
   const socketSpec =
@@ -161,57 +175,119 @@ export default function ProductDetail() {
     product.brand_name ||
     "RAPTOR LAKE";
 
-  // Logical groups for Blueprint
+  const memorySpec =
+    specsMap["memory support"] ||
+    specsMap["memory"] ||
+    specsMap["ram"] ||
+    specsMap["memory type"] ||
+    "";
+
+  // Systematic classification of specifications - guarantees NO spec is dropped
+  const categorizedSpecKeys = new Set();
+
+  // Group: Model Identification & Product Baseline (Model Number, SKU, Series, Form Factor, Warranty, etc.)
+  const groupModelSpecs = specifications.filter((s) => {
+    const n = s.specification_name.toLowerCase().trim();
+    const matches =
+      n.includes("model") ||
+      n.includes("part") ||
+      n.includes("serial") ||
+      n.includes("sku") ||
+      n.includes("item number");
+    if (matches) categorizedSpecKeys.add(s.id || s.specification_name);
+    return matches;
+  });
+
+  // Group 1: Core Architecture & Silicon Matrix
   const group1Specs = specifications.filter((s) => {
-    const n = s.specification_name.toLowerCase();
-    return (
+    const key = s.id || s.specification_name;
+    if (categorizedSpecKeys.has(key)) return false;
+    const n = s.specification_name.toLowerCase().trim();
+    const matches =
       n.includes("arch") ||
       n.includes("gen") ||
       n.includes("core") ||
       n.includes("thread") ||
-      n.includes("process")
-    );
+      n.includes("process") ||
+      n.includes("lithography") ||
+      n.includes("silicon");
+    if (matches) categorizedSpecKeys.add(key);
+    return matches;
   });
 
+  // Group 2: Frequency, Cache & Performance Matrix
   const group2Specs = specifications.filter((s) => {
-    const n = s.specification_name.toLowerCase();
-    return (
+    const key = s.id || s.specification_name;
+    if (categorizedSpecKeys.has(key)) return false;
+    const n = s.specification_name.toLowerCase().trim();
+    const matches =
       n.includes("clock") ||
       n.includes("speed") ||
       n.includes("cache") ||
       n.includes("frequency") ||
-      n.includes("boost")
-    );
+      n.includes("boost") ||
+      n.includes("ghz") ||
+      n.includes("mhz");
+    if (matches) categorizedSpecKeys.add(key);
+    return matches;
   });
 
+  // Group 3: Memory & Interconnect Specifications
+  const groupMemorySpecs = specifications.filter((s) => {
+    const key = s.id || s.specification_name;
+    if (categorizedSpecKeys.has(key)) return false;
+    const n = s.specification_name.toLowerCase().trim();
+    const matches =
+      n.includes("memory") ||
+      n.includes("ram") ||
+      n.includes("ddr") ||
+      n.includes("bandwidth") ||
+      n.includes("dimm") ||
+      n.includes("channel");
+    if (matches) categorizedSpecKeys.add(key);
+    return matches;
+  });
+
+  // Group 4: Power, Thermals & Socket Specifications
   const group3Specs = specifications.filter((s) => {
-    const n = s.specification_name.toLowerCase();
-    return (
+    const key = s.id || s.specification_name;
+    if (categorizedSpecKeys.has(key)) return false;
+    const n = s.specification_name.toLowerCase().trim();
+    const matches =
       n.includes("power") ||
       n.includes("thermal") ||
       n.includes("socket") ||
       n.includes("cooler") ||
-      n.includes("watt")
-    );
+      n.includes("watt") ||
+      n.includes("tdp") ||
+      n.includes("tgp");
+    if (matches) categorizedSpecKeys.add(key);
+    return matches;
   });
 
+  // Group 5: Integrated Graphics & Expansion I/O
   const group4Specs = specifications.filter((s) => {
-    const n = s.specification_name.toLowerCase();
-    return (
+    const key = s.id || s.specification_name;
+    if (categorizedSpecKeys.has(key)) return false;
+    const n = s.specification_name.toLowerCase().trim();
+    const matches =
       n.includes("graphic") ||
+      n.includes("gpu") ||
       n.includes("display") ||
       n.includes("hdmi") ||
       n.includes("pcie") ||
-      n.includes("i/o")
-    );
+      n.includes("i/o") ||
+      n.includes("port") ||
+      n.includes("usb");
+    if (matches) categorizedSpecKeys.add(key);
+    return matches;
   });
 
-  // If no categorization matched, show all specs in group 1
-  const hasCategorizedGroups =
-    group1Specs.length > 0 ||
-    group2Specs.length > 0 ||
-    group3Specs.length > 0 ||
-    group4Specs.length > 0;
+  // Group 6: General & Physical Hardware Specs (All remaining specs)
+  const groupRemainingSpecs = specifications.filter((s) => {
+    const key = s.id || s.specification_name;
+    return !categorizedSpecKeys.has(key);
+  });
 
   // Handle Add to Cart
   const handleAddToCart = async () => {
@@ -365,7 +441,7 @@ export default function ProductDetail() {
           reviewsData.reduce((acc, curr) => acc + (curr.rating || 5), 0) /
           reviewCount
         ).toFixed(1)
-      : "5.0";
+      : "0.0";
 
   // Rating distribution counts
   const ratingDistribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -506,6 +582,14 @@ export default function ProductDetail() {
             <span className="meta-tag tech-tag">
               {architectureSpec}
             </span>
+            {modelSpec && (
+              <span className="meta-tag model-tag" style={{ border: "1px solid rgba(239, 56, 66, 0.4)", color: "#ef3842" }}>
+                MODEL: {modelSpec}
+              </span>
+            )}
+            <span className="meta-tag sku-tag">
+              SKU: {product.sku}
+            </span>
           </div>
 
           {/* Product Name */}
@@ -530,15 +614,23 @@ export default function ProductDetail() {
                 </span>
               ))}
             </div>
-            <span className="rating-score">{avgRating}</span>
-            <span className="reviews-count-label">
-              ({reviewCount > 0 ? `${reviewCount} reviews` : "Verified Telemetry"})
-            </span>
+            {reviewCount > 0 ? (
+              <>
+                <span className="rating-score">{avgRating}</span>
+                <span className="reviews-count-label">
+                  ({reviewCount} {reviewCount === 1 ? "review" : "reviews"})
+                </span>
+              </>
+            ) : (
+              <span className="reviews-count-label" style={{ opacity: 0.7 }}>
+                No reviews yet
+              </span>
+            )}
             <span className="rating-bullet">•</span>
-            <div className="questions-label">
+            <Link to="/support" className="questions-label" style={{ textDecoration: "none" }}>
               <span className="question-mark-box">?</span>
-              <span>14 answered questions</span>
-            </div>
+              <span>Hardware Support</span>
+            </Link>
           </div>
 
           {/* PRICE & PURCHASE PANEL */}
@@ -897,18 +989,36 @@ export default function ProductDetail() {
                   <div className="empty-specs-box">
                     <p>No specifications have been logged for this component SKU.</p>
                   </div>
-                ) : hasCategorizedGroups ? (
+                ) : (
                   <div className="blueprint-sections-list">
-                    {/* Section 01: Core Architecture */}
+                    {/* Section 01: Model Identification & SKU Specifications */}
+                    {groupModelSpecs.length > 0 && (
+                      <div className="blueprint-group">
+                        <div className="group-header">
+                          <span className="group-tag">01 // MODEL IDENTIFICATION & SERIAL SPECIFICATIONS</span>
+                          <span className="group-subtag">FACTORY SERIAL & COMPONENT BLUEPRINT</span>
+                        </div>
+                        <div className="group-specs-grid">
+                          {groupModelSpecs.map((s) => (
+                            <div key={s.id || s.specification_name} className="spec-row-item">
+                              <span className="spec-key">{s.specification_name}</span>
+                              <span className="spec-val" style={{ color: "#ef3842" }}>{s.specification_value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Section 02: Core Architecture & Silicon */}
                     {group1Specs.length > 0 && (
                       <div className="blueprint-group">
                         <div className="group-header">
-                          <span className="group-tag">01 // COMPONENT ARCHITECTURE & ENGINE</span>
+                          <span className="group-tag">02 // COMPONENT ARCHITECTURE & ENGINE</span>
                           <span className="group-subtag">TSMC / INTEL SILICON MATRIX</span>
                         </div>
                         <div className="group-specs-grid">
                           {group1Specs.map((s) => (
-                            <div key={s.id} className="spec-row-item">
+                            <div key={s.id || s.specification_name} className="spec-row-item">
                               <span className="spec-key">{s.specification_name}</span>
                               <span className="spec-val">{s.specification_value}</span>
                             </div>
@@ -917,16 +1027,16 @@ export default function ProductDetail() {
                       </div>
                     )}
 
-                    {/* Section 02: Frequency & Performance */}
+                    {/* Section 03: Frequency, Cache & Performance */}
                     {group2Specs.length > 0 && (
                       <div className="blueprint-group">
                         <div className="group-header">
-                          <span className="group-tag">02 // FREQUENCY, CACHE & PERFORMANCE MATRIX</span>
+                          <span className="group-tag">03 // FREQUENCY, CACHE & PERFORMANCE MATRIX</span>
                           <span className="group-subtag">HIGH-SPEED BUS INTERCONNECT</span>
                         </div>
                         <div className="group-specs-grid">
                           {group2Specs.map((s) => (
-                            <div key={s.id} className="spec-row-item">
+                            <div key={s.id || s.specification_name} className="spec-row-item">
                               <span className="spec-key">{s.specification_name}</span>
                               <span className="spec-val">{s.specification_value}</span>
                             </div>
@@ -935,16 +1045,34 @@ export default function ProductDetail() {
                       </div>
                     )}
 
-                    {/* Section 03: Power & Thermals */}
+                    {/* Section 04: Memory & Interconnect */}
+                    {groupMemorySpecs.length > 0 && (
+                      <div className="blueprint-group">
+                        <div className="group-header">
+                          <span className="group-tag">04 // MEMORY & BUS INTERCONNECT SPECIFICATIONS</span>
+                          <span className="group-subtag">BANDWIDTH & CHANNEL CAPABILITY</span>
+                        </div>
+                        <div className="group-specs-grid">
+                          {groupMemorySpecs.map((s) => (
+                            <div key={s.id || s.specification_name} className="spec-row-item">
+                              <span className="spec-key">{s.specification_name}</span>
+                              <span className="spec-val">{s.specification_value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Section 05: Power & Thermals */}
                     {group3Specs.length > 0 && (
                       <div className="blueprint-group">
                         <div className="group-header">
-                          <span className="group-tag">03 // POWER, THERMALS & SOCKET SPECIFICATIONS</span>
+                          <span className="group-tag">05 // POWER, THERMALS & SOCKET SPECIFICATIONS</span>
                           <span className="group-subtag">THERMAL DESIGN ENVELOPE</span>
                         </div>
                         <div className="group-specs-grid">
                           {group3Specs.map((s) => (
-                            <div key={s.id} className="spec-row-item">
+                            <div key={s.id || s.specification_name} className="spec-row-item">
                               <span className="spec-key">{s.specification_name}</span>
                               <span className="spec-val">{s.specification_value}</span>
                             </div>
@@ -953,16 +1081,16 @@ export default function ProductDetail() {
                       </div>
                     )}
 
-                    {/* Section 04: Graphics & I/O */}
+                    {/* Section 06: Graphics & Expansion I/O */}
                     {group4Specs.length > 0 && (
                       <div className="blueprint-group">
                         <div className="group-header">
-                          <span className="group-tag">04 // INTEGRATED GRAPHICS & EXPANSION I/O</span>
+                          <span className="group-tag">06 // INTEGRATED GRAPHICS & EXPANSION I/O</span>
                           <span className="group-subtag">DISPLAY & DATA PIPELINE</span>
                         </div>
                         <div className="group-specs-grid">
                           {group4Specs.map((s) => (
-                            <div key={s.id} className="spec-row-item">
+                            <div key={s.id || s.specification_name} className="spec-row-item">
                               <span className="spec-key">{s.specification_name}</span>
                               <span className="spec-val">{s.specification_value}</span>
                             </div>
@@ -970,21 +1098,24 @@ export default function ProductDetail() {
                         </div>
                       </div>
                     )}
-                  </div>
-                ) : (
-                  <div className="blueprint-group">
-                    <div className="group-header">
-                      <span className="group-tag">01 // HARDWARE ARCHITECTURE SPECIFICATIONS</span>
-                      <span className="group-subtag">FACTORY CALIBRATED METRICS</span>
-                    </div>
-                    <div className="group-specs-grid">
-                      {specifications.map((s) => (
-                        <div key={s.id} className="spec-row-item">
-                          <span className="spec-key">{s.specification_name}</span>
-                          <span className="spec-val">{s.specification_value}</span>
+
+                    {/* Section 07: Additional Technical Specifications */}
+                    {groupRemainingSpecs.length > 0 && (
+                      <div className="blueprint-group">
+                        <div className="group-header">
+                          <span className="group-tag">07 // ADDITIONAL TECHNICAL SPECIFICATIONS</span>
+                          <span className="group-subtag">HARDWARE ATTRIBUTES & ATTRIBUTES</span>
                         </div>
-                      ))}
-                    </div>
+                        <div className="group-specs-grid">
+                          {groupRemainingSpecs.map((s) => (
+                            <div key={s.id || s.specification_name} className="spec-row-item">
+                              <span className="spec-key">{s.specification_name}</span>
+                              <span className="spec-val">{s.specification_value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -998,21 +1129,33 @@ export default function ProductDetail() {
                 <h3 className="metrics-title">Dimensions & Clearance</h3>
 
                 <div className="metrics-list">
+                  {modelSpec && (
+                    <div className="metric-line">
+                      <span className="metric-label">Model Number</span>
+                      <span className="metric-data" style={{ color: "#ef3842", fontWeight: "700" }}>{modelSpec}</span>
+                    </div>
+                  )}
+                  <div className="metric-line">
+                    <span className="metric-label">SKU Identifier</span>
+                    <span className="metric-data">{product.sku}</span>
+                  </div>
                   <div className="metric-line">
                     <span className="metric-label">Socket / Package</span>
                     <span className="metric-data">{socketSpec}</span>
                   </div>
-                  <div className="metric-line">
-                    <span className="metric-label">Lithography</span>
-                    <span className="metric-data">Intel 7 (10nm Enhanced SuperFin)</span>
-                  </div>
+                  {memorySpec && (
+                    <div className="metric-line">
+                      <span className="metric-label">Memory Support</span>
+                      <span className="metric-data">{memorySpec}</span>
+                    </div>
+                  )}
                   <div className="metric-line">
                     <span className="metric-label">Max Turbo Power</span>
                     <span className="metric-data">{powerSpec}</span>
                   </div>
                   <div className="metric-line">
                     <span className="metric-label">Form Factor Clearance</span>
-                    <span className="metric-data">Standard ATX / Mini-ITX</span>
+                    <span className="metric-data">{specsMap["form factor"] || "Standard ATX / Mini-ITX"}</span>
                   </div>
                 </div>
 

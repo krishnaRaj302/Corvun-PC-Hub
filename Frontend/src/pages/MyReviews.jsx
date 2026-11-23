@@ -159,9 +159,9 @@ export default function MyReviews() {
     const avg =
       total > 0
         ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / total).toFixed(1)
-        : "5.0";
+        : "0.0";
     const votes = reviews.reduce((acc, r) => acc + (Number(r.helpfulVotes) || 0), 0);
-    const rewards = reviews.reduce((acc, r) => acc + (Number(r.rewardsPoints) || 50), 0);
+    const rewards = total > 0 ? reviews.reduce((acc, r) => acc + (Number(r.rewardsPoints) || 50), 0) : 0;
     return { total, avg, votes, rewards };
   }, [reviews]);
 

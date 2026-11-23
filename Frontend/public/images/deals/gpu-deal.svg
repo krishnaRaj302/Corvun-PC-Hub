@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <radialGradient id="gpuBg" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#141a2e"/>
+      <stop offset="100%" stop-color="#050811"/>
+    </radialGradient>
+    <linearGradient id="neonRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff1e27"/>
+      <stop offset="100%" stop-color="#ff5964"/>
+    </linearGradient>
+    <linearGradient id="neonCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#7000ff"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="360" fill="url(#gpuBg)"/>
+  
+  <!-- Subtle grid lines -->
+  <path d="M0,60 H600 M0,120 H600 M0,180 H600 M0,240 H600 M0,300 H600" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+  <path d="M100,0 V360 M200,0 V360 M300,0 V360 M400,0 V360 M500,0 V360" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+
+  <!-- Card 1 (Left GPU) -->
+  <g transform="translate(60, 75)">
+    <!-- Shroud -->
+    <rect x="0" y="0" width="220" height="150" rx="10" fill="#0b0e17" stroke="#1f293d" stroke-width="2"/>
+    <rect x="10" y="10" width="200" height="130" rx="6" fill="#111625"/>
+    
+    <!-- Fan 1 -->
+    <circle cx="65" cy="75" r="45" fill="#070a12" stroke="#252f48" stroke-width="2"/>
+    <circle cx="65" cy="75" r="38" fill="none" stroke="url(#neonCyan)" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="65" cy="75" r="16" fill="#131a29"/>
+    <!-- Fan Blades -->
+    <path d="M65,75 L65,37 M65,75 L65,113 M65,75 L37,65 M65,75 L113,65 M65,75 L45,45 M65,75 L85,105 M65,75 L45,105 M65,75 L85,45" stroke="#2a3754" stroke-width="3"/>
+
+    <!-- Fan 2 -->
+    <circle cx="155" cy="75" r="45" fill="#070a12" stroke="#252f48" stroke-width="2"/>
+    <circle cx="155" cy="75" r="38" fill="none" stroke="url(#neonCyan)" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="155" cy="75" r="16" fill="#131a29"/>
+    <path d="M155,75 L155,37 M155,75 L155,113 M155,75 L127,65 M155,75 L203,65 M155,75 L135,45 M155,75 L175,105 M155,75 L135,105 M155,75 L175,45" stroke="#2a3754" stroke-width="3"/>
+
+    <!-- Heatpipes / Accents -->
+    <path d="M5,15 H215 M5,135 H215" stroke="#ff1e27" stroke-width="1.5" stroke-dasharray="8 4"/>
+  </g>
+
+  <!-- Card 2 (Right GPU with RGB Angle) -->
+  <g transform="translate(310, 65)">
+    <!-- Shroud -->
+    <rect x="0" y="0" width="230" height="165" rx="12" fill="#0e121e" stroke="#2a344d" stroke-width="2"/>
+    <rect x="12" y="12" width="206" height="141" rx="8" fill="#141a29"/>
+
+    <!-- RGB Top Edge Strip -->
+    <path d="M20,12 H210" stroke="url(#neonRed)" stroke-width="4" stroke-linecap="round" filter="url(#glow)"/>
+
+    <!-- Fan 1 -->
+    <circle cx="70" cy="85" r="48" fill="#080b14" stroke="#2d3957" stroke-width="2"/>
+    <circle cx="70" cy="85" r="40" fill="none" stroke="url(#neonRed)" stroke-width="3" filter="url(#glow)"/>
+    <circle cx="70" cy="85" r="18" fill="#182033"/>
+    <path d="M70,85 L70,45 M70,85 L70,125 M70,85 L35,85 M70,85 L105,85 M70,85 L48,53 M70,85 L92,117 M70,85 L48,117 M70,85 L92,53" stroke="#ff3843" stroke-width="3"/>
+
+    <!-- Fan 2 -->
+    <circle cx="160" cy="85" r="48" fill="#080b14" stroke="#2d3957" stroke-width="2"/>
+    <circle cx="160" cy="85" r="40" fill="none" stroke="url(#neonCyan)" stroke-width="3" filter="url(#glow)"/>
+    <circle cx="160" cy="85" r="18" fill="#182033"/>
+    <path d="M160,85 L160,45 M160,85 L160,125 M160,85 L125,85 M160,85 L195,85 M160,85 L138,53 M160,85 L182,117 M160,85 L138,117 M160,85 L182,53" stroke="#00e5ff" stroke-width="3"/>
+
+    <!-- Branding Text -->
+    <text x="115" y="145" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold" fill="#ff1e27" letter-spacing="2">RTX 4080 TI SUPER</text>
+  </g>
+</svg>

@@ -23,7 +23,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order,on_delete=models.CASCADE,related_name="items")
-    product_variant = models.ForeignKey(ProductVariant,on_delete=models.PROTECT,related_name="order_items",null=True,blank=True)
+    product_variant = models.ForeignKey(ProductVariant,on_delete=models.SET_NULL,related_name="order_items",null=True,blank=True)
     product_name = models.CharField(max_length=255)
     variant_name = models.CharField(max_length=150)
     sku = models.CharField(max_length=100)

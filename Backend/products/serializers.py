@@ -84,6 +84,17 @@ class BrandSerializer(serializers.ModelSerializer):
             return obj.product_count
         return obj.products.count()
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        logo_url = data.get("logo")
+        if logo_url and logo_url.startswith("/media/"):
+            request = self.context.get("request")
+            if request:
+                data["logo"] = request.build_absolute_uri(logo_url)
+            else:
+                data["logo"] = f"http://127.0.0.1:8002{logo_url}"
+        return data
+
 
 # =========================
 # Product Serializer

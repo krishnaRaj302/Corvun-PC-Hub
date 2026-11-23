@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <radialGradient id="psuBg" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#141a2b"/>
+      <stop offset="100%" stop-color="#05070e"/>
+    </radialGradient>
+    <radialGradient id="fanRainbow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0e1320"/>
+      <stop offset="70%" stop-color="#1c253b"/>
+      <stop offset="85%" stop-color="#00e5ff"/>
+      <stop offset="93%" stop-color="#ff00cc"/>
+      <stop offset="100%" stop-color="#ff1e27"/>
+    </radialGradient>
+    <filter id="fanGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#psuBg)"/>
+
+  <!-- PSU Main Body -->
+  <g transform="translate(180, 50)">
+    <!-- Steel Chassis -->
+    <rect x="0" y="0" width="240" height="250" rx="14" fill="#0b0e18" stroke="#1f283d" stroke-width="2.5"/>
+    
+    <!-- Fan Grille Ring -->
+    <circle cx="120" cy="125" r="95" fill="none" stroke="url(#fanRainbow)" stroke-width="8" filter="url(#fanGlow)"/>
+    <circle cx="120" cy="125" r="85" fill="#0e1321" stroke="#2a3754" stroke-width="2"/>
+
+    <!-- Circular Grille Mesh Rings -->
+    <circle cx="120" cy="125" r="65" fill="none" stroke="#25324c" stroke-width="2" stroke-dasharray="10 6"/>
+    <circle cx="120" cy="125" r="45" fill="none" stroke="#25324c" stroke-width="2" stroke-dasharray="8 4"/>
+
+    <!-- Fan Blades -->
+    <path d="M120,125 Q135,70 120,40" stroke="#00e5ff" stroke-width="4" fill="none" opacity="0.8"/>
+    <path d="M120,125 Q175,110 205,125" stroke="#ff00cc" stroke-width="4" fill="none" opacity="0.8"/>
+    <path d="M120,125 Q105,180 120,210" stroke="#ff1e27" stroke-width="4" fill="none" opacity="0.8"/>
+    <path d="M120,125 Q65,140 35,125" stroke="#ffaa00" stroke-width="4" fill="none" opacity="0.8"/>
+    <path d="M120,125 Q160,80 180,65" stroke="#a200ff" stroke-width="4" fill="none" opacity="0.8"/>
+    <path d="M120,125 Q80,170 60,185" stroke="#00ff88" stroke-width="4" fill="none" opacity="0.8"/>
+
+    <!-- Central Hub Logo -->
+    <circle cx="120" cy="125" r="28" fill="#080b13" stroke="#ff1e27" stroke-width="2"/>
+    <text x="120" y="129" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="900" fill="#ffffff" letter-spacing="1">850W</text>
+    
+    <!-- 80 Plus Gold Badge in Corner -->
+    <rect x="180" y="15" width="45" height="24" rx="4" fill="#d4af37" opacity="0.9"/>
+    <text x="202" y="31" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="900" fill="#000000">GOLD</text>
+  </g>
+</svg>

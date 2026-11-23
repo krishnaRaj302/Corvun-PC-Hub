@@ -113,6 +113,7 @@ class OrderSerializer(serializers.ModelSerializer):
     customer_phone = serializers.CharField(source="user.phone", read_only=True, default="")
     items_count = serializers.SerializerMethodField()
     shipping_address = serializers.SerializerMethodField()
+    payment_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -134,12 +135,27 @@ class OrderSerializer(serializers.ModelSerializer):
             "payment_status",
             "items_count",
             "items",
+            "payment_details",
             "created_at",
             "updated_at",
         ]
 
     def get_items_count(self, obj):
         return sum(item.quantity for item in obj.items.all())
+
+    def get_payment_details(self, obj):
+        payment = obj.payments.order_by("-id").first()
+        if payment:
+            return {
+                "id": payment.id,
+                "method": payment.payment_method,
+                "status": payment.status,
+                "amount": float(payment.amount),
+                "currency": payment.currency,
+                "razorpay_payment_id": payment.razorpay_payment_id,
+                "razorpay_order_id": payment.razorpay_order_id,
+            }
+        return None
 
     def get_shipping_address(self, obj):
         if not obj.shipping_address_id:

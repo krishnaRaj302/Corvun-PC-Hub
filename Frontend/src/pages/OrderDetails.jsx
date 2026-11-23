@@ -249,14 +249,14 @@ function OrderDetails() {
   // Address Resolution
   const address =
     order.shipping_address || {
-      full_name: order.customer_name || user?.full_name || "Vikramaditya Rao",
-      phone: order.customer_phone || user?.phone || "+91 98840 XXXXX",
-      address_line1: "Flat 902, Apex Towers, Brigade Gateway Campus",
-      address_line2: "Rajajinagar",
-      city: "Bengaluru",
-      state: "Karnataka",
-      postal_code: "560055",
-      country: "India",
+      full_name: order.customer_name || user?.full_name || "—",
+      phone: order.customer_phone || user?.phone || "—",
+      address_line1: "—",
+      address_line2: "",
+      city: "",
+      state: "",
+      postal_code: "",
+      country: "",
     };
 
   return (
@@ -595,9 +595,8 @@ function OrderDetails() {
               </svg>
               <div className="entry-content">
                 <span className="recipient-name">
-                  {address.full_name || order.customer_name || user?.full_name || "Vikramaditya Rao"}
+                  {address.full_name || order.customer_name || user?.full_name || "—"}
                 </span>
-                <span className="recipient-title-sub">Lead Systems Architect</span>
               </div>
             </div>
 
@@ -621,7 +620,7 @@ function OrderDetails() {
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
               <span className="recipient-phone">
-                {address.phone || order.customer_phone || user?.phone || "+91 98840 XXXXX"}
+                {address.phone || order.customer_phone || user?.phone || "—"}
               </span>
             </div>
           </section>
@@ -639,13 +638,29 @@ function OrderDetails() {
 
             <div className="payment-display-row">
               <div className="payment-card-badge">
-                <span className="card-brand-txt">VISA</span>
+                <span className="card-brand-txt">
+                  {order.payment_details?.method === "razorpay"
+                    ? "RZP"
+                    : order.payment_details?.method === "cod"
+                    ? "COD"
+                    : "PAY"}
+                </span>
               </div>
               <div className="payment-meta-text">
                 <span className="payment-type-headline">
-                  Credit Card ending in 4242
+                  {order.payment_details?.method === "razorpay"
+                    ? "Razorpay Online Gateway"
+                    : order.payment_details?.method === "cod"
+                    ? "Cash on Delivery"
+                    : "Authorized Payment Gateway"}
                 </span>
-                <span className="payment-exp-text">Expires 12/28</span>
+                <span className="payment-exp-text">
+                  {order.payment_details?.razorpay_payment_id
+                    ? `TXN ID: ${order.payment_details.razorpay_payment_id}`
+                    : order.payment_status === "completed"
+                    ? "Payment Verified & Settled"
+                    : "Payment Due on Arrival"}
+                </span>
               </div>
             </div>
           </section>

@@ -96,6 +96,21 @@ def product_reviews(request, product_id):
     )
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def my_reviews(request):
+    reviews = Review.objects.filter(
+        user=request.user
+    ).select_related("user", "product", "product__category", "product__brand").prefetch_related("product__images").order_by("-created_at")
+
+    serializer = ReviewSerializer(reviews, many=True)
+
+    return Response(
+        {"reviews": serializer.data},
+        status=status.HTTP_200_OK
+    )
+
+
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def update_review(request, review_id):

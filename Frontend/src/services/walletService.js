@@ -15,68 +15,15 @@ export const formatCurrency = (amount = 0) => {
 };
 
 /**
- * Default starter ledger data for newly initialized user workstations
+ * Default clean starter ledger data for newly initialized user workstations
  */
 const getDefaultLedger = (userId) => {
   return {
     userId: userId || "user",
-    balance: 4850.0,
-    pendingCashback: 350.0,
-    rewardPoints: 120,
-    transactions: [
-      {
-        id: "TXN-CRV-984210",
-        type: "credit",
-        category: "topup",
-        title: "Instant Wallet Top-Up",
-        description: "Funds loaded via UPI (Google Pay / Verified Node)",
-        amount: 2500.0,
-        balanceAfter: 4850.0,
-        status: "completed",
-        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        paymentMethod: "UPI",
-        reference: "UPI/3948210984/CRV",
-      },
-      {
-        id: "TXN-CRV-984102",
-        type: "credit",
-        category: "referral",
-        title: "Referral Commission Reward",
-        description: "Hardware referral bonus credited for Rig Purchase",
-        amount: 1500.0,
-        balanceAfter: 2350.0,
-        status: "completed",
-        date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        paymentMethod: "Referral Node",
-        reference: "REF-BONUS-CRV89",
-      },
-      {
-        id: "TXN-CRV-983995",
-        type: "debit",
-        category: "order",
-        title: "Checkout Partial Debit",
-        description: "Applied credits towards Custom GPU Bracket & Cables",
-        amount: 650.0,
-        balanceAfter: 850.0,
-        status: "completed",
-        date: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
-        paymentMethod: "Corvun Wallet",
-        reference: "ORD-CRV-33546",
-      },
-      {
-        id: "TXN-CRV-983501",
-        type: "credit",
-        category: "cashback",
-        title: "Workstation Welcome Cashback",
-        description: "Special enthusiast activation bonus",
-        amount: 1500.0,
-        balanceAfter: 1500.0,
-        status: "completed",
-        date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-        paymentMethod: "Promo Allocation",
-        reference: "PROMO-WELCOME-CRV",
-      },
-    ],
+    balance: 0.0,
+    pendingCashback: 0.0,
+    rewardPoints: 0,
+    transactions: [],
   };
 };
 
@@ -91,8 +38,13 @@ export const getWalletData = (user) => {
     const raw = localStorage.getItem(storageKey);
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Ensure recalculation of balance from transactions if present
-      if (Array.isArray(parsed.transactions) && parsed.transactions.length > 0) {
+      // Clean up legacy mock transactions if present
+      const hasMockTxn = Array.isArray(parsed.transactions) && parsed.transactions.some((t) => String(t.id).startsWith("TXN-CRV-984"));
+      if (hasMockTxn) {
+        localStorage.removeItem(storageKey);
+        return getDefaultLedger(userId);
+      }
+      if (typeof parsed.balance === "number") {
         return parsed;
       }
     }
@@ -100,15 +52,7 @@ export const getWalletData = (user) => {
     console.warn("Corvun Wallet: Error parsing storage ledger", err);
   }
 
-  // Generate and save default ledger
-  const defaultData = getDefaultLedger(userId);
-  try {
-    localStorage.setItem(storageKey, JSON.stringify(defaultData));
-  } catch (e) {
-    console.error("Corvun Wallet: Failed to persist default ledger", e);
-  }
-
-  return defaultData;
+  return getDefaultLedger(userId);
 };
 
 /**

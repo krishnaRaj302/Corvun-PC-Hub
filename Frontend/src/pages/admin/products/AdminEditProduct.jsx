@@ -8,6 +8,7 @@ import {
   createAdminImage,
   deleteAdminImage,
   createAdminSpecification,
+  updateAdminSpecification,
   deleteAdminSpecification,
   getAdminCategories,
   getAdminBrands,
@@ -344,7 +345,7 @@ export default function AdminEditProduct() {
         }
       }
 
-      // 4. Handle Specs: delete removed ones, add new ones without id
+      // 4. Handle Specs: delete removed ones, update existing ones, add new ones without id
       const currentSpecIds = specifications.filter((s) => s.id).map((s) => s.id);
       const specsToDelete = initialSpecIds.filter(
         (sid) => !currentSpecIds.includes(sid)
@@ -360,6 +361,11 @@ export default function AdminEditProduct() {
         if (!s.id && s.specification_name.trim() && s.specification_value.trim()) {
           await createAdminSpecification({
             product: id,
+            specification_name: s.specification_name.trim(),
+            specification_value: s.specification_value.trim(),
+          });
+        } else if (s.id && s.specification_name.trim() && s.specification_value.trim()) {
+          await updateAdminSpecification(s.id, {
             specification_name: s.specification_name.trim(),
             specification_value: s.specification_value.trim(),
           });
@@ -898,6 +904,7 @@ export default function AdminEditProduct() {
                     <input
                       type="text"
                       className="admin-dynamic-row-input"
+                      placeholder="e.g. Model Number, Socket, TDP"
                       value={s.specification_name || ""}
                       onChange={(e) =>
                         handleUpdateSpec(idx, "specification_name", e.target.value)
@@ -908,6 +915,7 @@ export default function AdminEditProduct() {
                     <input
                       type="text"
                       className="admin-dynamic-row-input"
+                      placeholder="e.g. BX8071514600K, LGA1700, 181W"
                       value={s.specification_value || ""}
                       onChange={(e) =>
                         handleUpdateSpec(idx, "specification_value", e.target.value)

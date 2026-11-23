@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
+import cloudinary
 
 
 
@@ -34,7 +35,7 @@ SECRET_KEY = 'django-insecure-@0jc(l$k-boor50t-2j)wd^c(#7fvg8rav(wfhv8ayj_u7e)ju
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver', '[::1]']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -178,4 +179,27 @@ SIMPLE_JWT = {
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_placeholder")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
 RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET", "")
+
+# ============================================================
+# FILE UPLOAD SIZE LIMITS
+# Allow high-resolution brand vectors, manufacturer assets, and product media up to 50MB
+# ============================================================
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
+
 RAZORPAY_CURRENCY = "INR"
+
+# ============================================================
+# CLOUDINARY IMAGE STORAGE CONFIGURATION
+# ============================================================
+
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
+
+cloudinary.config(
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET,
+    secure=True
+)

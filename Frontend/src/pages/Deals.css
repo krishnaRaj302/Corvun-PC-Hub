@@ -1,0 +1,792 @@
+/* ============================================================
+   CORVUN PC — EXCLUSIVE DEALS & OFFERS PAGE
+   Dark Cyberpunk High-Performance Theme
+   ============================================================ */
+
+.deals-page-wrapper {
+  min-height: 100vh;
+  background-color: #050811;
+  color: #f8fafc;
+  font-family: var(--corvun-font, system-ui, -apple-system, sans-serif);
+  padding-bottom: 80px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.deals-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ─── Floating Toast Feedback ─────────────────────────────── */
+.deals-floating-toast {
+  position: fixed;
+  top: 85px;
+  right: 28px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(12, 16, 29, 0.95);
+  border: 1px solid rgba(255, 30, 39, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 30, 39, 0.2);
+  backdrop-filter: blur(12px);
+  padding: 12px 18px;
+  border-radius: 8px;
+  animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 420px;
+}
+
+@keyframes slideInToast {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.deals-floating-toast.success .toast-indicator {
+  width: 6px;
+  height: 24px;
+  border-radius: 3px;
+  background: #ff1e27;
+  box-shadow: 0 0 10px #ff1e27;
+}
+
+.deals-floating-toast.error .toast-indicator {
+  width: 6px;
+  height: 24px;
+  border-radius: 3px;
+  background: #f87171;
+}
+
+.toast-text {
+  font-size: 13px;
+  color: #e2e8f0;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  margin-left: auto;
+  transition: color 0.15s;
+}
+
+.toast-close:hover {
+  color: #ffffff;
+}
+
+/* ============================================================
+   1. HERO SECTION
+   ============================================================ */
+
+.deals-hero-section {
+  position: relative;
+  padding: 60px 24px 50px;
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 30, 39, 0.12) 0%, rgba(5, 8, 17, 0) 70%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.deals-hero-content {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Glowing Lightning Badge Frame */
+.deals-hero-icon-frame {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 30, 39, 0.08);
+  border: 1px solid rgba(255, 30, 39, 0.3);
+  box-shadow: 0 0 20px rgba(255, 30, 39, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Protocol Subtitle Tag */
+.deals-hero-protocol-tag {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff1e27;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* Hero Title */
+.deals-hero-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  margin: 0 0 16px;
+}
+
+/* Hero Subtitle */
+.deals-hero-subtitle {
+  font-size: 15px;
+  color: #94a3b8;
+  line-height: 1.6;
+  max-width: 620px;
+  margin: 0 0 32px;
+}
+
+/* 3 Trust Badges in Pill Frames */
+.deals-trust-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.trust-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 30, 39, 0.25);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.trust-pill-badge:hover {
+  border-color: rgba(255, 30, 39, 0.5);
+  background: rgba(255, 30, 39, 0.06);
+  color: #ffffff;
+}
+
+.trust-pill-badge svg {
+  color: #ff1e27;
+}
+
+/* ============================================================
+   2. ACTIVE DEALS SECTION & HEADER
+   ============================================================ */
+
+.deals-active-section {
+  padding-top: 48px;
+}
+
+.deals-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.deals-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.deals-title-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.deals-vertical-bar {
+  width: 4px;
+  height: 24px;
+  border-radius: 2px;
+  background: #ff1e27;
+  box-shadow: 0 0 10px #ff1e27;
+}
+
+.deals-section-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.deals-node-sync-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-left: 16px;
+}
+
+/* Real-Time Countdown Box */
+.deals-countdown-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(12, 16, 29, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.deals-countdown-box svg {
+  color: #ff1e27;
+}
+
+.countdown-label {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.countdown-timer {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   DEALS GRID (3 Columns)
+   ============================================================ */
+
+.deals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Deal Card */
+.deal-card {
+  background: #0c101d;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+
+.deal-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 30, 39, 0.4);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 30, 39, 0.12);
+}
+
+/* Card Media Header */
+.deal-media-frame {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: #080b14;
+  overflow: hidden;
+}
+
+.deal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.deal-card:hover .deal-image {
+  transform: scale(1.03);
+}
+
+/* Top-Left Floating Badge */
+.deal-status-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.deal-status-tag.featured {
+  background: rgba(11, 14, 23, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f8fafc;
+}
+
+.deal-status-tag.hot-bundle {
+  background: rgba(255, 30, 39, 0.15);
+  border: 1px solid #ff1e27;
+  color: #ff3843;
+}
+
+/* Top-Right Floating Discount Tag */
+.deal-discount-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  background: linear-gradient(135deg, #ff1e27, #cf1119);
+  color: #ffffff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(255, 30, 39, 0.4);
+}
+
+/* Card Body */
+.deal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.deal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+
+.deal-description {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0 0 16px;
+  min-height: 40px;
+}
+
+/* Expiry Row */
+.deal-expiry-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.deal-expiry-row svg {
+  color: #64748b;
+}
+
+.deal-expiry-text {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Footer / Action Row */
+.deal-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 12px;
+}
+
+/* Promo Code Chip */
+.deal-promo-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.promo-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.promo-code-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.promo-code-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  font-weight: 800;
+  color: #ff1e27;
+  letter-spacing: 0.5px;
+  transition: color 0.15s;
+}
+
+.deal-promo-chip:hover .promo-code-text {
+  color: #ff5964;
+  text-decoration: underline;
+}
+
+.promo-code-box svg {
+  color: #64748b;
+  transition: color 0.15s;
+}
+
+.deal-promo-chip:hover .promo-code-box svg {
+  color: #ffffff;
+}
+
+.copied-pill {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  font-size: 9px;
+  background: #ff1e27;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+/* Action Button */
+.deal-action-btn {
+  background: #ff1e27;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(255, 30, 39, 0.25);
+  white-space: nowrap;
+}
+
+.deal-action-btn:hover {
+  background: #e0161f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(255, 30, 39, 0.4);
+}
+
+.deal-action-btn:active {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   3. TELEMETRY METRIC STRIP (Below Grid)
+   ============================================================ */
+
+.deals-telemetry-strip-section {
+  margin-top: 48px;
+}
+
+.telemetry-strip-card {
+  background: #080c16;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 22px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.telemetry-metric-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+
+.metric-icon-frame {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00e5ff;
+}
+
+.metric-icon-frame.red-accent {
+  color: #ff1e27;
+  border-color: rgba(255, 30, 39, 0.3);
+  background: rgba(255, 30, 39, 0.06);
+}
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.metric-headline {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.metric-subtext {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.telemetry-divider {
+  width: 1px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ============================================================
+   4. BOTTOM NEWSLETTER / HARDWARE DROP CTA
+   ============================================================ */
+
+.deals-newsletter-section {
+  margin-top: 54px;
+}
+
+.deals-newsletter-box {
+  background: #0a0e1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 50px 30px;
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.deals-newsletter-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ff1e27, transparent);
+}
+
+.newsletter-protocol-badge {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff1e27;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.newsletter-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 10px;
+}
+
+.newsletter-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  max-width: 520px;
+  margin: 0 auto 28px;
+  line-height: 1.5;
+}
+
+.deals-subscribe-form {
+  display: flex;
+  gap: 10px;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.subscribe-input-wrapper {
+  flex: 1;
+}
+
+.subscribe-input {
+  width: 100%;
+  background: #060913;
+  border: 1px solid #1e283d;
+  border-radius: 6px;
+  padding: 12px 16px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.subscribe-input:focus {
+  border-color: #ff1e27;
+  box-shadow: 0 0 12px rgba(255, 30, 39, 0.25);
+}
+
+.subscribe-btn {
+  background: #ff1e27;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.subscribe-btn:hover:not(:disabled) {
+  background: #e0161f;
+  transform: translateY(-1px);
+}
+
+.subscribe-btn:disabled {
+  background: #1e293b;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
+   ============================================================ */
+
+@media (max-width: 1100px) {
+  .deals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .telemetry-strip-card {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .telemetry-divider {
+    display: none;
+  }
+}
+
+/* Empty State */
+.deals-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  background: #0c101d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.empty-state-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 30, 39, 0.08);
+  border: 1px solid rgba(255, 30, 39, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.empty-state-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 10px;
+}
+
+.empty-state-desc {
+  font-size: 13.5px;
+  color: #94a3b8;
+  max-width: 540px;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.empty-browse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #ff1e27 0%, #d80015 100%);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 11px 24px;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(255, 30, 39, 0.35);
+  transition: all 0.2s ease;
+}
+
+.empty-browse-btn:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .deals-hero-title {
+    font-size: 30px;
+  }
+
+  .deals-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .deals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .telemetry-strip-card {
+    grid-template-columns: 1fr;
+  }
+
+  .deals-subscribe-form {
+    flex-direction: column;
+  }
+
+  .subscribe-btn {
+    width: 100%;
+  }
+}
