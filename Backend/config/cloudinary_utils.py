@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from PIL import Image, UnidentifiedImageError
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,11 @@ ALLOWED_CLOUDINARY_FOLDERS = {
 
 DEFAULT_MAX_IMAGE_SIZE_BYTES = 25 * 1024 * 1024  # 25 MB
 
+# Decompression bomb & dimension limits
+MAX_IMAGE_DIMENSION = 10_000  # max 10,000 px in width or height
+MAX_IMAGE_PIXELS = 100_000_000  # max 100 million total pixels (prevents zip bomb memory exhaustion)
+Image.MAX_IMAGE_PIXELS = MAX_IMAGE_PIXELS
+
 DEFAULT_ALLOWED_EXTENSIONS = {
     ".png",
     ".jpg",
@@ -29,6 +35,17 @@ DEFAULT_ALLOWED_EXTENSIONS = {
     ".svg",
     ".bmp",
     ".ico",
+}
+
+# Pillow format mapping to expected extensions
+PILLOW_FORMAT_MAP = {
+    "JPEG": {".jpg", ".jpeg"},
+    "PNG": {".png"},
+    "WEBP": {".webp"},
+    "GIF": {".gif"},
+    "BMP": {".bmp"},
+    "ICO": {".ico"},
+    "AVIF": {".avif"},
 }
 
 
@@ -44,24 +61,27 @@ def is_cloudinary_url(url: str) -> bool:
 def extract_public_id_from_url(url: str) -> str | None:
     """
     Extracts the Cloudinary public_id (including folder path) from a secure URL.
+    Supports standard URLs, versioned URLs, single/chained transformation URLs, query strings, and fragments.
+
     E.g.:
-    https://res.cloudinary.com/xyz/image/upload/v1740000000/corvun/products/abc123_intel.png
-    -> 'corvun/products/abc123_intel'
+    https://res.cloudinary.com/xyz/image/upload/v1740000000/corvun/products/abc123_intel.png -> 'corvun/products/abc123_intel'
+    https://res.cloudinary.com/xyz/image/upload/w_500,c_fill/v1234/corvun/brands/xyz_asus.png -> 'corvun/brands/xyz_asus'
+    https://res.cloudinary.com/xyz/image/upload/c_scale,w_auto/corvun/banners/hero_deal.webp?v=2#details -> 'corvun/banners/hero_deal'
     """
     if not is_cloudinary_url(url):
         return None
 
-    # Match /image/upload/(optional v\d+/)(corvun/(products|brands|banners)/<id>)
+    # Matches /image/upload/(optional transformations and/or version)(corvun/(products|brands|banners)/<id>)
     match = re.search(
-        r"/image/upload/(?:v\d+/)?(corvun/(?:products|brands|banners)/.+?)(?:\.[a-zA-Z0-9]+)?(?:\?|$)",
+        r"/image/upload/(?:.*?/)*(corvun/(?:products|brands|banners)/.+?)(?:\.[a-zA-Z0-9]+)?(?:\?|#|$)",
         url,
     )
     if match:
         return match.group(1)
 
-    # General fallback for any folder structure under /image/upload/
+    # General fallback strictly requiring corvun/ prefix
     match_general = re.search(
-        r"/image/upload/(?:v\d+/)?(.+?)(?:\.[a-zA-Z0-9]+)?(?:\?|$)",
+        r"/image/upload/(?:.*?/)*(corvun/.+?)(?:\.[a-zA-Z0-9]+)?(?:\?|#|$)",
         url,
     )
     if match_general:
@@ -78,6 +98,98 @@ def sanitize_filename(filename: str, max_length: int = 50) -> str:
     clean = re.sub(r"[^a-zA-Z0-9_\-]", "_", base_name)
     clean = re.sub(r"_+", "_", clean).strip("_")
     return clean[:max_length] if clean else "image"
+
+
+def validate_svg_content(file_obj) -> None:
+    """
+    Validates SVG vector content by checking XML structure and blocking embedded scripts.
+    """
+    if hasattr(file_obj, "seek") and callable(file_obj.seek):
+        file_obj.seek(0)
+
+    try:
+        if hasattr(file_obj, "read") and callable(file_obj.read):
+            raw_bytes = file_obj.read(65536)
+            if hasattr(file_obj, "seek") and callable(file_obj.seek):
+                file_obj.seek(0)
+        elif isinstance(file_obj, str) and os.path.isfile(file_obj):
+            with open(file_obj, "rb") as f:
+                raw_bytes = f.read(65536)
+        else:
+            return
+    except Exception as exc:
+        raise ValidationError(f"Unable to read SVG file content: {str(exc)}")
+
+    content_str = raw_bytes.decode("utf-8", errors="ignore").lower()
+
+    if "<svg" not in content_str:
+        raise ValidationError("Invalid SVG image: missing <svg> root element.")
+
+    # Security check: disallow embedded script tags and event handlers
+    dangerous_patterns = [
+        r"<script",
+        r"javascript:",
+        r"onload\s*=",
+        r"onerror\s*=",
+        r"onclick\s*=",
+        r"href\s*=\s*['\"]javascript:",
+        r"<iframe",
+        r"<object",
+        r"<embed",
+    ]
+    for pattern in dangerous_patterns:
+        if re.search(pattern, content_str):
+            raise ValidationError("SVG file contains unsafe scripts or embedded active content.")
+
+
+def validate_image_content(file_obj, ext: str) -> None:
+    """
+    Validates actual image content using Pillow.
+    Checks integrity, dimensions, pixel bounds, and format matching.
+    """
+    if ext == ".svg":
+        validate_svg_content(file_obj)
+        return
+
+    if hasattr(file_obj, "seek") and callable(file_obj.seek):
+        file_obj.seek(0)
+
+    try:
+        img = Image.open(file_obj)
+        img.verify()
+    except UnidentifiedImageError:
+        raise ValidationError("Uploaded file is not a valid or recognizable image.")
+    except Exception as exc:
+        raise ValidationError(f"Image integrity verification failed: {str(exc)}")
+
+    # Rewind after verify() to inspect dimensions
+    if hasattr(file_obj, "seek") and callable(file_obj.seek):
+        file_obj.seek(0)
+
+    try:
+        img = Image.open(file_obj)
+        width, height = img.size
+        format_name = img.format
+
+        if width > MAX_IMAGE_DIMENSION or height > MAX_IMAGE_DIMENSION:
+            raise ValidationError(
+                f"Image dimensions ({width}x{height}) exceed maximum allowed dimension of {MAX_IMAGE_DIMENSION}px."
+            )
+
+        if (width * height) > MAX_IMAGE_PIXELS:
+            raise ValidationError("Image resolution is excessively high and violates decompression safety limits.")
+
+        expected_exts = PILLOW_FORMAT_MAP.get(format_name)
+        if expected_exts and ext not in expected_exts:
+            logger.warning("Image extension '%s' differs from detected format '%s'", ext, format_name)
+
+    except ValidationError:
+        raise
+    except Exception as exc:
+        raise ValidationError(f"Failed to inspect image dimensions: {str(exc)}")
+    finally:
+        if hasattr(file_obj, "seek") and callable(file_obj.seek):
+            file_obj.seek(0)
 
 
 def upload_image_to_cloudinary(
@@ -127,10 +239,8 @@ def upload_image_to_cloudinary(
             f"File size ({actual_mb:.1f}MB) exceeds the maximum limit of {limit_mb:.0f}MB."
         )
 
-    # Validate MIME type if available on uploaded file
-    content_type = getattr(file_obj, "content_type", "")
-    if content_type and not content_type.startswith("image/") and ext != ".svg":
-        raise ValidationError("Uploaded file must be a valid image.")
+    # Validate actual image content & integrity with Pillow
+    validate_image_content(file_obj, ext)
 
     # Generate a unique, deterministic public ID
     clean_name = sanitize_filename(filename)
@@ -138,7 +248,6 @@ def upload_image_to_cloudinary(
     public_id = f"{unique_suffix}_{clean_name}"
 
     try:
-        # Rewind file pointer if supported
         if hasattr(file_obj, "seek") and callable(file_obj.seek):
             file_obj.seek(0)
 
@@ -180,6 +289,7 @@ def delete_image_from_cloudinary(url_or_public_id: str) -> bool:
     """
     Deletes an asset from Cloudinary using either its secure URL or public_id.
     Safely ignores non-Cloudinary / local media paths.
+    Strictly restricted to corvun/ namespace (products, brands, banners).
     """
     if not url_or_public_id or not isinstance(url_or_public_id, str):
         return False
@@ -196,9 +306,9 @@ def delete_image_from_cloudinary(url_or_public_id: str) -> bool:
         public_id = extracted
 
     # Only delete assets within our application namespace
-    if not public_id.startswith("corvun/"):
+    if not public_id.startswith(("corvun/products/", "corvun/brands/", "corvun/banners/")):
         logger.warning(
-            "Refusing to delete asset outside 'corvun/' namespace: %s",
+            "Refusing to delete asset outside CORVUN namespace: %s",
             public_id,
         )
         return False

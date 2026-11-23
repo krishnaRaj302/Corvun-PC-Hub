@@ -2,6 +2,7 @@ import os
 import io
 import django
 from django.conf import settings
+from PIL import Image
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
@@ -10,6 +11,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import transaction
 
 from products.models import Product, Category, Brand, ProductImage
 from content.models import Banner
@@ -18,21 +20,23 @@ from config.cloudinary_utils import (
     delete_image_from_cloudinary,
     is_cloudinary_url,
     extract_public_id_from_url,
+    validate_image_content,
+    validate_svg_content,
+    MAX_IMAGE_DIMENSION,
 )
 
 User = get_user_model()
 
-# Minimal valid 1x1 PNG bytes with valid CRC
-VALID_PNG_BYTES = (
-    b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
-    b"\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc\xf8\xff\xff"
-    b"?\x00\x05\xfe\x02\xfe\r\xef\x85h\x00\x00\x00\x00IEND\xaeB`\x82"
-)
+# Generate valid 10x10 PNG bytes using Pillow
+_buf = io.BytesIO()
+_img = Image.new("RGBA", (10, 10), (0, 150, 255, 255))
+_img.save(_buf, format="PNG")
+VALID_PNG_BYTES = _buf.getvalue()
 
 
 def run_tests():
     print("=" * 60)
-    print("RUNNING CLOUDINARY INTEGRATION TEST SUITE")
+    print("RUNNING HARDENED CLOUDINARY INTEGRATION TEST SUITE")
     print("=" * 60)
 
     # 1. Setup Admin User & Authenticated API Client
@@ -66,17 +70,55 @@ def run_tests():
         # Test 14: Invalid files and oversized files rejected
         # ----------------------------------------------------
         print("\n[Test 14] Invalid files and oversized files rejected...")
-        # Invalid extension (.txt)
         bad_file = SimpleUploadedFile("bad.txt", b"not an image", content_type="text/plain")
         res_bad = client.post("/api/products/images/upload/", {"image": bad_file}, format="multipart")
         assert res_bad.status_code == status.HTTP_400_BAD_REQUEST, f"Expected 400, got {res_bad.status_code}"
         print("  PASS: Bad extension rejected with 400.")
 
-        # Oversized file simulation
         huge_file = SimpleUploadedFile("huge.jpg", b"x" * (26 * 1024 * 1024), content_type="image/jpeg")
         res_huge = client.post("/api/products/images/upload/", {"image": huge_file}, format="multipart")
         assert res_huge.status_code == status.HTTP_400_BAD_REQUEST, f"Expected 400, got {res_huge.status_code}"
         print("  PASS: Oversized file rejected with 400.")
+
+        # ----------------------------------------------------
+        # Test 15: Corrupt image file rejected via Pillow verification
+        # ----------------------------------------------------
+        print("\n[Test 15] Corrupt raster image rejected by Pillow...")
+        corrupt_file = SimpleUploadedFile("corrupt.png", b"\x89PNG\r\n\x1a\ncorruptpayload12345", content_type="image/png")
+        res_corrupt = client.post("/api/products/images/upload/", {"image": corrupt_file}, format="multipart")
+        assert res_corrupt.status_code == status.HTTP_400_BAD_REQUEST
+        print("  PASS: Corrupt image rejected by Pillow integrity check.")
+
+        # ----------------------------------------------------
+        # Test 16: SVG with embedded malicious scripts rejected
+        # ----------------------------------------------------
+        print("\n[Test 16] SVG with embedded script rejected...")
+        malicious_svg = SimpleUploadedFile(
+            "vector.svg",
+            b"<svg xmlns='http://www.w3.org/2000/svg'><script>alert('xss')</script></svg>",
+            content_type="image/svg+xml"
+        )
+        res_svg = client.post("/api/products/images/upload/", {"image": malicious_svg}, format="multipart")
+        assert res_svg.status_code == status.HTTP_400_BAD_REQUEST
+        print("  PASS: Malicious SVG rejected.")
+
+        # ----------------------------------------------------
+        # Test 17: Public ID extraction from transformation and versioned URLs
+        # ----------------------------------------------------
+        print("\n[Test 17] Public ID extraction from complex transformation URLs...")
+        url1 = "https://res.cloudinary.com/demo/image/upload/v1740000000/corvun/products/abc123_intel.png"
+        assert extract_public_id_from_url(url1) == "corvun/products/abc123_intel"
+
+        url2 = "https://res.cloudinary.com/demo/image/upload/w_500,c_fill/v1234/corvun/brands/xyz_asus.png"
+        assert extract_public_id_from_url(url2) == "corvun/brands/xyz_asus"
+
+        url3 = "https://res.cloudinary.com/demo/image/upload/c_scale,w_auto/corvun/banners/hero_deal.webp?v=2#details"
+        assert extract_public_id_from_url(url3) == "corvun/banners/hero_deal"
+
+        non_corvun_url = "https://res.cloudinary.com/demo/image/upload/v1234/other_app/secret.jpg"
+        # Non-corvun URL outside namespace
+        assert extract_public_id_from_url(non_corvun_url) is None or not delete_image_from_cloudinary(non_corvun_url)
+        print("  PASS: Public ID extraction and namespace isolation verified.")
 
         # ----------------------------------------------------
         # Test 1: Upload one product image to Cloudinary
@@ -117,7 +159,6 @@ def run_tests():
             stock=10,
             status="active"
         )
-        # Create image records
         pimg1 = ProductImage.objects.create(
             product=prod,
             image=img1_url,
@@ -176,7 +217,6 @@ def run_tests():
         res_del_img = client.delete(f"/api/products/images/{img3_id}/delete/")
         assert res_del_img.status_code == status.HTTP_200_OK, f"Delete failed: {res_del_img.data}"
         assert not ProductImage.objects.filter(id=img3_id).exists(), "ProductImage record still in DB!"
-        # Remove from cleanup list since endpoint already destroyed it
         if img3_url in uploaded_test_urls:
             uploaded_test_urls.remove(img3_url)
         print("  PASS: Image record and Cloudinary asset deleted.")
@@ -193,7 +233,6 @@ def run_tests():
         uploaded_test_urls.append(brand_logo_url)
         print(f"  PASS: Brand logo uploaded to Cloudinary: {brand_logo_url}")
 
-        # Create brand with uploaded logo
         test_brand = Brand.objects.create(name="Cloudinary Brand Test", logo=brand_logo_url, status="listed")
         assert test_brand.logo == brand_logo_url
         test_brand_id = test_brand.id
@@ -278,7 +317,7 @@ def run_tests():
         # Clean up test product
         prod.delete()
         print("\n" + "=" * 60)
-        print("ALL 14 CLOUDINARY INTEGRATION TESTS PASSED!")
+        print("ALL 17 CLOUDINARY HARDENING TESTS PASSED!")
         print("=" * 60)
 
     finally:

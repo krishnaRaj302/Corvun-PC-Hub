@@ -1,6 +1,7 @@
 import os
 import uuid
 from django.conf import settings
+from django.db import transaction
 from django.utils import timezone
 from django.db.models import Q
 from rest_framework.decorators import api_view, permission_classes
@@ -162,14 +163,20 @@ def admin_banners(request, banner_id=None):
 
         serializer = BannerSerializer(data=data)
         if serializer.is_valid():
-            banner = serializer.save()
-            return Response(
-                {
-                    "message": "Banner created successfully.",
-                    "banner": BannerSerializer(banner).data,
-                },
-                status=status.HTTP_201_CREATED
-            )
+            try:
+                with transaction.atomic():
+                    banner = serializer.save()
+                return Response(
+                    {
+                        "message": "Banner created successfully.",
+                        "banner": BannerSerializer(banner).data,
+                    },
+                    status=status.HTTP_201_CREATED
+                )
+            except Exception as e:
+                if file_obj and "image" in data:
+                    _remove_banner_media_file(data["image"])
+                return Response({"error": f"Failed to save banner: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
         # If serializer validation failed and file was uploaded, clean up file
         if file_obj and "image" in data:
@@ -224,22 +231,28 @@ def admin_banners(request, banner_id=None):
 
         serializer = BannerSerializer(banner, data=data, partial=(request.method == "PATCH"))
         if serializer.is_valid():
-            updated_banner = serializer.save()
+            try:
+                with transaction.atomic():
+                    updated_banner = serializer.save()
 
-            # Clean up old image if a new one was uploaded and differs
-            if new_file_uploaded and old_image and old_image != updated_banner.image:
-                _remove_banner_media_file(old_image)
+                    # Clean up old image only after commit
+                    if new_file_uploaded and old_image and old_image != updated_banner.image:
+                        transaction.on_commit(lambda: _remove_banner_media_file(old_image))
 
-            return Response(
-                {
-                    "message": "Banner updated successfully.",
-                    "banner": BannerSerializer(updated_banner).data,
-                },
-                status=status.HTTP_200_OK
-            )
+                return Response(
+                    {
+                        "message": "Banner updated successfully.",
+                        "banner": BannerSerializer(updated_banner).data,
+                    },
+                    status=status.HTTP_200_OK
+                )
+            except Exception as e:
+                if new_file_uploaded and "image" in data:
+                    _remove_banner_media_file(data["image"])
+                return Response({"error": f"Failed to update banner: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
         # If validation fails and new file was saved, remove the new file
-        if new_file_uploaded:
+        if new_file_uploaded and "image" in data:
             _remove_banner_media_file(data["image"])
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -249,10 +262,13 @@ def admin_banners(request, banner_id=None):
     # ----------------------------------------------------
     if request.method == "DELETE":
         old_image = banner.image
-        banner.delete()
-        _remove_banner_media_file(old_image)
-
-        return Response(
-            {"message": "Banner deleted successfully."},
-            status=status.HTTP_200_OK
-        )
+        try:
+            with transaction.atomic():
+                banner.delete()
+                transaction.on_commit(lambda: _remove_banner_media_file(old_image))
+            return Response(
+                {"message": "Banner deleted successfully."},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response({"error": f"Failed to delete banner: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)

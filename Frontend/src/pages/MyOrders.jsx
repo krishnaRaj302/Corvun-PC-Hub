@@ -43,8 +43,16 @@ function MyOrders() {
       console.error("Orders load failed:", err);
       if (err.response?.status === 401) {
         setError("Your session has expired. Please log in again.");
+      } else if (err.response?.status === 403) {
+        setError("Access denied. Please verify your account credentials.");
+      } else if (!err.response) {
+        setError("Cannot connect to server. Please verify backend service on port 8002.");
       } else {
-        setError("Failed to interrogate order repository node. Please verify connection.");
+        setError(
+          err.response?.data?.error ||
+          err.response?.data?.detail ||
+          "Failed to interrogate order repository node. Please verify connection."
+        );
       }
     } finally {
       setLoading(false);
@@ -52,34 +60,12 @@ function MyOrders() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    let isMounted = true;
-
     if (!authLoading && isAuthenticated) {
-      getMyOrders()
-        .then((orderRes) => {
-          if (!isMounted) return;
-          setOrders(Array.isArray(orderRes?.orders) ? orderRes.orders : []);
-          setError("");
-        })
-        .catch((err) => {
-          if (!isMounted) return;
-          console.error("Orders load failed:", err);
-          setError("Failed to interrogate order repository node. Please verify connection.");
-        })
-        .finally(() => {
-          if (isMounted) setLoading(false);
-        });
+      fetchOrders();
     } else if (!authLoading && !isAuthenticated) {
-      Promise.resolve().then(() => {
-        if (!isMounted) return;
-        setLoading(false);
-      });
+      setLoading(false);
     }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [authLoading, isAuthenticated]);
+  }, [authLoading, isAuthenticated, fetchOrders]);
 
   // Handle Cancel Order
   const handleCancelOrder = async (orderId) => {
@@ -408,9 +394,15 @@ function MyOrders() {
             <div className="orders-state-box error-box">
               <div className="state-badge">TRANSACTION_ERROR</div>
               <p>{error}</p>
-              <button type="button" className="retry-btn" onClick={fetchOrders}>
-                Retry Interrogation
-              </button>
+              {error.toLowerCase().includes("session") || error.toLowerCase().includes("log in") ? (
+                <Link to="/login" className="retry-btn" style={{ textDecoration: "none", display: "inline-block", marginTop: "8px" }}>
+                  Log In to Workstation →
+                </Link>
+              ) : (
+                <button type="button" className="retry-btn" onClick={fetchOrders}>
+                  Retry Interrogation
+                </button>
+              )}
             </div>
           ) : paginatedOrders.length === 0 ? (
             <div className="orders-state-box empty-box">

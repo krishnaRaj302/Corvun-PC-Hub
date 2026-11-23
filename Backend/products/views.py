@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from django.db import transaction
 from django.db.models import F, Q, Count, ProtectedError
 from rest_framework.exceptions import ValidationError
 
@@ -318,25 +319,43 @@ def delete_product(request, product_id):
         )
 
     try:
-        # Dissociate any order items referencing product variants so the historical order records remain intact
-        from orders.models import OrderItem
-        OrderItem.objects.filter(product_variant__product=product).update(product_variant=None)
+        with transaction.atomic():
+            # Dissociate any order items referencing product variants so the historical order records remain intact
+            from orders.models import OrderItem
+            OrderItem.objects.filter(product_variant__product=product).update(product_variant=None)
 
-        # Clean up images (Cloudinary assets and legacy local files)
-        for img in product.images.all():
-            if img.image and is_cloudinary_url(img.image):
-                delete_image_from_cloudinary(img.image)
-            elif img.image and img.image.startswith("/media/products/"):
-                try:
-                    rel_path = img.image[len("/media/"):]
-                    full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
-                    if os.path.isfile(full_path):
-                        os.remove(full_path)
-                except Exception:
-                    pass
+            # Collect image URLs before cascading delete
+            cloudinary_urls_to_delete = []
+            local_paths_to_delete = []
+            for img in product.images.all():
+                if img.image and is_cloudinary_url(img.image):
+                    cloudinary_urls_to_delete.append(img.image)
+                elif img.image and img.image.startswith("/media/products/"):
+                    try:
+                        rel_path = img.image[len("/media/"):]
+                        full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                        local_paths_to_delete.append(full_path)
+                    except Exception:
+                        pass
 
-        # Delete the product and its cascaded variants, images, and specifications
-        product.delete()
+            # Delete the product and its cascaded variants, images, and specifications
+            product.delete()
+
+            # Schedule external image cleanup only after successful database commit
+            def _cleanup_product_assets():
+                for c_url in cloudinary_urls_to_delete:
+                    try:
+                        delete_image_from_cloudinary(c_url)
+                    except Exception:
+                        pass
+                for l_path in local_paths_to_delete:
+                    try:
+                        if os.path.isfile(l_path):
+                            os.remove(l_path)
+                    except Exception:
+                        pass
+
+            transaction.on_commit(_cleanup_product_assets)
 
         # Send success response
         return Response(
@@ -509,14 +528,20 @@ def create_brand(request):
 
     serializer = BrandSerializer(data=data, context={"request": request})
     if serializer.is_valid():
-        serializer.save()
-        return Response(
-            {
-                "message": "Brand created successfully.",
-                "data": serializer.data
-            },
-            status=status.HTTP_201_CREATED
-        )
+        try:
+            with transaction.atomic():
+                serializer.save()
+            return Response(
+                {
+                    "message": "Brand created successfully.",
+                    "data": serializer.data
+                },
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            if uploaded_logo and is_cloudinary_url(uploaded_logo):
+                delete_image_from_cloudinary(uploaded_logo)
+            return Response({"error": f"Failed to save brand: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Clean up uploaded Cloudinary image if DB save fails
     if uploaded_logo and is_cloudinary_url(uploaded_logo):
@@ -558,28 +583,36 @@ def update_brand(request, brand_id):
     partial = request.method == "PATCH"
     serializer = BrandSerializer(brand, data=data, partial=partial, context={"request": request})
     if serializer.is_valid():
-        serializer.save()
+        try:
+            with transaction.atomic():
+                serializer.save()
 
-        # Clean up old logo if replaced
-        if uploaded_logo and old_logo and old_logo != uploaded_logo:
-            if is_cloudinary_url(old_logo):
-                delete_image_from_cloudinary(old_logo)
-            elif old_logo.startswith("/media/brands/"):
-                try:
-                    rel_path = old_logo[len("/media/"):]
-                    full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
-                    if os.path.isfile(full_path):
-                        os.remove(full_path)
-                except Exception:
-                    pass
+                # Clean up old logo only after commit
+                if uploaded_logo and old_logo and old_logo != uploaded_logo:
+                    def _cleanup_old_brand_logo():
+                        if is_cloudinary_url(old_logo):
+                            delete_image_from_cloudinary(old_logo)
+                        elif old_logo.startswith("/media/brands/"):
+                            try:
+                                rel_path = old_logo[len("/media/"):]
+                                full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                                if os.path.isfile(full_path):
+                                    os.remove(full_path)
+                            except Exception:
+                                pass
+                    transaction.on_commit(_cleanup_old_brand_logo)
 
-        return Response(
-            {
-                "message": "Brand updated successfully.",
-                "data": serializer.data
-            },
-            status=status.HTTP_200_OK
-        )
+            return Response(
+                {
+                    "message": "Brand updated successfully.",
+                    "data": serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            if uploaded_logo and is_cloudinary_url(uploaded_logo):
+                delete_image_from_cloudinary(uploaded_logo)
+            return Response({"error": f"Failed to update brand: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Clean up uploaded Cloudinary image if DB update fails
     if uploaded_logo and is_cloudinary_url(uploaded_logo):
@@ -610,23 +643,28 @@ def delete_brand(request, brand_id):
 
     old_logo = brand.logo
     try:
-        brand.delete()
-        if old_logo:
-            if is_cloudinary_url(old_logo):
-                delete_image_from_cloudinary(old_logo)
-            elif old_logo.startswith("/media/brands/"):
-                try:
-                    rel_path = old_logo[len("/media/"):]
-                    full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
-                    if os.path.isfile(full_path):
-                        os.remove(full_path)
-                except Exception:
-                    pass
+        with transaction.atomic():
+            brand.delete()
+            if old_logo:
+                def _cleanup_deleted_brand_logo():
+                    if is_cloudinary_url(old_logo):
+                        delete_image_from_cloudinary(old_logo)
+                    elif old_logo.startswith("/media/brands/"):
+                        try:
+                            rel_path = old_logo[len("/media/"):]
+                            full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                            if os.path.isfile(full_path):
+                                os.remove(full_path)
+                        except Exception:
+                            pass
+                transaction.on_commit(_cleanup_deleted_brand_logo)
     except ProtectedError:
         return Response(
             {"error": "Cannot delete this brand because products are currently associated with it."},
             status=status.HTTP_400_BAD_REQUEST
         )
+    except Exception as e:
+        return Response({"error": f"Failed to delete brand: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response(
         {"message": "Brand deleted successfully."},
@@ -652,53 +690,90 @@ def brand_admin_detail(request, brand_id):
             )
         old_logo = brand.logo
         try:
-            brand.delete()
-            if old_logo:
-                if is_cloudinary_url(old_logo):
-                    delete_image_from_cloudinary(old_logo)
-                elif old_logo.startswith("/media/brands/"):
-                    try:
-                        rel_path = old_logo[len("/media/"):]
-                        full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
-                        if os.path.isfile(full_path):
-                            os.remove(full_path)
-                    except Exception:
-                        pass
+            with transaction.atomic():
+                brand.delete()
+                if old_logo:
+                    def _cleanup_admin_brand_logo():
+                        if is_cloudinary_url(old_logo):
+                            delete_image_from_cloudinary(old_logo)
+                        elif old_logo.startswith("/media/brands/"):
+                            try:
+                                rel_path = old_logo[len("/media/"):]
+                                full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                                if os.path.isfile(full_path):
+                                    os.remove(full_path)
+                            except Exception:
+                                pass
+                    transaction.on_commit(_cleanup_admin_brand_logo)
         except ProtectedError:
             return Response(
                 {"error": "Cannot delete this brand because products are currently associated with it."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        except Exception as e:
+            return Response({"error": f"Failed to delete brand: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
         return Response({"message": "Brand deleted successfully."}, status=status.HTTP_200_OK)
-        return Response(
-            {"message": "Brand deleted successfully."},
-            status=status.HTTP_200_OK
-        )
 
     elif request.method in ["PUT", "PATCH"]:
         data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
-        uploaded_logo = _handle_logo_upload(request)
-        if uploaded_logo:
-            data["logo"] = uploaded_logo
+        file_obj = request.FILES.get("logo")
+        uploaded_logo = None
+        old_logo = brand.logo
+
+        if file_obj:
+            try:
+                uploaded_logo = _handle_logo_upload(request)
+                data["logo"] = uploaded_logo
+            except ValidationError as e:
+                err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+                return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        elif "logo" in data and not isinstance(data["logo"], str):
+            del data["logo"]
 
         partial = request.method == "PATCH"
-        serializer = BrandSerializer(brand, data=data, partial=partial)
+        serializer = BrandSerializer(brand, data=data, partial=partial, context={"request": request})
         if serializer.is_valid():
-            serializer.save()
-            return Response(
-                {
-                    "message": "Brand updated successfully.",
-                    "data": serializer.data
-                },
-                status=status.HTTP_200_OK
-            )
+            try:
+                with transaction.atomic():
+                    serializer.save()
+                    if uploaded_logo and old_logo and old_logo != uploaded_logo:
+                        def _cleanup_old_detail_logo():
+                            if is_cloudinary_url(old_logo):
+                                delete_image_from_cloudinary(old_logo)
+                            elif old_logo.startswith("/media/brands/"):
+                                try:
+                                    rel_path = old_logo[len("/media/"):]
+                                    full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                                    if os.path.isfile(full_path):
+                                        os.remove(full_path)
+                                except Exception:
+                                    pass
+                        transaction.on_commit(_cleanup_old_detail_logo)
+                return Response(
+                    {
+                        "message": "Brand updated successfully.",
+                        "data": serializer.data
+                    },
+                    status=status.HTTP_200_OK
+                )
+            except Exception as e:
+                if uploaded_logo and is_cloudinary_url(uploaded_logo):
+                    delete_image_from_cloudinary(uploaded_logo)
+                return Response({"error": f"Failed to update brand: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if uploaded_logo and is_cloudinary_url(uploaded_logo):
+            delete_image_from_cloudinary(uploaded_logo)
+
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
 
     # GET
-    serializer = BrandSerializer(brand)
+    serializer = BrandSerializer(brand, context={"request": request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
@@ -854,15 +929,20 @@ def create_product_image(request):
 
     # Check whether the image data is valid
     if serializer.is_valid():
-        # Save the image into the database
-        serializer.save()
-        return Response(
-            {
-                "message": "Product image added successfully.",
-                "data": serializer.data
-            },
-            status=status.HTTP_201_CREATED
-        )
+        try:
+            with transaction.atomic():
+                serializer.save()
+            return Response(
+                {
+                    "message": "Product image added successfully.",
+                    "data": serializer.data
+                },
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            if uploaded_url and is_cloudinary_url(uploaded_url):
+                delete_image_from_cloudinary(uploaded_url)
+            return Response({"error": f"Database save failed: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Clean up uploaded Cloudinary image if DB validation failed
     if uploaded_url and is_cloudinary_url(uploaded_url):
@@ -886,26 +966,31 @@ def delete_product_image(request, image_id):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # If Cloudinary image, delete remote asset
-    if image.image and is_cloudinary_url(image.image):
-        delete_image_from_cloudinary(image.image)
-    # Clean up file on disk if stored locally in media/products
-    elif image.image and image.image.startswith("/media/products/"):
-        rel_path = image.image[len("/media/"):]
-        full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
-        if os.path.isfile(full_path):
-            try:
-                os.remove(full_path)
-            except Exception:
-                pass
+    img_url = image.image
+    try:
+        with transaction.atomic():
+            image.delete()
 
-    # Delete the image
-    image.delete()
+            def _cleanup_deleted_product_image():
+                if img_url and is_cloudinary_url(img_url):
+                    delete_image_from_cloudinary(img_url)
+                elif img_url and img_url.startswith("/media/products/"):
+                    try:
+                        rel_path = img_url[len("/media/"):]
+                        full_path = os.path.join(settings.MEDIA_ROOT, rel_path)
+                        if os.path.isfile(full_path):
+                            os.remove(full_path)
+                    except Exception:
+                        pass
 
-    return Response(
-        {"message": "Product image deleted successfully."},
-        status=status.HTTP_200_OK
-    )
+            transaction.on_commit(_cleanup_deleted_product_image)
+
+        return Response(
+            {"message": "Product image deleted successfully."},
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response({"error": f"Failed to delete product image: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 @api_view(["POST"])
 @permission_classes([IsAdmin])
 def create_product_specification(request):

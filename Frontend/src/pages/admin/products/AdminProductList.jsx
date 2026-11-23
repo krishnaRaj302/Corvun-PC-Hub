@@ -89,7 +89,16 @@ export default function AdminProductList() {
       setDeleteTarget(null);
       fetchProducts();
     } catch (err) {
-      alert(err.response?.data?.error || "Error deleting product.");
+      console.error("AdminProductList delete error:", err);
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.detail ||
+        (err.response?.status === 401
+          ? "Your admin session has expired. Please log in again."
+          : err.response?.status === 403
+          ? "Permission denied: Your account does not have admin privileges."
+          : err.message || "Error deleting product.");
+      alert(msg);
     } finally {
       setDeleting(false);
     }

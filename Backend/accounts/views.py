@@ -150,11 +150,14 @@ def login(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def profile(request):
+    role = getattr(request.user, "role", "customer")
+    if (getattr(request.user, "is_superuser", False) or getattr(request.user, "is_staff", False)) and role != "admin":
+        role = "admin"
     return Response({
         "id": request.user.id,
         "full_name": request.user.full_name,
         "email": request.user.email,
-        "role": request.user.role
+        "role": role
     })
 
 @api_view(["POST"])
