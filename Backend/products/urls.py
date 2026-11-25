@@ -10,6 +10,7 @@ from .views import (
     create_category,
     update_category,
     delete_category,
+    upload_category_image,
     brand_list,
     create_brand,
     update_brand,
@@ -41,6 +42,8 @@ urlpatterns = [
     # Categories
     path("categories/", category_list, name="category_list"),
     path("categories/create/", create_category, name="create_category"),
+    path("categories/upload-image/", upload_category_image, name="upload_category_image"),
+    path("admin/categories/upload-image/", upload_category_image, name="admin_upload_category_image"),
     path("categories/<int:category_id>/update/", update_category, name="update_category"),
     path("categories/<int:category_id>/delete/", delete_category, name="delete_category"),
 

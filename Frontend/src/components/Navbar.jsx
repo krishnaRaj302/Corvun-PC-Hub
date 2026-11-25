@@ -4,26 +4,22 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import "./Navbar.css";
 
-// Corvun Diamond Logo Icon
-export const CorvunLogo = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="corvun-navbar-icon"
-  >
-    <path d="M12 2L22 12L12 22L2 12L12 2Z" fill="var(--corvun-red)" />
-    <rect
-      x="8.5"
-      y="8.5"
-      width="7"
-      height="7"
-      transform="rotate(45 12 12)"
-      fill="var(--corvun-bg)"
-    />
-  </svg>
+// Corvun Official Brand Emblem Logo
+export const CorvunLogo = ({ className = "corvun-navbar-icon", style }) => (
+  <img
+    src="/brand/corvun-icon.png"
+    alt="CORVUN Logo"
+    className={className}
+    style={{
+      width: "32px",
+      height: "32px",
+      objectFit: "contain",
+      filter: "drop-shadow(0 0 10px rgba(239, 56, 66, 0.45))",
+      flexShrink: 0,
+      display: "inline-block",
+      ...style,
+    }}
+  />
 );
 
 function Navbar() {
@@ -71,15 +67,12 @@ function Navbar() {
       {/* Main Navigation Bar */}
       <div className="navbar-main-container">
         <div className="navbar-brand-section">
-          <Link to="/" className="navbar-brand-link">
-            <CorvunLogo />
-            <div className="navbar-brand-col">
-              <div className="navbar-brand-row">
-                <span className="navbar-brand-text">CORVUN</span>
-                <span className="navbar-brand-dot">•</span>
-              </div>
-              <span className="navbar-brand-subtext">BUILD BEYOND LIMITS</span>
-            </div>
+          <Link to="/" className="navbar-brand-link" aria-label="CORVUN PC">
+            <img
+              src="/brand/corvun-pc-logo.png"
+              alt="CORVUN PC"
+              className="navbar-brand-logo-img"
+            />
           </Link>
         </div>
 

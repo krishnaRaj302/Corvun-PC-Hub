@@ -44,6 +44,7 @@ class CategorySerializer(serializers.ModelSerializer):
             "id",
             "name",
             "description",
+            "image",
             "status",
             "product_count",
             "created_at",

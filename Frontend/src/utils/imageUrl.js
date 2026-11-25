@@ -1,7 +1,7 @@
 const BACKEND_BASE = "http://127.0.0.1:8002";
 
 export const resolveImageUrl = (path) => {
-  if (!path) return "";
+  if (!path || typeof path !== "string") return "";
   if (
     path.startsWith("http://") ||
     path.startsWith("https://") ||
@@ -15,6 +15,9 @@ export const resolveImageUrl = (path) => {
   }
   if (path.startsWith("/")) {
     return `${BACKEND_BASE}${path}`;
+  }
+  if (path.startsWith("media/")) {
+    return `${BACKEND_BASE}/${path}`;
   }
   return path;
 };

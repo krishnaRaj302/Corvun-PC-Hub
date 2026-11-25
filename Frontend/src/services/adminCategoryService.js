@@ -36,3 +36,13 @@ export const deleteAdminCategory = async (categoryId) => {
   );
   return response.data;
 };
+
+/**
+ * Upload a category image directly
+ */
+export const uploadAdminCategoryImage = async (file) => {
+  const formData = new FormData();
+  formData.append("image", file);
+  const response = await api.post("/products/categories/upload-image/", formData);
+  return response.data;
+};

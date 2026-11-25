@@ -1,14 +1,200 @@
 /* ==================================================
-   CORVUN WORKSTATION FOOTER STYLES
+   CORVUN WORKSTATION FOOTER STYLES (ANIMATED EDITION)
    ================================================== */
 
 .corvun-footer {
+  position: relative;
   width: 100%;
   margin-top: auto;
-  background-color: var(--corvun-bg);
-  border-top: 1px solid var(--corvun-border);
+  background-color: #05070c;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--corvun-text);
   font-family: var(--corvun-sans);
+  overflow: hidden;
+}
+
+/* ── Top Animated Crimson Laser Border ────────── */
+.footer-laser-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(239, 56, 66, 0.25) 25%,
+    rgba(255, 46, 56, 0.95) 50%,
+    rgba(239, 56, 66, 0.25) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  box-shadow: 0 0 14px rgba(255, 46, 56, 0.55);
+  z-index: 4;
+  pointer-events: none;
+  animation: footer-laser-sweep 5.5s linear infinite;
+}
+
+@keyframes footer-laser-sweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Animated Background Logo & Atmospheric Stage ─ */
+.footer-bg-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-bg-grid {
+  position: absolute;
+  inset: -40px 0 0 0;
+  background-image:
+    linear-gradient(rgba(239, 56, 66, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(239, 56, 66, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 75% 80% at 50% 45%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 80% at 50% 45%, black 20%, transparent 80%);
+  animation: footer-grid-drift 18s linear infinite;
+}
+
+@keyframes footer-grid-drift {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(44px);
+  }
+}
+
+.footer-bg-aura {
+  position: absolute;
+  width: 680px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(239, 56, 66, 0.14) 0%,
+    rgba(239, 56, 66, 0.04) 48%,
+    transparent 75%
+  );
+  filter: blur(36px);
+  animation: footer-aura-pulse 5s ease-in-out infinite alternate;
+}
+
+@keyframes footer-aura-pulse {
+  from {
+    transform: scale(0.92);
+    opacity: 0.65;
+  }
+  to {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Orbital Rings Behind Background Logo */
+.footer-bg-orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(239, 56, 66, 0.14);
+  pointer-events: none;
+}
+
+.footer-bg-orbit-ring.ring-one {
+  width: 520px;
+  height: 520px;
+  animation: footer-orbit-spin 34s linear infinite;
+}
+
+.footer-bg-orbit-ring.ring-two {
+  width: 360px;
+  height: 360px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.04) rgba(239, 56, 66, 0.18);
+  animation: footer-orbit-spin 22s linear infinite reverse;
+}
+
+@keyframes footer-orbit-spin {
+  from {
+    transform: rotateX(68deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(68deg) rotateZ(360deg);
+  }
+}
+
+/* Animated Background CORVUN Logo Watermark */
+.footer-bg-logo-wrap {
+  position: relative;
+  width: min(760px, 86%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.11;
+  transform-style: preserve-3d;
+  animation: footer-logo-float 7s ease-in-out infinite alternate;
+  transition: opacity 0.45s ease, filter 0.45s ease;
+  overflow: hidden;
+}
+
+.corvun-footer:hover .footer-bg-logo-wrap {
+  opacity: 0.18;
+}
+
+.footer-bg-logo-img {
+  width: 100%;
+  height: auto;
+  max-height: 210px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 28px rgba(239, 56, 66, 0.45));
+  user-select: none;
+}
+
+.footer-bg-logo-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.25) 48%,
+    rgba(239, 56, 66, 0.35) 52%,
+    transparent 75%
+  );
+  mix-blend-mode: overlay;
+  transform: translateX(-140%);
+  animation: footer-logo-sheen 6.5s ease-in-out infinite;
+}
+
+@keyframes footer-logo-float {
+  0% {
+    transform: perspective(1000px) translateY(6px) rotateX(4deg) rotateY(-3deg) scale(0.98);
+  }
+  50% {
+    transform: perspective(1000px) translateY(-8px) rotateX(0deg) rotateY(2deg) scale(1.02);
+  }
+  100% {
+    transform: perspective(1000px) translateY(4px) rotateX(-3deg) rotateY(4deg) scale(1);
+  }
+}
+
+@keyframes footer-logo-sheen {
+  0%, 55% {
+    transform: translateX(-140%);
+  }
+  100% {
+    transform: translateX(140%);
+  }
 }
 
 .footer-top-reticle-bar {
@@ -31,9 +217,11 @@
 }
 
 .footer-main-grid {
+  position: relative;
+  z-index: 2;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 56px 24px 40px;
+  padding: 58px 24px 44px;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 48px;
@@ -50,7 +238,22 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  align-self: flex-start;
   text-decoration: none;
+  transition: transform 0.25s ease;
+}
+
+.footer-brand-link:hover {
+  transform: translateX(3px);
+}
+
+.footer-brand-link img {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
+}
+
+.footer-brand-link:hover img {
+  transform: scale(1.12) rotate(-6deg);
+  filter: drop-shadow(0 0 14px rgba(239, 56, 66, 0.75)) !important;
 }
 
 .footer-brand-title {
@@ -74,7 +277,7 @@
 .footer-mission-text {
   font-size: 13px;
   line-height: 1.6;
-  color: #8e95a5;
+  color: #9ba3b4;
   max-width: 360px;
 }
 
@@ -89,19 +292,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  background-color: #12151c;
-  border: 1px solid #1c202a;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background-color: rgba(18, 21, 28, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
   color: #8e95a5;
-  transition: var(--corvun-transition);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .social-icon-btn:hover {
   color: #ffffff;
-  background-color: #1c202a;
-  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(239, 56, 66, 0.16);
+  border-color: rgba(239, 56, 66, 0.65);
+  box-shadow: 0 6px 16px rgba(239, 56, 66, 0.28);
+  transform: translateY(-3px);
 }
 
 /* Columns */
@@ -112,12 +318,33 @@
 }
 
 .footer-column-title {
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
   font-family: var(--corvun-mono);
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #ffffff;
+  padding-bottom: 6px;
+}
+
+.footer-column-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background: #ef3842;
+  box-shadow: 0 0 8px rgba(239, 56, 66, 0.6);
+  transition: width 0.3s ease;
+}
+
+.footer-column:hover .footer-column-title::after {
+  width: 100%;
 }
 
 .footer-link-list {
@@ -128,22 +355,43 @@
 }
 
 .footer-link-list a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   font-size: 13px;
-  color: #7b8394;
+  color: #8b93a5;
   text-decoration: none;
-  transition: var(--corvun-transition);
+  transition: color 0.22s ease, transform 0.22s ease;
+}
+
+.footer-link-list a::before {
+  content: "";
+  width: 0;
+  height: 2px;
+  margin-right: 0;
+  border-radius: 2px;
+  background-color: #ef3842;
+  box-shadow: 0 0 6px #ef3842;
+  transition: width 0.22s ease, margin-right 0.22s ease;
 }
 
 .footer-link-list a:hover {
   color: #ffffff;
-  transform: translateX(2px);
-  display: inline-block;
+  transform: translateX(3px);
+}
+
+.footer-link-list a:hover::before {
+  width: 8px;
+  margin-right: 7px;
 }
 
 /* Bottom Bar */
 .footer-bottom-bar {
-  border-top: 1px solid #161922;
-  background-color: #050608;
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: rgba(5, 6, 9, 0.78);
+  backdrop-filter: blur(10px);
   padding: 18px 24px;
 }
 
@@ -179,24 +427,40 @@
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 4px;
-  background-color: #0e1017;
+  background-color: rgba(14, 16, 23, 0.85);
   border: 1px solid #1c202a;
   color: #8e95a5;
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.payment-pill:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .payment-pill.secure-pill {
   color: #22c55e;
-  border-color: rgba(34, 197, 94, 0.25);
-  background-color: rgba(34, 197, 94, 0.06);
+  border-color: rgba(34, 197, 94, 0.28);
+  background-color: rgba(34, 197, 94, 0.08);
+  animation: footer-secure-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes footer-secure-pulse {
+  from {
+    box-shadow: 0 0 0 rgba(34, 197, 94, 0);
+  }
+  to {
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.22);
+  }
 }
 
 .copyright-text {
   font-family: var(--corvun-mono);
   font-size: 11px;
-  color: #555c6d;
+  color: #646d80;
 }
 
 /* Responsive */
@@ -205,12 +469,27 @@
     grid-template-columns: 1fr 1fr;
     gap: 32px;
   }
+
+  .footer-bg-orbit-ring.ring-one {
+    width: 380px;
+    height: 380px;
+  }
+
+  .footer-bg-orbit-ring.ring-two {
+    width: 260px;
+    height: 260px;
+  }
 }
 
 @media (max-width: 600px) {
   .footer-main-grid {
     grid-template-columns: 1fr;
     gap: 28px;
+  }
+
+  .footer-bg-logo-wrap {
+    width: 94%;
+    opacity: 0.09;
   }
 
   .footer-bottom-inner {
