@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   getAdminCategories,
   createAdminCategory,
@@ -30,11 +30,45 @@ export default function AdminCategories() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    image: "",
     status: true,
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [formErrors, setFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const addFileInputRef = useRef(null);
+  const editFileInputRef = useRef(null);
+  const MAX_SIZE_MB = 25;
+
+  const handleImageChange = (file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      showToast("Please upload a valid image file (PNG, JPG, WEBP, SVG, etc.).", "error");
+      return;
+    }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      const actualSizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      showToast(`Image file size (${actualSizeMb}MB) exceeds the maximum ${MAX_SIZE_MB}MB limit.`, "error");
+      return;
+    }
+    setImageFile(file);
+    const objectUrl = URL.createObjectURL(file);
+    setImagePreview(objectUrl);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleImageChange(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
 
   /* ── Auto-dismiss toast ───────────────────────────────────────────── */
   useEffect(() => {
@@ -94,8 +128,11 @@ export default function AdminCategories() {
     setFormData({
       name: "",
       description: "",
+      image: "",
       status: true,
     });
+    setImageFile(null);
+    setImagePreview("");
     setFormErrors({});
     setIsAddModalOpen(true);
   };
@@ -106,8 +143,11 @@ export default function AdminCategories() {
     setFormData({
       name: cat.name,
       description: cat.description || "",
+      image: cat.image || "",
       status: Boolean(cat.status),
     });
+    setImageFile(null);
+    setImagePreview(cat.image || "");
     setFormErrors({});
     setIsEditModalOpen(true);
   };
@@ -137,19 +177,29 @@ export default function AdminCategories() {
 
     setSubmitting(true);
     try {
-      const payload = {
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        status: formData.status,
-      };
+      let payload;
+      if (imageFile) {
+        payload = new FormData();
+        payload.append("name", formData.name.trim());
+        payload.append("description", formData.description.trim());
+        payload.append("status", formData.status);
+        payload.append("image", imageFile);
+      } else {
+        payload = {
+          name: formData.name.trim(),
+          description: formData.description.trim(),
+          status: formData.status,
+          image: formData.image || "",
+        };
+      }
 
       if (isEditModalOpen && currentCategory) {
         await updateAdminCategory(currentCategory.id, payload);
-        showToast(`Category "${payload.name}" updated successfully.`);
+        showToast(`Category "${formData.name.trim()}" updated successfully.`);
         setIsEditModalOpen(false);
       } else {
         await createAdminCategory(payload);
-        showToast(`Category "${payload.name}" created successfully.`);
+        showToast(`Category "${formData.name.trim()}" created successfully.`);
         setIsAddModalOpen(false);
       }
 
@@ -364,7 +414,18 @@ export default function AdminCategories() {
                     {/* Category Name */}
                     <td>
                       <div className="ac-cat-cell">
-                        <span className="ac-row-dot" />
+                        {cat.image ? (
+                          <img src={cat.image} alt={cat.name} className="ac-cat-thumb" />
+                        ) : (
+                          <div className="ac-cat-thumb-placeholder">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                              <rect x="4" y="4" width="16" height="16" rx="2" />
+                              <rect x="9" y="9" width="6" height="6" />
+                              <line x1="9" y1="1" x2="9" y2="4" />
+                              <line x1="15" y1="1" x2="15" y2="4" />
+                            </svg>
+                          </div>
+                        )}
                         <span className="ac-cat-name" title={cat.name}>
                           {cat.name}
                         </span>
@@ -554,6 +615,76 @@ export default function AdminCategories() {
                   />
                 </div>
 
+                {/* Field: Category Image */}
+                <div className="ac-form-group">
+                  <label className="ac-form-label">CATEGORY IMAGE</label>
+                  <div
+                    className="ac-upload-dropzone"
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    onClick={() => addFileInputRef.current?.click()}
+                  >
+                    <input
+                      ref={addFileInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif,image/avif"
+                      style={{ display: "none" }}
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          handleImageChange(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    {imagePreview ? (
+                      <div className="ac-upload-preview-wrap" onClick={(e) => e.stopPropagation()}>
+                        <img src={imagePreview} alt="Category preview" className="ac-upload-preview-img" />
+                        <div className="ac-upload-preview-actions">
+                          <button
+                            type="button"
+                            className="ac-btn-change-image"
+                            onClick={() => addFileInputRef.current?.click()}
+                          >
+                            Change Image
+                          </button>
+                          <button
+                            type="button"
+                            className="ac-btn-remove-image"
+                            onClick={() => {
+                              setImageFile(null);
+                              setImagePreview("");
+                              setFormData({ ...formData, image: "" });
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="ac-upload-icon-circle">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                          </svg>
+                        </div>
+                        <p className="ac-upload-title">Drop category image here, or browse</p>
+                        <p className="ac-upload-subtitle">Supports PNG, JPG, WEBP, SVG (up to 25MB)</p>
+                        <button
+                          type="button"
+                          className="ac-upload-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addFileInputRef.current?.click();
+                          }}
+                        >
+                          Select Image
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
                 {/* Field 3: Status Toggle */}
                 <div className="ac-form-group">
                   <label className="ac-form-label">STATUS</label>
@@ -675,6 +806,76 @@ export default function AdminCategories() {
                       setFormData({ ...formData, description: e.target.value })
                     }
                   />
+                </div>
+
+                {/* Field: Category Image */}
+                <div className="ac-form-group">
+                  <label className="ac-form-label">CATEGORY IMAGE</label>
+                  <div
+                    className="ac-upload-dropzone"
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    onClick={() => editFileInputRef.current?.click()}
+                  >
+                    <input
+                      ref={editFileInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif,image/avif"
+                      style={{ display: "none" }}
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          handleImageChange(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    {imagePreview ? (
+                      <div className="ac-upload-preview-wrap" onClick={(e) => e.stopPropagation()}>
+                        <img src={imagePreview} alt="Category preview" className="ac-upload-preview-img" />
+                        <div className="ac-upload-preview-actions">
+                          <button
+                            type="button"
+                            className="ac-btn-change-image"
+                            onClick={() => editFileInputRef.current?.click()}
+                          >
+                            Change Image
+                          </button>
+                          <button
+                            type="button"
+                            className="ac-btn-remove-image"
+                            onClick={() => {
+                              setImageFile(null);
+                              setImagePreview("");
+                              setFormData({ ...formData, image: "" });
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="ac-upload-icon-circle">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                          </svg>
+                        </div>
+                        <p className="ac-upload-title">Drop category image here, or browse</p>
+                        <p className="ac-upload-subtitle">Supports PNG, JPG, WEBP, SVG (up to 25MB)</p>
+                        <button
+                          type="button"
+                          className="ac-upload-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            editFileInputRef.current?.click();
+                          }}
+                        >
+                          Select Image
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 {/* Field 3: Status Toggle */}

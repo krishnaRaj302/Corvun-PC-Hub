@@ -172,8 +172,7 @@ def logout(request):
 
     try:
         token = RefreshToken(refresh_token)
-        token .blacklist() #ഈ refresh token ഇനി ഉപയോഗിക്കാൻ പാടില്ല എന്ന് Django/SimpleJWT-നോട് പറയുന്നതാണ്.
-
+        token .blacklist() 
     except Exception:
         return Response({
             "error" : "Invalid refresh token."

@@ -18,9 +18,9 @@ export const getCategories = async () => {
   return response.data;
 };
 
-// Fetch brands
-export const getBrands = async () => {
-  const response = await api.get("/products/brands/");
+// Fetch brands (supports optional filters like { status: "listed" })
+export const getBrands = async (params = {}) => {
+  const response = await api.get("/products/brands/", { params });
   return response.data;
 };
 

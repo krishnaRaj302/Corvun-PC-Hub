@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import ErrorBoundary from "./components/ErrorBoundary";
 import CustomerLayout from "./layouts/CustomerLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
@@ -55,7 +56,8 @@ import AdminBanners from "./pages/admin/AdminBanners";
 
 function App() {
   return (
-    <Routes>
+    <ErrorBoundary>
+      <Routes>
       {/* ==========================================
           CUSTOMER WORKSTATION PAGES
           ========================================== */}
@@ -331,7 +333,11 @@ function App() {
           <Route path="/admin/reports" element={<Navigate to="/admin/sales" replace />} />
         </Route>
       </Route>
+
+      <Route path="/components" element={<Navigate to="/products" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </ErrorBoundary>
   );
 }
 

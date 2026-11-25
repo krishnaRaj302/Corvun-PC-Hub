@@ -5,6 +5,25 @@ import "./Footer.css";
 function Footer() {
   return (
     <footer className="corvun-footer">
+      {/* Top Animated Crimson Laser Sweep Border */}
+      <div className="footer-laser-border" aria-hidden="true" />
+
+      {/* Animated Background Logo & Atmospheric Stage */}
+      <div className="footer-bg-stage" aria-hidden="true">
+        <div className="footer-bg-grid" />
+        <div className="footer-bg-aura" />
+        <div className="footer-bg-orbit-ring ring-one" />
+        <div className="footer-bg-orbit-ring ring-two" />
+        <div className="footer-bg-logo-wrap">
+          <img
+            src="/brand/corvun-pc-logo.png"
+            alt=""
+            className="footer-bg-logo-img"
+          />
+          <div className="footer-bg-logo-sheen" />
+        </div>
+      </div>
+
       <div className="footer-main-grid">
         {/* Brand Column */}
         <div className="footer-brand-column">

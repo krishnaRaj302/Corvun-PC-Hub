@@ -826,3 +826,145 @@
   line-height: 1.5;
   margin: 0;
 }
+
+/* ── Category Thumbnail & Placeholder ──────────────────────── */
+.ac-cat-thumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #141720;
+  border: 1px solid #20242e;
+  flex-shrink: 0;
+}
+
+.ac-cat-thumb-placeholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #141720;
+  border: 1px solid #20242e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+/* ── Category Image Dropzone ────────────────────────────────── */
+.ac-upload-dropzone {
+  border: 1.5px dashed #2a303f;
+  border-radius: 8px;
+  background: #111319;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.ac-upload-dropzone:hover {
+  border-color: #ef3842;
+  background: #131722;
+}
+
+.ac-upload-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #171b24;
+  border: 1px solid #232834;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8e95a5;
+  margin-bottom: 4px;
+}
+
+.ac-upload-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.ac-upload-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ac-upload-btn {
+  margin-top: 6px;
+  padding: 7px 18px;
+  background: #171b24;
+  border: 1px solid #2e3544;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ac-upload-btn:hover {
+  background: #232834;
+  border-color: #3f475a;
+}
+
+.ac-upload-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ac-upload-preview-img {
+  max-width: 160px;
+  max-height: 100px;
+  object-fit: contain;
+  background: #141720;
+  border: 1px solid #20242e;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.ac-upload-preview-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.ac-btn-change-image {
+  padding: 6px 14px;
+  background: #1c202a;
+  border: 1px solid #2e3544;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ac-btn-change-image:hover {
+  background: #252b38;
+}
+
+.ac-btn-remove-image {
+  padding: 6px 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ac-btn-remove-image:hover {
+  background: rgba(239, 68, 68, 0.2);
+}

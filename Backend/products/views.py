@@ -165,9 +165,9 @@ def brand_list(request):
     # Status filter (all, listed, unlisted)
     status_param = request.query_params.get("status", "").strip().lower()
     if status_param in ["listed", "active"]:
-        brands = brands.filter(status="listed")
+        brands = brands.filter(status__iexact="listed")
     elif status_param in ["unlisted", "inactive"]:
-        brands = brands.filter(status="unlisted")
+        brands = brands.filter(status__iexact="unlisted")
 
     brands = brands.order_by("-id")
 
@@ -184,10 +184,10 @@ def brand_list(request):
             paginator.page_size = 8
 
         result_page = paginator.paginate_queryset(brands, request)
-        serializer = BrandSerializer(result_page, many=True)
+        serializer = BrandSerializer(result_page, many=True, context={"request": request})
         return paginator.get_paginated_response(serializer.data)
 
-    serializer = BrandSerializer(brands, many=True)
+    serializer = BrandSerializer(brands, many=True, context={"request": request})
     return Response(
         serializer.data,
         status=status.HTTP_200_OK
@@ -369,37 +369,94 @@ def delete_product(request, product_id):
         )
 
 
+def _handle_category_image_upload(request):
+    file_obj = request.FILES.get("image") or request.FILES.get("file")
+    if not file_obj:
+        return None
+    allowed_extensions = {".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".avif", ".ico", ".bmp"}
+    res = upload_image_to_cloudinary(
+        file_obj,
+        folder_type="categories",
+        allowed_extensions=allowed_extensions,
+    )
+    return res["secure_url"]
+
+
+@api_view(["POST"])
+@permission_classes([IsAdmin])
+def upload_category_image(request):
+    file_obj = request.FILES.get("image") or request.FILES.get("file")
+    if not file_obj:
+        return Response(
+            {"error": "No image file provided."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    try:
+        uploaded_image = _handle_category_image_upload(request)
+    except ValidationError as e:
+        err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+        return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not uploaded_image:
+        return Response(
+            {"error": "Invalid file type. Allowed formats: PNG, JPG, JPEG, WEBP, SVG, GIF, AVIF, BMP, ICO."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    return Response(
+        {"image": uploaded_image, "message": "Category image uploaded successfully to Cloudinary."},
+        status=status.HTTP_200_OK
+    )
+
+
 @api_view(["POST"])
 @permission_classes([IsAdmin])
 def create_category(request):
-    # Get category data sent from Postman/frontend
-    serializer = CategorySerializer(data=request.data)
+    data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
+    uploaded_image = None
+    if request.FILES.get("image") or request.FILES.get("file"):
+        try:
+            uploaded_image = _handle_category_image_upload(request)
+            data["image"] = uploaded_image
+        except ValidationError as e:
+            err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+            return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    elif "image" in data and not isinstance(data["image"], str):
+        del data["image"]
 
-    # Check whether the category data is valid
+    serializer = CategorySerializer(data=data)
+
     if serializer.is_valid():
+        try:
+            with transaction.atomic():
+                serializer.save()
+            return Response(
+                {
+                    "message": "Category created successfully.",
+                    "data": serializer.data
+                },
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            if uploaded_image and is_cloudinary_url(uploaded_image):
+                delete_image_from_cloudinary(uploaded_image)
+            return Response({"error": f"Failed to save category: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Save the category into the database
-        serializer.save()
+    if uploaded_image and is_cloudinary_url(uploaded_image):
+        delete_image_from_cloudinary(uploaded_image)
 
-        # Send success response
-        return Response(
-            {
-                "message": "Category created successfully.",
-                "data": serializer.data
-            },
-            status=status.HTTP_201_CREATED
-        )
-
-    # Send validation errors
     return Response(
         serializer.errors,
         status=status.HTTP_400_BAD_REQUEST
     )
+
 
 @api_view(["PUT"])
 @permission_classes([IsAdmin])
 def update_category(request, category_id):
-    # Find the category using the ID from the URL
     try:
         category = Category.objects.get(id=category_id)
     except Category.DoesNotExist:
@@ -408,37 +465,62 @@ def update_category(request, category_id):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # Send the existing category and new data to the serializer
+    data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
+    uploaded_image = None
+    old_image_to_delete = None
+
+    if request.FILES.get("image") or request.FILES.get("file"):
+        try:
+            uploaded_image = _handle_category_image_upload(request)
+            data["image"] = uploaded_image
+            if category.image and is_cloudinary_url(category.image) and category.image != uploaded_image:
+                old_image_to_delete = category.image
+        except ValidationError as e:
+            err_msg = e.detail[0] if isinstance(e.detail, list) else str(e.detail)
+            return Response({"error": str(err_msg)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    elif "image" in data and not isinstance(data["image"], str):
+        del data["image"]
+    elif "image" in data and data["image"] == "" and category.image and is_cloudinary_url(category.image):
+        old_image_to_delete = category.image
+
     serializer = CategorySerializer(
         category,
-        data=request.data
+        data=data,
+        partial=True
     )
 
-    # Check whether the new data is valid
     if serializer.is_valid():
+        try:
+            with transaction.atomic():
+                serializer.save()
+                if old_image_to_delete:
+                    transaction.on_commit(lambda: delete_image_from_cloudinary(old_image_to_delete))
+            return Response(
+                {
+                    "message": "Category updated successfully.",
+                    "data": serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            if uploaded_image and is_cloudinary_url(uploaded_image):
+                delete_image_from_cloudinary(uploaded_image)
+            return Response({"error": f"Failed to update category: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Update the category in the database
-        serializer.save()
+    if uploaded_image and is_cloudinary_url(uploaded_image):
+        delete_image_from_cloudinary(uploaded_image)
 
-        # Send the updated category
-        return Response(
-            {
-                "message": "Category updated successfully.",
-                "data": serializer.data
-            },
-            status=status.HTTP_200_OK
-        )
-
-    # Send validation errors
     return Response(
         serializer.errors,
         status=status.HTTP_400_BAD_REQUEST
     )
 
+
 @api_view(["DELETE"])
 @permission_classes([IsAdmin])
 def delete_category(request, category_id):
-    # Find the category using the ID from the URL
     try:
         category = Category.objects.get(id=category_id)
     except Category.DoesNotExist:
@@ -447,7 +529,6 @@ def delete_category(request, category_id):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # Check if category has any products attached
     if category.products.exists():
         return Response(
             {"error": "Cannot delete category because it contains products. Reassign or remove the products first."},
@@ -455,15 +536,17 @@ def delete_category(request, category_id):
         )
 
     try:
-        # Delete the category from the database
-        category.delete()
+        with transaction.atomic():
+            old_image = category.image
+            category.delete()
+            if old_image and is_cloudinary_url(old_image):
+                transaction.on_commit(lambda: delete_image_from_cloudinary(old_image))
     except ProtectedError:
         return Response(
             {"error": "Cannot delete category because it contains products. Reassign or remove the products first."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Send success response
     return Response(
         {"message": "Category deleted successfully."},
         status=status.HTTP_200_OK

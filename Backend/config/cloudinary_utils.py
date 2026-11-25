@@ -16,6 +16,7 @@ ALLOWED_CLOUDINARY_FOLDERS = {
     "products": "corvun/products",
     "brands": "corvun/brands",
     "banners": "corvun/banners",
+    "categories": "corvun/categories",
 }
 
 DEFAULT_MAX_IMAGE_SIZE_BYTES = 25 * 1024 * 1024  # 25 MB
@@ -71,9 +72,9 @@ def extract_public_id_from_url(url: str) -> str | None:
     if not is_cloudinary_url(url):
         return None
 
-    # Matches /image/upload/(optional transformations and/or version)(corvun/(products|brands|banners)/<id>)
+    # Matches /image/upload/(optional transformations and/or version)(corvun/(products|brands|banners|categories)/<id>)
     match = re.search(
-        r"/image/upload/(?:.*?/)*(corvun/(?:products|brands|banners)/.+?)(?:\.[a-zA-Z0-9]+)?(?:\?|#|$)",
+        r"/image/upload/(?:.*?/)*(corvun/(?:products|brands|banners|categories)/.+?)(?:\.[a-zA-Z0-9]+)?(?:\?|#|$)",
         url,
     )
     if match:
@@ -306,7 +307,7 @@ def delete_image_from_cloudinary(url_or_public_id: str) -> bool:
         public_id = extracted
 
     # Only delete assets within our application namespace
-    if not public_id.startswith(("corvun/products/", "corvun/brands/", "corvun/banners/")):
+    if not public_id.startswith(("corvun/products/", "corvun/brands/", "corvun/banners/", "corvun/categories/")):
         logger.warning(
             "Refusing to delete asset outside CORVUN namespace: %s",
             public_id,
